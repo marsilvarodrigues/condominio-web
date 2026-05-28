@@ -1,0 +1,231 @@
+<svg width="1280" height="800" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="card-shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Page background -->
+  <rect width="1280" height="800" fill="#F0F2F5"/>
+
+  <!-- ===== SIDEBAR ===== -->
+  <rect width="260" height="800" fill="#1A2332"/>
+
+  <!-- Sidebar logo -->
+  <rect x="0" y="0" width="260" height="64" fill="#151D2B"/>
+  <rect x="20" y="17" width="30" height="30" rx="6" fill="#1976D2"/>
+  <rect x="25" y="22" width="20" height="22" rx="2" fill="white" opacity="0.9"/>
+  <rect x="28" y="27" width="5" height="7" rx="1" fill="#1976D2"/>
+  <rect x="36" y="27" width="5" height="7" rx="1" fill="#1976D2"/>
+  <rect x="28" y="36" width="5" height="6" rx="1" fill="#1976D2"/>
+  <rect x="36" y="36" width="5" height="6" rx="1" fill="#1976D2"/>
+  <text x="58" y="34" font-size="18" font-weight="700" fill="white">CondoGest</text>
+  <text x="58" y="50" font-size="11" fill="#78909C">v1.0</text>
+
+  <!-- Nav items -->
+  <!-- Dashboard (active) -->
+  <rect x="0" y="80" width="260" height="48" fill="#1976D2" rx="0"/>
+  <rect x="0" y="80" width="4" height="48" fill="#42A5F5"/>
+  <!-- Grid icon -->
+  <rect x="26" y="92" width="8" height="8" rx="1" fill="white"/>
+  <rect x="37" y="92" width="8" height="8" rx="1" fill="white"/>
+  <rect x="26" y="103" width="8" height="8" rx="1" fill="white"/>
+  <rect x="37" y="103" width="8" height="8" rx="1" fill="white"/>
+  <text x="58" y="109" font-size="14" font-weight="500" fill="white">Dashboard</text>
+
+  <!-- Condomínios -->
+  <rect x="0" y="128" width="260" height="48" fill="transparent"/>
+  <!-- Building icon -->
+  <rect x="26" y="142" width="18" height="20" rx="2" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <rect x="29" y="148" width="4" height="6" rx="0.5" fill="#78909C"/>
+  <rect x="35" y="148" width="4" height="6" rx="0.5" fill="#78909C"/>
+  <rect x="29" y="157" width="4" height="5" rx="0.5" fill="#78909C"/>
+  <rect x="35" y="157" width="4" height="5" rx="0.5" fill="#78909C"/>
+  <text x="58" y="157" font-size="14" fill="#90A4AE">Condomínios</text>
+
+  <!-- Blocos -->
+  <rect x="0" y="176" width="260" height="48" fill="transparent"/>
+  <rect x="26" y="190" width="18" height="20" rx="2" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <rect x="30" y="194" width="5" height="5" rx="0.5" fill="#78909C"/>
+  <rect x="37" y="194" width="5" height="5" rx="0.5" fill="#78909C"/>
+  <rect x="30" y="202" width="10" height="8" rx="0.5" fill="#78909C"/>
+  <text x="58" y="205" font-size="14" fill="#90A4AE">Blocos</text>
+
+  <!-- Apartamentos -->
+  <rect x="0" y="224" width="260" height="48" fill="transparent"/>
+  <!-- Door icon -->
+  <rect x="26" y="238" width="16" height="20" rx="2" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <circle cx="38" cy="248" r="2" fill="#78909C"/>
+  <text x="58" y="253" font-size="14" fill="#90A4AE">Apartamentos</text>
+
+  <!-- Usuários -->
+  <rect x="0" y="272" width="260" height="48" fill="transparent"/>
+  <!-- People icon -->
+  <circle cx="31" cy="285" r="5" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <path d="M22 298 Q27 292 40 298" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <circle cx="42" cy="284" r="4" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <text x="58" y="301" font-size="14" fill="#90A4AE">Usuários</text>
+
+  <!-- Divider -->
+  <line x1="20" y1="340" x2="240" y2="340" stroke="#2A3445" stroke-width="1"/>
+
+  <!-- Estados -->
+  <rect x="0" y="352" width="260" height="48" fill="transparent"/>
+  <!-- Map icon -->
+  <polygon points="30,364 44,360 44,380 30,384" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <text x="58" y="381" font-size="14" fill="#90A4AE">Estados</text>
+
+  <!-- User profile at bottom -->
+  <rect x="0" y="736" width="260" height="64" fill="#151D2B"/>
+  <circle cx="36" cy="768" r="18" fill="#1976D2"/>
+  <text x="36" y="773" text-anchor="middle" font-size="14" font-weight="700" fill="white">JS</text>
+  <text x="62" y="763" font-size="13" font-weight="600" fill="white">João Silva</text>
+  <text x="62" y="779" font-size="11" fill="#78909C">Administrador</text>
+  <!-- Logout icon -->
+  <path d="M228 760 L240 768 L228 776" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <path d="M236 768 L218 768" stroke="#78909C" stroke-width="1.5"/>
+
+  <!-- ===== TOP APPBAR ===== -->
+  <rect x="260" y="0" width="1020" height="64" fill="white" filter="url(#card-shadow)"/>
+  <text x="292" y="38" font-size="20" font-weight="600" fill="#1A2332">Dashboard</text>
+  <!-- Breadcrumb -->
+  <text x="292" y="55" font-size="11" fill="#90A4AE">Início  ›  Dashboard</text>
+  <!-- Right side: notifications + avatar -->
+  <!-- Bell icon -->
+  <path d="M1170 22 Q1174 18 1178 22 L1178 34 L1166 34 Z" fill="none" stroke="#546E7A" stroke-width="1.5"/>
+  <circle cx="1172" cy="37" r="2.5" fill="#546E7A"/>
+  <!-- Badge -->
+  <circle cx="1178" cy="20" r="5" fill="#F44336"/>
+  <text x="1178" y="23" text-anchor="middle" font-size="7" fill="white">3</text>
+  <!-- Avatar -->
+  <circle cx="1230" cy="32" r="20" fill="#1976D2"/>
+  <text x="1230" y="37" text-anchor="middle" font-size="13" font-weight="700" fill="white">JS</text>
+
+  <!-- ===== CONTENT AREA ===== -->
+
+  <!-- Page header -->
+  <text x="292" y="98" font-size="13" fill="#78909C">Bem-vindo de volta, João! Aqui está o resumo do seu condomínio.</text>
+
+  <!-- ===== STAT CARDS ===== -->
+  <!-- Card 1: Condomínios -->
+  <rect x="280" y="108" width="230" height="110" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <rect x="280" y="108" width="230" height="5" rx="12" fill="#1976D2"/>
+  <rect x="280" y="113" width="230" height="3" fill="#1976D2"/>
+  <rect x="296" y="130" width="44" height="44" rx="10" fill="#E3F2FD"/>
+  <rect x="304" y="140" width="26" height="26" rx="3" fill="none" stroke="#1976D2" stroke-width="2"/>
+  <rect x="308" y="146" width="5" height="8" rx="0.5" fill="#1976D2"/>
+  <rect x="316" y="146" width="5" height="8" rx="0.5" fill="#1976D2"/>
+  <rect x="308" y="157" width="5" height="7" rx="0.5" fill="#1976D2"/>
+  <rect x="316" y="157" width="5" height="7" rx="0.5" fill="#1976D2"/>
+  <text x="352" y="148" font-size="32" font-weight="700" fill="#1A2332">4</text>
+  <text x="296" y="195" font-size="13" fill="#78909C">Condomínios</text>
+  <text x="476" y="195" text-anchor="end" font-size="11" fill="#4CAF50">▲ Ativo</text>
+
+  <!-- Card 2: Blocos -->
+  <rect x="530" y="108" width="230" height="110" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <rect x="530" y="108" width="230" height="5" rx="12" fill="#00897B"/>
+  <rect x="530" y="113" width="230" height="3" fill="#00897B"/>
+  <rect x="546" y="130" width="44" height="44" rx="10" fill="#E0F2F1"/>
+  <rect x="552" y="138" width="28" height="28" rx="3" fill="none" stroke="#00897B" stroke-width="2"/>
+  <rect x="556" y="143" width="8" height="6" rx="0.5" fill="#00897B"/>
+  <rect x="567" y="143" width="8" height="6" rx="0.5" fill="#00897B"/>
+  <rect x="556" y="152" width="20" height="10" rx="0.5" fill="#00897B"/>
+  <text x="602" y="148" font-size="32" font-weight="700" fill="#1A2332">12</text>
+  <text x="546" y="195" font-size="13" fill="#78909C">Blocos</text>
+  <text x="726" y="195" text-anchor="end" font-size="11" fill="#4CAF50">▲ +2 este mês</text>
+
+  <!-- Card 3: Apartamentos -->
+  <rect x="780" y="108" width="230" height="110" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <rect x="780" y="108" width="230" height="5" rx="12" fill="#7B1FA2"/>
+  <rect x="780" y="113" width="230" height="3" fill="#7B1FA2"/>
+  <rect x="796" y="130" width="44" height="44" rx="10" fill="#F3E5F5"/>
+  <rect x="804" y="138" width="20" height="28" rx="2" fill="none" stroke="#7B1FA2" stroke-width="2"/>
+  <circle cx="820" cy="152" r="3" fill="#7B1FA2"/>
+  <text x="852" y="148" font-size="32" font-weight="700" fill="#1A2332">96</text>
+  <text x="796" y="195" font-size="13" fill="#78909C">Apartamentos</text>
+  <text x="976" y="195" text-anchor="end" font-size="11" fill="#78909C">8 por bloco</text>
+
+  <!-- Card 4: Usuários -->
+  <rect x="1030" y="108" width="230" height="110" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <rect x="1030" y="108" width="230" height="5" rx="12" fill="#E65100"/>
+  <rect x="1030" y="113" width="230" height="3" fill="#E65100"/>
+  <rect x="1046" y="130" width="44" height="44" rx="10" fill="#FFF3E0"/>
+  <circle cx="1062" cy="145" r="6" fill="none" stroke="#E65100" stroke-width="2"/>
+  <path d="M1052 168 Q1058 160 1072 160 Q1086 160 1092 168" fill="none" stroke="#E65100" stroke-width="2"/>
+  <circle cx="1074" cy="143" r="5" fill="none" stroke="#E65100" stroke-width="1.5"/>
+  <text x="1102" y="148" font-size="32" font-weight="700" fill="#1A2332">23</text>
+  <text x="1046" y="195" font-size="13" fill="#78909C">Usuários</text>
+  <text x="1226" y="195" text-anchor="end" font-size="11" fill="#4CAF50">▲ 5 ativos</text>
+
+  <!-- ===== SECOND ROW: Table + Activity ===== -->
+
+  <!-- Recent Condominios table -->
+  <rect x="280" y="248" width="590" height="340" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <text x="300" y="280" font-size="15" font-weight="600" fill="#1A2332">Condomínios Recentes</text>
+  <text x="844" y="280" text-anchor="end" font-size="12" fill="#1976D2">Ver todos →</text>
+  <!-- Table header -->
+  <rect x="280" y="290" width="590" height="36" fill="#F8FAFC"/>
+  <text x="300" y="313" font-size="12" font-weight="600" fill="#546E7A">NOME</text>
+  <text x="520" y="313" font-size="12" font-weight="600" fill="#546E7A">CNPJ</text>
+  <text x="720" y="313" font-size="12" font-weight="600" fill="#546E7A">STATUS</text>
+  <!-- Row 1 -->
+  <line x1="280" y1="326" x2="870" y2="326" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="346" font-size="13" fill="#1A2332">Residencial Solar das Flores</text>
+  <text x="520" y="346" font-size="13" fill="#546E7A">12.345.678/0001-90</text>
+  <rect x="720" y="334" width="60" height="20" rx="10" fill="#E8F5E9"/>
+  <text x="750" y="348" text-anchor="middle" font-size="11" fill="#2E7D32">Ativo</text>
+  <!-- Row 2 -->
+  <line x1="280" y1="362" x2="870" y2="362" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="382" font-size="13" fill="#1A2332">Edifício Monte Verde</text>
+  <text x="520" y="382" font-size="13" fill="#546E7A">98.765.432/0001-11</text>
+  <rect x="720" y="370" width="60" height="20" rx="10" fill="#E8F5E9"/>
+  <text x="750" y="384" text-anchor="middle" font-size="11" fill="#2E7D32">Ativo</text>
+  <!-- Row 3 -->
+  <line x1="280" y1="398" x2="870" y2="398" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="418" font-size="13" fill="#1A2332">Parque das Árvores</text>
+  <text x="520" y="418" font-size="13" fill="#546E7A">45.678.901/0001-34</text>
+  <rect x="720" y="406" width="60" height="20" rx="10" fill="#E8F5E9"/>
+  <text x="750" y="420" text-anchor="middle" font-size="11" fill="#2E7D32">Ativo</text>
+  <!-- Row 4 -->
+  <line x1="280" y1="434" x2="870" y2="434" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="454" font-size="13" fill="#1A2332">Condomínio Bela Vista</text>
+  <text x="520" y="454" font-size="13" fill="#546E7A">11.222.333/0001-55</text>
+  <rect x="720" y="442" width="60" height="20" rx="10" fill="#FFF3E0"/>
+  <text x="750" y="456" text-anchor="middle" font-size="11" fill="#E65100">Inativo</text>
+  <!-- Pagination -->
+  <text x="580" y="565" text-anchor="middle" font-size="12" fill="#78909C">Mostrando 4 de 4 condomínios</text>
+
+  <!-- Recent Activity panel -->
+  <rect x="890" y="248" width="370" height="340" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <text x="910" y="280" font-size="15" font-weight="600" fill="#1A2332">Atividade Recente</text>
+
+  <!-- Activity items -->
+  <circle cx="922" cy="315" r="8" fill="#E3F2FD"/>
+  <text x="922" y="319" text-anchor="middle" font-size="10" fill="#1976D2">+</text>
+  <text x="938" y="311" font-size="12" font-weight="500" fill="#1A2332">Novo apartamento criado</text>
+  <text x="938" y="326" font-size="11" fill="#90A4AE">Apto 302 · Bloco A · há 5 min</text>
+  <line x1="922" y1="342" x2="922" y2="360" stroke="#E3E8EF" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+  <circle cx="922" cy="368" r="8" fill="#E8F5E9"/>
+  <text x="922" y="372" text-anchor="middle" font-size="10" fill="#2E7D32">✓</text>
+  <text x="938" y="364" font-size="12" font-weight="500" fill="#1A2332">Usuário atualizado</text>
+  <text x="938" y="379" font-size="11" fill="#90A4AE">Maria Santos · há 23 min</text>
+  <line x1="922" y1="394" x2="922" y2="412" stroke="#E3E8EF" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+  <circle cx="922" cy="420" r="8" fill="#F3E5F5"/>
+  <text x="922" y="424" text-anchor="middle" font-size="10" fill="#7B1FA2">⊞</text>
+  <text x="938" y="416" font-size="12" font-weight="500" fill="#1A2332">Novo bloco adicionado</text>
+  <text x="938" y="431" font-size="11" fill="#90A4AE">Bloco C · Solar das Flores · há 1h</text>
+  <line x1="922" y1="446" x2="922" y2="464" stroke="#E3E8EF" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+  <circle cx="922" cy="472" r="8" fill="#FFF3E0"/>
+  <text x="922" y="476" text-anchor="middle" font-size="9" fill="#E65100">🗑</text>
+  <text x="938" y="468" font-size="12" font-weight="500" fill="#1A2332">Condomínio desativado</text>
+  <text x="938" y="483" font-size="11" fill="#90A4AE">Bela Vista · há 3h</text>
+  <line x1="922" y1="498" x2="922" y2="516" stroke="#E3E8EF" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+  <circle cx="922" cy="524" r="8" fill="#E3F2FD"/>
+  <text x="922" y="528" text-anchor="middle" font-size="10" fill="#1976D2">+</text>
+  <text x="938" y="520" font-size="12" font-weight="500" fill="#1A2332">Novo usuário criado</text>
+  <text x="938" y="535" font-size="11" fill="#90A4AE">Carlos Oliveira · há 5h</text>
+</svg>

@@ -1,0 +1,46 @@
+# Build output — maior diretório, nunca deve entrar no contexto
+target/
+
+# IDEs
+.idea/
+.vscode/
+*.iws
+*.iml
+*.ipr
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+.nb-gradle/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Claude Code
+.claude/
+
+# Documentação e arquivos de projeto (não afetam o build)
+CLAUDE.md
+README.md
+*.md
+
+# Docker (o Dockerfile em si não precisa estar no contexto)
+.dockerignore
+docker-compose*.yml
+
+# CI/CD e scripts locais
+.github/
+Makefile
+
+# Arquivos de ambiente — nunca devem entrar em imagens
+.env
+.env.*
+*.env

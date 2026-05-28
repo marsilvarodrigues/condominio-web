@@ -1,0 +1,164 @@
+<svg width="1280" height="960" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="card-shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#000" flood-opacity="0.12"/>
+    </filter>
+    <filter id="btn-shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#1565C0" flood-opacity="0.35"/>
+    </filter>
+    <linearGradient id="header-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1565C0"/>
+      <stop offset="100%" stop-color="#1976D2"/>
+    </linearGradient>
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8EAF6"/>
+      <stop offset="100%" stop-color="#E3F2FD"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── Email client chrome background ── -->
+  <rect width="1280" height="960" fill="url(#bg-grad)"/>
+
+  <!-- Decorative dots pattern -->
+  <circle cx="80" cy="80" r="4" fill="#1976D2" opacity="0.12"/>
+  <circle cx="160" cy="120" r="3" fill="#1976D2" opacity="0.10"/>
+  <circle cx="1200" cy="80" r="4" fill="#1976D2" opacity="0.12"/>
+  <circle cx="1120" cy="140" r="3" fill="#1976D2" opacity="0.10"/>
+  <circle cx="80" cy="880" r="4" fill="#1976D2" opacity="0.12"/>
+  <circle cx="1200" cy="880" r="4" fill="#1976D2" opacity="0.12"/>
+
+  <!-- Email client bar -->
+  <rect x="340" y="20" width="600" height="36" rx="8" fill="white" filter="url(#card-shadow)" opacity="0.7"/>
+  <circle cx="362" cy="38" r="6" fill="#FF5F57"/>
+  <circle cx="380" cy="38" r="6" fill="#FFBD2E"/>
+  <circle cx="398" cy="38" r="6" fill="#28CA41"/>
+  <rect x="418" y="28" width="430" height="20" rx="4" fill="#F4F6F9"/>
+  <text x="633" y="42" text-anchor="middle" font-size="11" fill="#90A4AE">🔒  noreply@condogest.com.br</text>
+
+  <!-- ── Email container ── -->
+  <rect x="340" y="68" width="600" height="870" rx="0" fill="#F4F6F9"/>
+
+  <!-- Pre-header / subject line hint -->
+  <rect x="340" y="68" width="600" height="28" fill="#ECEFF1"/>
+  <text x="640" y="86" text-anchor="middle" font-size="11" fill="#90A4AE">Sua conta foi criada · Ative em até 24 horas</text>
+
+  <!-- Email body (white card) -->
+  <rect x="340" y="96" width="600" height="760" fill="white" filter="url(#card-shadow)"/>
+
+  <!-- ══ HEADER ══ -->
+  <rect x="340" y="96" width="600" height="120" fill="url(#header-grad)"/>
+
+  <!-- Logo mark -->
+  <rect x="594" y="118" width="44" height="44" rx="10" fill="rgba(255,255,255,0.15)"/>
+  <rect x="599" y="123" width="34" height="34" rx="6" fill="white" opacity="0.95"/>
+  <!-- Building icon inside logo -->
+  <rect x="605" y="129" width="22" height="24" rx="2" fill="#1565C0"/>
+  <rect x="608" y="133" width="4" height="6" rx="0.5" fill="white"/>
+  <rect x="614" y="133" width="4" height="6" rx="0.5" fill="white"/>
+  <rect x="620" y="133" width="4" height="6" rx="0.5" fill="white"/>
+  <rect x="608" y="142" width="4" height="6" rx="0.5" fill="white"/>
+  <rect x="614" y="142" width="4" height="6" rx="0.5" fill="white"/>
+  <rect x="620" y="142" width="4" height="6" rx="0.5" fill="white"/>
+  <rect x="612" y="149" width="8" height="8" rx="0.5" fill="white"/>
+
+  <text x="648" y="139" font-size="20" font-weight="700" fill="white">CondoGest</text>
+  <text x="648" y="157" font-size="12" fill="rgba(255,255,255,0.80)">Sistema de Gestão de Condomínios</text>
+
+  <!-- Decorative shapes in header -->
+  <circle cx="880" cy="108" r="40" fill="white" opacity="0.05"/>
+  <circle cx="360" cy="200" r="50" fill="white" opacity="0.04"/>
+
+  <!-- ══ HERO AREA ══ -->
+  <!-- Check icon circle -->
+  <circle cx="640" cy="260" r="42" fill="#E8F5E9"/>
+  <circle cx="640" cy="260" r="32" fill="#4CAF50"/>
+  <!-- Checkmark -->
+  <path d="M626 260 L636 271 L656 250" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <text x="640" y="326" text-anchor="middle" font-size="22" font-weight="700" fill="#1A2332">Bem-vindo ao CondoGest!</text>
+  <text x="640" y="350" text-anchor="middle" font-size="14" fill="#546E7A">Sua conta foi criada com sucesso.</text>
+
+  <!-- ══ GREETING ══ -->
+  <text x="380" y="388" font-size="14" fill="#1A2332">Olá, <tspan font-weight="600">Maria Santos</tspan>,</text>
+  <text x="380" y="412" font-size="14" fill="#546E7A">Um administrador criou sua conta no sistema. Para ativar</text>
+  <text x="380" y="430" font-size="14" fill="#546E7A">o acesso, utilize a senha temporária abaixo e clique no</text>
+  <text x="380" y="448" font-size="14" fill="#546E7A">botão para definir uma nova senha segura.</text>
+
+  <!-- ══ TEMP PASSWORD BOX ══ -->
+  <rect x="380" y="468" width="480" height="78" rx="10" fill="#F8FAFC" stroke="#CFD8DC" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <!-- Lock icon -->
+  <rect x="406" y="488" width="20" height="16" rx="3" fill="none" stroke="#90A4AE" stroke-width="1.5"/>
+  <rect x="411" y="482" width="10" height="10" rx="5" fill="none" stroke="#90A4AE" stroke-width="1.5"/>
+  <text x="436" y="498" font-size="12" fill="#78909C">Senha temporária</text>
+  <text x="640" y="527" text-anchor="middle" font-size="22" font-weight="700" fill="#1565C0" letter-spacing="4">Tr@mp0S3nh@</text>
+
+  <text x="380" y="572" font-size="13" fill="#546E7A">Esta senha é válida para o <tspan font-weight="600">primeiro acesso</tspan>. Você será</text>
+  <text x="380" y="590" font-size="13" fill="#546E7A">solicitado a criar uma senha pessoal após a ativação.</text>
+
+  <!-- ══ CTA BUTTON ══ -->
+  <rect x="430" y="614" width="420" height="54" rx="10" fill="#1565C0" filter="url(#btn-shadow)"/>
+  <!-- Subtle gradient overlay -->
+  <rect x="430" y="614" width="420" height="27" rx="10" fill="white" opacity="0.06"/>
+  <rect x="430" y="628" width="420" height="13" fill="white" opacity="0.06"/>
+  <!-- Arrow icon -->
+  <path d="M818 641 L830 641 M825 636 L830 641 L825 646" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="622" y="646" text-anchor="middle" font-size="15" font-weight="700" fill="white" letter-spacing="0.5">ATIVAR MINHA CONTA</text>
+
+  <!-- URL fallback -->
+  <text x="640" y="688" text-anchor="middle" font-size="11" fill="#90A4AE">ou acesse:</text>
+  <text x="640" y="704" text-anchor="middle" font-size="11" fill="#1976D2" text-decoration="underline">https://app.condogest.com.br/auth/activate?token=abc123…</text>
+
+  <!-- ══ EXPIRY WARNING ══ -->
+  <rect x="380" y="724" width="480" height="48" rx="8" fill="#FFF8E1" stroke="#FFE082" stroke-width="1.5"/>
+  <!-- Warning triangle -->
+  <polygon points="403,754 413,736 423,754" fill="none" stroke="#F9A825" stroke-width="1.5"/>
+  <text x="413" y="751" text-anchor="middle" font-size="9" fill="#F9A825">!</text>
+  <text x="433" y="747" font-size="12" fill="#795548"><tspan font-weight="600">Atenção:</tspan> este link expira em <tspan font-weight="600">24 horas</tspan>.</text>
+  <text x="433" y="763" font-size="12" fill="#795548">Se expirar, solicite um novo link ao administrador.</text>
+
+  <!-- ══ FOOTER ══ -->
+  <rect x="340" y="856" width="600" height="72" fill="#F8FAFC"/>
+  <line x1="340" y1="856" x2="940" y2="856" stroke="#E3E8EF" stroke-width="1"/>
+
+  <text x="640" y="878" text-anchor="middle" font-size="11" fill="#90A4AE">Este email foi enviado automaticamente. Não responda a esta mensagem.</text>
+  <text x="640" y="896" text-anchor="middle" font-size="11" fill="#90A4AE">© 2025 CondoGest · Suporte: suporte@condogest.com.br</text>
+  <text x="640" y="914" text-anchor="middle" font-size="11" fill="#B0BEC5">Av. Paulista, 1000 · São Paulo, SP · Brasil</text>
+
+  <!-- ── Annotation callouts (outside the email) ── -->
+
+  <!-- Callout 1: Portuguese subject -->
+  <line x1="940" y1="82" x2="1010" y2="82" stroke="#FF7043" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle cx="1010" cy="82" r="3" fill="#FF7043"/>
+  <rect x="1020" y="68" width="230" height="28" rx="6" fill="#FFF3E0" stroke="#FF7043" stroke-width="1"/>
+  <text x="1030" y="86" font-size="11" fill="#BF360C">Assunto localizado em português</text>
+
+  <!-- Callout 2: Password box -->
+  <line x1="940" y1="507" x2="1010" y2="507" stroke="#1976D2" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle cx="1010" cy="507" r="3" fill="#1976D2"/>
+  <rect x="1020" y="493" width="230" height="28" rx="6" fill="#E3F2FD" stroke="#1976D2" stroke-width="1"/>
+  <text x="1030" y="511" font-size="11" fill="#0D47A1">Senha em destaque visual</text>
+
+  <!-- Callout 3: CTA button -->
+  <line x1="940" y1="641" x2="1010" y2="641" stroke="#2E7D32" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle cx="1010" cy="641" r="3" fill="#2E7D32"/>
+  <rect x="1020" y="627" width="230" height="28" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1"/>
+  <text x="1030" y="645" font-size="11" fill="#1B5E20">Botão CTA com sombra colorida</text>
+
+  <!-- Callout 4: Warning banner -->
+  <line x1="940" y1="748" x2="1010" y2="748" stroke="#F9A825" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle cx="1010" cy="748" r="3" fill="#F9A825"/>
+  <rect x="1020" y="734" width="230" height="28" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
+  <text x="1030" y="752" font-size="11" fill="#E65100">Alerta de expiração de 24h</text>
+
+  <!-- Left callout: Header branding -->
+  <line x1="340" y1="156" x2="270" y2="156" stroke="#7B1FA2" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle cx="270" cy="156" r="3" fill="#7B1FA2"/>
+  <rect x="30" y="142" width="230" height="28" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1"/>
+  <text x="40" y="160" font-size="11" fill="#4A148C">Header com branding + gradiente</text>
+
+  <!-- Left callout: Hero checkmark -->
+  <line x1="340" y1="260" x2="270" y2="260" stroke="#00897B" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle cx="270" cy="260" r="3" fill="#00897B"/>
+  <rect x="30" y="246" width="230" height="28" rx="6" fill="#E0F2F1" stroke="#00897B" stroke-width="1"/>
+  <text x="40" y="264" font-size="11" fill="#004D40">Ícone de confirmação animável</text>
+</svg>

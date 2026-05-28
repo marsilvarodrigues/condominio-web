@@ -1,0 +1,188 @@
+spring:
+  application:
+    name: condominio
+
+  # Virtual threads (Java 21 / Project Loom)
+  # Maior ganho isolado de performance: cada request recebe uma virtual thread,
+  # eliminando o gargalo do pool de threads de OS para workloads I/O-bound.
+  threads:
+    virtual:
+      enabled: true
+
+  # Mail
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  # Datasource — HikariCP
+  datasource:
+    url: jdbc:postgresql://localhost:5432/condominio
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: CondominioPool
+      # Pool sizing: limitado pela capacidade do PostgreSQL, não pela app.
+      # Regra prática para DB 4-core: 20 conexões é o teto seguro.
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      # keepalive-time: evita que firewalls/load balancers derrubem conexões ociosas.
+      keepalive-time: 60000
+      # leak-detection-threshold: loga aviso se uma conexão não for devolvida em 60s.
+      leak-detection-threshold: 60000
+      data-source-properties:
+        # Reescreve INSERT em lote (INSERT ... VALUES (...),(...),...) — beneficia
+        # operações de criação em massa sem mudança no código Java.
+        reWriteBatchedInserts: true
+        # Cache de prepared statements no lado do driver (evita parse repetido no PG).
+        preparedStatementCacheQueries: 256
+        preparedStatementCacheSizeMiB: 5
+        # Timeout de socket: evita threads presas em queries penduradas.
+        socketTimeout: 30
+        tcpKeepAlive: true
+
+  # Liquibase
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  # JPA / Hibernate
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    # open-in-view=false: libera a conexão DB ao sair da camada de serviço.
+    # Com true (default), a conexão fica aberta até o fim do HTTP request,
+    # reduzindo drasticamente a utilização efetiva do pool.
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: public
+        # Batch de inserts/updates: reduz round-trips ao banco em operações de coleção.
+        jdbc.batch_size: 25
+        order_inserts: true
+        order_updates: true
+        jdbc.batch_versioned_data: true
+        # Query plan cache: evita recompilar o plano de criteria queries repetidas.
+        query.plan_cache_max_size: 2048
+        query.plan_parameter_metadata_max_size: 128
+        generate_statistics: false
+
+  # Redis / Lettuce
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 1000ms
+      lettuce:
+        pool:
+          # Pool maior: com virtual threads há mais requisições concorrentes acessando cache.
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+          max-wait: 500ms
+        shutdown-timeout: 100ms
+
+# Server — Undertow
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /api
+  http2:
+    enabled: true
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/xml,text/plain
+    # Não comprimir respostas pequenas (overhead > ganho abaixo de 1 KB).
+    min-response-size: 1024
+  error:
+    include-message: never
+    include-stacktrace: never
+  undertow:
+    threads:
+      # io: threads de OS para NIO (seleção de eventos). Padrão = max(2, nCPUs).
+      # Deixar em auto é ideal; só sobrescreva em ambientes com restrição de CPU.
+      # io: ${UNDERTOW_IO_THREADS:4}
+      #
+      # worker: com virtual threads habilitados, o executor de workers
+      # é substituído pelo VirtualThreadTaskExecutor — este valor torna-se irrelevante.
+      # Mantido apenas como fallback caso virtual threads sejam desabilitadas.
+      worker: 32
+    # Buffers de 16 KB diretos (off-heap): reduz pressão no GC para payloads JSON médios.
+    buffer-size: 16384
+    direct-buffers: true
+
+# JWT
+# IMPORTANT: replace the secret with a Base64-encoded key of at least 32 bytes before deploying.
+# Generate with: openssl rand -base64 32
+security:
+  jwt:
+    secret: ${JWT_SECRET:dGhpcy1pcy1hLXNhbXBsZS1zZWNyZXQta2V5LWZvci1kZXZlbG9wbWVudC1vbmx5}
+    access-token-expiration: ${JWT_ACCESS_EXPIRATION:3600}
+    refresh-token-expiration: ${JWT_REFRESH_EXPIRATION:86400}
+    issuer: ${JWT_ISSUER:http://localhost:8080}
+    client-id: ${JWT_CLIENT_ID:condominio}
+    client-secret: ${JWT_CLIENT_SECRET:condominio-secret}
+
+# App
+app:
+  base-url: ${APP_BASE_URL:http://localhost:8080/api}
+  frontend-url: ${FRONTEND_URL:http://localhost:5173}
+  security:
+    password-history-count: ${PASSWORD_HISTORY_COUNT:3}
+  # Cache — L1 (Caffeine) + L2 (Redis)
+  cache:
+    l1-default-ttl: 10m
+    l2-default-ttl: 1h
+    l1-default-max-size: 500
+    caches:
+      blocos:
+        l1-ttl: 5m
+        l2-ttl: 30m
+        max-size: 1000
+      apartamentos:
+        l1-ttl: 5m
+        l2-ttl: 30m
+        max-size: 2000
+      moradores:
+        l1-ttl: 10m
+        l2-ttl: 1h
+        max-size: 500
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,caches,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+      # Probes separados para Kubernetes readiness/liveness
+      probes:
+        enabled: true
+    prometheus:
+      access: read_only
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+# Logging — padrão e níveis gerenciados por logback-spring.xml
+logging:
+  level:
+    root: INFO
+    com.pmrodrigues: DEBUG
+    org.springframework.security: INFO
+    org.hibernate.SQL: INFO

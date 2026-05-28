@@ -1,0 +1,163 @@
+<svg width="1280" height="800" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="800" fill="#F0F2F5"/>
+  <!-- Sidebar -->
+  <rect width="260" height="800" fill="#1A2332"/>
+  <rect x="0" y="0" width="260" height="64" fill="#151D2B"/>
+  <text x="58" y="34" font-size="18" font-weight="700" fill="white">CondoGest</text>
+  <text x="58" y="50" font-size="11" fill="#78909C">v1.0</text>
+  <text x="58" y="109" font-size="14" fill="#90A4AE">Dashboard</text>
+  <text x="58" y="157" font-size="14" fill="#90A4AE">Condomínios</text>
+  <!-- Blocos (active) -->
+  <rect x="0" y="176" width="260" height="48" fill="#1976D2"/>
+  <rect x="0" y="176" width="4" height="48" fill="#42A5F5"/>
+  <text x="58" y="205" font-size="14" font-weight="500" fill="white">Blocos</text>
+  <text x="58" y="253" font-size="14" fill="#90A4AE">Apartamentos</text>
+  <text x="58" y="301" font-size="14" fill="#90A4AE">Usuários</text>
+  <rect x="0" y="736" width="260" height="64" fill="#151D2B"/>
+  <circle cx="36" cy="768" r="18" fill="#1976D2"/>
+  <text x="36" y="773" text-anchor="middle" font-size="14" font-weight="700" fill="white">JS</text>
+  <text x="62" y="763" font-size="13" font-weight="600" fill="white">João Silva</text>
+  <text x="62" y="779" font-size="11" fill="#78909C">Administrador</text>
+
+  <!-- AppBar -->
+  <rect x="260" y="0" width="1020" height="64" fill="white" filter="url(#shadow)"/>
+  <text x="292" y="38" font-size="20" font-weight="600" fill="#1A2332">Blocos</text>
+  <text x="292" y="55" font-size="11" fill="#90A4AE">Início  ›  Blocos</text>
+  <circle cx="1230" cy="32" r="20" fill="#1976D2"/>
+  <text x="1230" y="37" text-anchor="middle" font-size="13" font-weight="700" fill="white">JS</text>
+
+  <!-- Condomínio context breadcrumb/selector -->
+  <rect x="280" y="80" width="980" height="50" rx="10" fill="white" filter="url(#shadow)"/>
+  <text x="296" y="106" font-size="12" fill="#78909C">Condomínio:</text>
+  <rect x="386" y="88" width="280" height="34" rx="8" fill="#F4F6F9" stroke="#1976D2" stroke-width="1.5"/>
+  <text x="400" y="109" font-size="13" fill="#1A2332">Residencial Solar das Flores</text>
+  <text x="656" y="109" text-anchor="end" font-size="14" fill="#1976D2">▾</text>
+  <text x="676" y="109" font-size="12" fill="#78909C">Filtrando blocos deste condomínio</text>
+
+  <!-- Toolbar -->
+  <rect x="280" y="142" width="980" height="52" rx="10" fill="white" filter="url(#shadow)"/>
+  <rect x="296" y="154" width="240" height="34" rx="8" fill="#F4F6F9" stroke="#CFD8DC" stroke-width="1"/>
+  <text x="316" y="175" font-size="13" fill="#90A4AE">Buscar bloco...</text>
+  <rect x="1160" y="150" width="160" height="38" rx="8" fill="#1565C0"/>
+  <text x="1240" y="174" text-anchor="middle" font-size="14" font-weight="600" fill="white">+ Novo Bloco</text>
+
+  <!-- ===== TWO-PANEL LAYOUT ===== -->
+
+  <!-- LEFT PANEL: Blocos list -->
+  <rect x="280" y="206" width="370" height="500" rx="12" fill="white" filter="url(#shadow)"/>
+  <rect x="280" y="206" width="370" height="44" rx="12" fill="#F8FAFC"/>
+  <rect x="280" y="228" width="370" height="22" fill="#F8FAFC"/>
+  <text x="300" y="233" font-size="12" font-weight="600" fill="#546E7A">BLOCO</text>
+  <text x="420" y="233" font-size="12" font-weight="600" fill="#546E7A">Nº</text>
+  <text x="510" y="233" font-size="12" font-weight="600" fill="#546E7A">APTOS</text>
+  <text x="608" y="233" font-size="12" font-weight="600" fill="#546E7A">AÇÕES</text>
+
+  <!-- Bloco A (selected) -->
+  <rect x="280" y="250" width="370" height="44" fill="#E3F2FD"/>
+  <rect x="280" y="250" width="4" height="44" fill="#1976D2"/>
+  <text x="300" y="277" font-size="14" font-weight="600" fill="#1565C0">Bloco A</text>
+  <text x="420" y="277" font-size="13" fill="#1565C0">1</text>
+  <text x="510" y="277" font-size="13" fill="#1565C0">8 aptos</text>
+  <rect x="596" y="260" width="26" height="26" rx="6" fill="#1565C0"/>
+  <text x="609" y="277" text-anchor="middle" font-size="12" fill="white">✎</text>
+  <rect x="628" y="260" width="26" height="26" rx="6" fill="#FCE4EC"/>
+  <text x="641" y="277" text-anchor="middle" font-size="12" fill="#C62828">🗑</text>
+
+  <line x1="280" y1="294" x2="650" y2="294" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="321" font-size="14" fill="#1A2332">Bloco B</text>
+  <text x="420" y="321" font-size="13" fill="#546E7A">2</text>
+  <text x="510" y="321" font-size="13" fill="#546E7A">8 aptos</text>
+  <rect x="596" y="306" width="26" height="26" rx="6" fill="#E3F2FD"/>
+  <text x="609" y="323" text-anchor="middle" font-size="12" fill="#1976D2">✎</text>
+  <rect x="628" y="306" width="26" height="26" rx="6" fill="#FCE4EC"/>
+  <text x="641" y="323" text-anchor="middle" font-size="12" fill="#C62828">🗑</text>
+
+  <line x1="280" y1="340" x2="650" y2="340" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="367" font-size="14" fill="#1A2332">Bloco C</text>
+  <text x="420" y="367" font-size="13" fill="#546E7A">3</text>
+  <text x="510" y="367" font-size="13" fill="#546E7A">8 aptos</text>
+  <rect x="596" y="352" width="26" height="26" rx="6" fill="#E3F2FD"/>
+  <text x="609" y="369" text-anchor="middle" font-size="12" fill="#1976D2">✎</text>
+  <rect x="628" y="352" width="26" height="26" rx="6" fill="#FCE4EC"/>
+  <text x="641" y="369" text-anchor="middle" font-size="12" fill="#C62828">🗑</text>
+
+  <line x1="280" y1="386" x2="650" y2="386" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="413" font-size="14" fill="#1A2332">Bloco D</text>
+  <text x="420" y="413" font-size="13" fill="#546E7A">4</text>
+  <text x="510" y="413" font-size="13" fill="#546E7A">8 aptos</text>
+  <rect x="596" y="398" width="26" height="26" rx="6" fill="#E3F2FD"/>
+  <text x="609" y="415" text-anchor="middle" font-size="12" fill="#1976D2">✎</text>
+  <rect x="628" y="398" width="26" height="26" rx="6" fill="#FCE4EC"/>
+  <text x="641" y="415" text-anchor="middle" font-size="12" fill="#C62828">🗑</text>
+
+  <!-- RIGHT PANEL: Apartamentos do Bloco A -->
+  <rect x="670" y="206" width="590" height="500" rx="12" fill="white" filter="url(#shadow)"/>
+
+  <!-- Panel header -->
+  <rect x="670" y="206" width="590" height="48" rx="12" fill="#1565C0"/>
+  <rect x="670" y="230" width="590" height="24" fill="#1565C0"/>
+  <text x="690" y="232" font-size="14" font-weight="600" fill="white">Apartamentos · Bloco A</text>
+  <text x="690" y="247" font-size="11" fill="rgba(255,255,255,0.75)">8 unidades cadastradas</text>
+  <rect x="1148" y="218" width="96" height="28" rx="6" fill="rgba(255,255,255,0.2)"/>
+  <text x="1196" y="236" text-anchor="middle" font-size="12" font-weight="600" fill="white">+ Apartamento</text>
+
+  <!-- Apto grid cards (2x4) -->
+  <!-- Row 1 -->
+  <rect x="686" y="266" width="130" height="80" rx="10" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="751" y="295" text-anchor="middle" font-size="22" font-weight="700" fill="#1A2332">101</text>
+  <rect x="714" y="306" width="74" height="18" rx="9" fill="#E8F5E9"/>
+  <text x="751" y="319" text-anchor="middle" font-size="11" fill="#2E7D32">Ocupado</text>
+
+  <rect x="828" y="266" width="130" height="80" rx="10" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="893" y="295" text-anchor="middle" font-size="22" font-weight="700" fill="#1A2332">102</text>
+  <rect x="856" y="306" width="74" height="18" rx="9" fill="#E8F5E9"/>
+  <text x="893" y="319" text-anchor="middle" font-size="11" fill="#2E7D32">Ocupado</text>
+
+  <rect x="970" y="266" width="130" height="80" rx="10" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="1035" y="295" text-anchor="middle" font-size="22" font-weight="700" fill="#1A2332">103</text>
+  <rect x="998" y="306" width="74" height="18" rx="9" fill="#FFF3E0"/>
+  <text x="1035" y="319" text-anchor="middle" font-size="11" fill="#E65100">Vago</text>
+
+  <rect x="1112" y="266" width="130" height="80" rx="10" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="1177" y="295" text-anchor="middle" font-size="22" font-weight="700" fill="#1A2332">104</text>
+  <rect x="1140" y="306" width="74" height="18" rx="9" fill="#E8F5E9"/>
+  <text x="1177" y="319" text-anchor="middle" font-size="11" fill="#2E7D32">Ocupado</text>
+
+  <!-- Row 2 -->
+  <rect x="686" y="362" width="130" height="80" rx="10" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="751" y="391" text-anchor="middle" font-size="22" font-weight="700" fill="#1A2332">201</text>
+  <rect x="714" y="402" width="74" height="18" rx="9" fill="#E8F5E9"/>
+  <text x="751" y="415" text-anchor="middle" font-size="11" fill="#2E7D32">Ocupado</text>
+
+  <rect x="828" y="362" width="130" height="80" rx="10" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="893" y="391" text-anchor="middle" font-size="22" font-weight="700" fill="#1A2332">202</text>
+  <rect x="856" y="402" width="74" height="18" rx="9" fill="#FFF3E0"/>
+  <text x="893" y="415" text-anchor="middle" font-size="11" fill="#E65100">Vago</text>
+
+  <rect x="970" y="362" width="130" height="80" rx="10" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="1035" y="391" text-anchor="middle" font-size="22" font-weight="700" fill="#1A2332">203</text>
+  <rect x="998" y="402" width="74" height="18" rx="9" fill="#E8F5E9"/>
+  <text x="1035" y="415" text-anchor="middle" font-size="11" fill="#2E7D32">Ocupado</text>
+
+  <rect x="1112" y="362" width="130" height="80" rx="10" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="1177" y="391" text-anchor="middle" font-size="22" font-weight="700" fill="#1A2332">204</text>
+  <rect x="1140" y="402" width="74" height="18" rx="9" fill="#E8F5E9"/>
+  <text x="1177" y="415" text-anchor="middle" font-size="11" fill="#2E7D32">Ocupado</text>
+
+  <!-- Summary bar -->
+  <rect x="686" y="462" width="556" height="40" rx="8" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+  <circle cx="706" cy="482" r="6" fill="#E8F5E9"/>
+  <text x="718" y="486" font-size="12" fill="#2E7D32">6 Ocupados</text>
+  <circle cx="800" cy="482" r="6" fill="#FFF3E0"/>
+  <text x="812" y="486" font-size="12" fill="#E65100">2 Vagos</text>
+  <text x="1200" y="486" text-anchor="end" font-size="12" fill="#78909C">75% ocupação</text>
+  <!-- Occupation bar -->
+  <rect x="870" y="476" width="280" height="12" rx="6" fill="#E3E8EF"/>
+  <rect x="870" y="476" width="210" height="12" rx="6" fill="#1976D2"/>
+</svg>

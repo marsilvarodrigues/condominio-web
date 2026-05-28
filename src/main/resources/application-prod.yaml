@@ -1,0 +1,15 @@
+# Otimizações adicionais ativas APENAS em produção (--spring.profiles.active=prod).
+#
+# auto-commit=false + connection.provider_disables_autocommit=true:
+#   Elimina 2 round-trips JDBC por transação (setAutoCommit false/true que o Hibernate
+#   chamaria no início e fim de cada @Transactional). Pressupõe que TODOS os acessos
+#   JDBC passam por @Transactional — não compatível com jdbcTemplate sem transação
+#   explícita, como usado nos @BeforeEach dos testes de integração.
+spring:
+  datasource:
+    hikari:
+      auto-commit: false
+  jpa:
+    properties:
+      hibernate:
+        connection.provider_disables_autocommit: true

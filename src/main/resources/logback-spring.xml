@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!--
+        CONSOLE text — perfil local (!docker)
+        Formato legível por humanos; mantém os campos MDC visíveis inline.
+    -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [cid=%X{correlation_id:-}] [rid=%X{request_id:-}] [iid=%X{idempotency_id:-}] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--
+        CONSOLE JSON — perfil docker
+        LogstashEncoder serializa cada log como uma linha JSON.
+        Todos os campos MDC (correlation_id, request_id, idempotency_id,
+        http_method, http_url, query_params) aparecem automaticamente como
+        propriedades de primeiro nível; Promtail/Fluent Bit colhem do stdout
+        sem configuração adicional de parsing.
+    -->
+    <appender name="CONSOLE_JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <fieldNames>
+                <timestamp>@timestamp</timestamp>
+                <version>[ignore]</version>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
+        </encoder>
+    </appender>
+
+    <!--
+        LOKI — perfil docker
+        JsonLayout converte cada evento em JSON estruturado antes de enviar
+        ao Loki. No Grafana use o parser "| json" no LogQL para filtrar por
+        qualquer campo MDC:
+            {app="condominio"} | json | correlation_id="<id>"
+            {app="condominio",level="ERROR"} | json | http_url=~"/api/users.*"
+    -->
+    <springProfile name="docker">
+        <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+            <http>
+                <url>${LOKI_URL:-http://loki:3100}/loki/api/v1/push</url>
+                <connectionTimeoutMs>5000</connectionTimeoutMs>
+                <requestTimeoutMs>5000</requestTimeoutMs>
+            </http>
+            <format>
+                <label>
+                    <!--
+                        Mantenha labels com baixa cardinalidade.
+                        NÃO coloque correlation_id/request_id como label —
+                        alta cardinalidade degrada o índice do Loki.
+                        Esses IDs ficam no body JSON e são filtrados via "| json".
+                    -->
+                    <pattern>app=condominio,host=${HOSTNAME:-unknown},level=%level</pattern>
+                    <readMarkers>true</readMarkers>
+                </label>
+                <message class="com.github.loki4j.logback.JsonLayout"/>
+                <sortByTime>true</sortByTime>
+            </format>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_JSON"/>
+            <appender-ref ref="LOKI"/>
+        </root>
+
+        <logger name="com.pmrodrigues" level="DEBUG"/>
+        <logger name="org.springframework.security" level="INFO"/>
+        <logger name="org.hibernate.SQL" level="INFO"/>
+    </springProfile>
+
+    <springProfile name="!docker">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+
+        <logger name="com.pmrodrigues" level="DEBUG"/>
+        <logger name="org.springframework.security" level="INFO"/>
+        <logger name="org.hibernate.SQL" level="INFO"/>
+    </springProfile>
+</configuration>
