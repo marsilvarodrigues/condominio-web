@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest(properties = "spring.jpa.hibernate.ddl-auto=create-drop")
@@ -53,9 +55,9 @@ class TenantFilterTest {
         bloco1 = blocoRepository.save(Bloco.builder().condominio(cond1).numero(1).bloco("A").build());
         bloco2 = blocoRepository.save(Bloco.builder().condominio(cond2).numero(1).bloco("A").build());
 
-        apartamentoRepository.save(Apartamento.builder().condominio(cond1).bloco(bloco1).numero("101").build());
-        apartamentoRepository.save(Apartamento.builder().condominio(cond1).bloco(bloco1).numero("102").build());
-        apartamentoRepository.save(Apartamento.builder().condominio(cond2).bloco(bloco2).numero("201").build());
+        apartamentoRepository.save(Apartamento.builder().condominio(cond1).bloco(bloco1).numero("101").areaConstruida(BigDecimal.TEN).build());
+        apartamentoRepository.save(Apartamento.builder().condominio(cond1).bloco(bloco1).numero("102").areaConstruida(BigDecimal.TEN).build());
+        apartamentoRepository.save(Apartamento.builder().condominio(cond2).bloco(bloco2).numero("201").areaConstruida(BigDecimal.TEN).build());
 
         em.flush();
         em.clear();

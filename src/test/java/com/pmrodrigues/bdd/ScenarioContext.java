@@ -42,4 +42,5 @@ public class ScenarioContext {
     private String lastCreatedEmail;
     private Long masterUserId;
     private Long regularUserId;
+    private Long testPlanoContasId;
 }

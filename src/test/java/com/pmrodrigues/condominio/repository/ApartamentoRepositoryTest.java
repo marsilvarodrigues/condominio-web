@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest(properties = "spring.jpa.hibernate.ddl-auto=create-drop")
@@ -44,7 +46,7 @@ class ApartamentoRepositoryTest {
     }
 
     private Apartamento apartamento(String numero) {
-        return Apartamento.builder().condominio(condominio).bloco(bloco).numero(numero).build();
+        return Apartamento.builder().condominio(condominio).bloco(bloco).numero(numero).areaConstruida(BigDecimal.TEN).build();
     }
 
     // ── soft delete ───────────────────────────────────────────────────────

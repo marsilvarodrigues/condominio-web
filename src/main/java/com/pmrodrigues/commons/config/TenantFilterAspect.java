@@ -1,4 +1,4 @@
-package com.pmrodrigues.condominio.config;
+package com.pmrodrigues.commons.config;
 
 import com.pmrodrigues.commons.tenant.TenantContext;
 import jakarta.persistence.EntityManager;
@@ -10,7 +10,13 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 
 /**
- * AOP aspect that activates the Hibernate {@code condominioFilter} with the current tenant's id before each repository method executes.
+ * AOP aspect that activates the Hibernate {@code condominioFilter} with the current tenant id
+ * before any repository method in any module executes.
+ *
+ * <p>The pointcut covers all packages under {@code com.pmrodrigues}, so new modules
+ * automatically receive tenant filtering without additional aspects.
+ * Entities that do not declare {@code @Filter(name="condominioFilter")} are unaffected —
+ * Hibernate silently skips filters that are not registered on a given entity.
  */
 @Slf4j
 @Aspect
@@ -21,9 +27,10 @@ public class TenantFilterAspect {
     private EntityManager entityManager;
 
     /**
-     * Enables the {@code condominioFilter} Hibernate filter on the current session before any repository method runs; no-ops when no tenant is set.
+     * Enables the {@code condominioFilter} on the current Hibernate session before any
+     * repository method runs; no-ops when no tenant is set in {@link TenantContext}.
      */
-    @Before("execution(* com.pmrodrigues.condominio.repository.*.*(..))")
+    @Before("execution(* com.pmrodrigues..repository.*.*(..))")
     public void enableCondominioFilter() {
         Long condominioId = TenantContext.getCondominioId();
         if (condominioId == null) {

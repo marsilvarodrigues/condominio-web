@@ -19,6 +19,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -140,7 +141,7 @@ class ApartamentoControllerTest {
         mockMvc.perform(post("/apartamentos")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(1L, "101"))))
+                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(1L, "101", BigDecimal.TEN))))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.numero").value("101"));
     }
@@ -165,7 +166,7 @@ class ApartamentoControllerTest {
         mockMvc.perform(post("/apartamentos")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(1L, "101"))))
+                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(1L, "101", BigDecimal.TEN))))
                 .andExpect(status().isForbidden());
     }
 
@@ -174,7 +175,7 @@ class ApartamentoControllerTest {
         mockMvc.perform(post("/apartamentos")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(1L, "101"))))
+                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(1L, "101", BigDecimal.TEN))))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -253,6 +254,6 @@ class ApartamentoControllerTest {
     // ── helper ────────────────────────────────────────────────────────────
 
     private ApartamentoDTO aptDto(Long id, String numero) {
-        return new ApartamentoDTO(id, null, numero, null, null);
+        return new ApartamentoDTO(id, null, numero, null, null, BigDecimal.TEN);
     }
 }

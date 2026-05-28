@@ -22,6 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,7 +62,7 @@ class ApartamentoServiceCacheTest {
     @Autowired CacheManager cacheManager;
 
     private final Apartamento entity = Apartamento.builder().id(1L).numero("101").build();
-    private final ApartamentoDTO dto = new ApartamentoDTO(1L, null, "101", null, null);
+    private final ApartamentoDTO dto = new ApartamentoDTO(1L, null, "101", null, null, BigDecimal.TEN);
     private final ApartamentoFilterDTO allFilter = new ApartamentoFilterDTO(null, null);
 
     @BeforeEach
@@ -107,7 +108,7 @@ class ApartamentoServiceCacheTest {
         when(mapper.toDTO(entity)).thenReturn(dto);
         service.filterBy(allFilter);
 
-        var createDto = new CreateApartamentoDTO(1L, "102");
+        var createDto = new CreateApartamentoDTO(1L, "102", BigDecimal.TEN);
         when(mapper.toEntity(createDto)).thenReturn(entity);
         when(repository.save(entity)).thenReturn(entity);
         service.create(createDto);

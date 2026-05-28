@@ -1,4 +1,4 @@
-<svg width="1280" height="800" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+<svg width="1280" height="820" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
   <defs>
     <filter id="card-shadow">
       <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/>
@@ -6,10 +6,10 @@
   </defs>
 
   <!-- Page background -->
-  <rect width="1280" height="800" fill="#F0F2F5"/>
+  <rect width="1280" height="820" fill="#F0F2F5"/>
 
   <!-- ===== SIDEBAR ===== -->
-  <rect width="260" height="800" fill="#1A2332"/>
+  <rect width="260" height="820" fill="#1A2332"/>
 
   <!-- Sidebar logo -->
   <rect x="0" y="0" width="260" height="64" fill="#151D2B"/>
@@ -26,7 +26,6 @@
   <!-- Dashboard (active) -->
   <rect x="0" y="80" width="260" height="48" fill="#1976D2" rx="0"/>
   <rect x="0" y="80" width="4" height="48" fill="#42A5F5"/>
-  <!-- Grid icon -->
   <rect x="26" y="92" width="8" height="8" rx="1" fill="white"/>
   <rect x="37" y="92" width="8" height="8" rx="1" fill="white"/>
   <rect x="26" y="103" width="8" height="8" rx="1" fill="white"/>
@@ -35,7 +34,6 @@
 
   <!-- Condomínios -->
   <rect x="0" y="128" width="260" height="48" fill="transparent"/>
-  <!-- Building icon -->
   <rect x="26" y="142" width="18" height="20" rx="2" fill="none" stroke="#78909C" stroke-width="1.5"/>
   <rect x="29" y="148" width="4" height="6" rx="0.5" fill="#78909C"/>
   <rect x="35" y="148" width="4" height="6" rx="0.5" fill="#78909C"/>
@@ -53,51 +51,75 @@
 
   <!-- Apartamentos -->
   <rect x="0" y="224" width="260" height="48" fill="transparent"/>
-  <!-- Door icon -->
   <rect x="26" y="238" width="16" height="20" rx="2" fill="none" stroke="#78909C" stroke-width="1.5"/>
   <circle cx="38" cy="248" r="2" fill="#78909C"/>
   <text x="58" y="253" font-size="14" fill="#90A4AE">Apartamentos</text>
 
   <!-- Usuários -->
   <rect x="0" y="272" width="260" height="48" fill="transparent"/>
-  <!-- People icon -->
   <circle cx="31" cy="285" r="5" fill="none" stroke="#78909C" stroke-width="1.5"/>
   <path d="M22 298 Q27 292 40 298" fill="none" stroke="#78909C" stroke-width="1.5"/>
   <circle cx="42" cy="284" r="4" fill="none" stroke="#78909C" stroke-width="1.5"/>
   <text x="58" y="301" font-size="14" fill="#90A4AE">Usuários</text>
 
-  <!-- Divider -->
-  <line x1="20" y1="340" x2="240" y2="340" stroke="#2A3445" stroke-width="1"/>
+  <!-- Divider 1 -->
+  <line x1="20" y1="332" x2="240" y2="332" stroke="#2A3445" stroke-width="1"/>
+
+  <!-- ── FINANCEIRO SECTION ────────────────────────────────── -->
+  <!-- Section label -->
+  <text x="22" y="354" font-size="10" font-weight="700" fill="#546E7A" letter-spacing="1.2">FINANCEIRO</text>
+  <text x="238" y="354" text-anchor="end" font-size="10" fill="#546E7A">▾</text>
+
+  <!-- Plano de Contas -->
+  <rect x="0" y="360" width="260" height="40" fill="transparent"/>
+  <!-- list icon -->
+  <line x1="28" y1="376" x2="42" y2="376" stroke="#78909C" stroke-width="1.5"/>
+  <line x1="28" y1="381" x2="42" y2="381" stroke="#78909C" stroke-width="1.5"/>
+  <line x1="28" y1="386" x2="36" y2="386" stroke="#78909C" stroke-width="1.5"/>
+  <text x="52" y="384" font-size="13" fill="#90A4AE">Plano de Contas</text>
+
+  <!-- Fundo de Reserva -->
+  <rect x="0" y="400" width="260" height="40" fill="transparent"/>
+  <!-- savings icon -->
+  <circle cx="35" cy="421" r="8" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <path d="M31 421 L35 417 L39 421" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <line x1="35" y1="417" x2="35" y2="426" stroke="#78909C" stroke-width="1.5"/>
+  <text x="52" y="425" font-size="13" fill="#90A4AE">Fundo de Reserva</text>
+
+  <!-- Orçamento Anual -->
+  <rect x="0" y="440" width="260" height="40" fill="transparent"/>
+  <!-- calendar icon -->
+  <rect x="27" y="449" width="18" height="18" rx="2" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <line x1="27" y1="455" x2="45" y2="455" stroke="#78909C" stroke-width="1.5"/>
+  <line x1="32" y1="446" x2="32" y2="452" stroke="#78909C" stroke-width="1.5"/>
+  <line x1="40" y1="446" x2="40" y2="452" stroke="#78909C" stroke-width="1.5"/>
+  <text x="52" y="463" font-size="13" fill="#90A4AE">Orçamento Anual</text>
+
+  <!-- Divider 2 -->
+  <line x1="20" y1="490" x2="240" y2="490" stroke="#2A3445" stroke-width="1"/>
 
   <!-- Estados -->
-  <rect x="0" y="352" width="260" height="48" fill="transparent"/>
-  <!-- Map icon -->
-  <polygon points="30,364 44,360 44,380 30,384" fill="none" stroke="#78909C" stroke-width="1.5"/>
-  <text x="58" y="381" font-size="14" fill="#90A4AE">Estados</text>
+  <rect x="0" y="500" width="260" height="48" fill="transparent"/>
+  <polygon points="30,512 44,508 44,528 30,532" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <text x="58" y="530" font-size="14" fill="#90A4AE">Estados</text>
 
   <!-- User profile at bottom -->
-  <rect x="0" y="736" width="260" height="64" fill="#151D2B"/>
-  <circle cx="36" cy="768" r="18" fill="#1976D2"/>
-  <text x="36" y="773" text-anchor="middle" font-size="14" font-weight="700" fill="white">JS</text>
-  <text x="62" y="763" font-size="13" font-weight="600" fill="white">João Silva</text>
-  <text x="62" y="779" font-size="11" fill="#78909C">Administrador</text>
-  <!-- Logout icon -->
-  <path d="M228 760 L240 768 L228 776" fill="none" stroke="#78909C" stroke-width="1.5"/>
-  <path d="M236 768 L218 768" stroke="#78909C" stroke-width="1.5"/>
+  <rect x="0" y="756" width="260" height="64" fill="#151D2B"/>
+  <circle cx="36" cy="788" r="18" fill="#1976D2"/>
+  <text x="36" y="793" text-anchor="middle" font-size="14" font-weight="700" fill="white">JS</text>
+  <text x="62" y="783" font-size="13" font-weight="600" fill="white">João Silva</text>
+  <text x="62" y="799" font-size="11" fill="#78909C">Administrador</text>
+  <path d="M228 780 L240 788 L228 796" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <path d="M236 788 L218 788" stroke="#78909C" stroke-width="1.5"/>
 
   <!-- ===== TOP APPBAR ===== -->
   <rect x="260" y="0" width="1020" height="64" fill="white" filter="url(#card-shadow)"/>
   <text x="292" y="38" font-size="20" font-weight="600" fill="#1A2332">Dashboard</text>
-  <!-- Breadcrumb -->
   <text x="292" y="55" font-size="11" fill="#90A4AE">Início  ›  Dashboard</text>
-  <!-- Right side: notifications + avatar -->
-  <!-- Bell icon -->
   <path d="M1170 22 Q1174 18 1178 22 L1178 34 L1166 34 Z" fill="none" stroke="#546E7A" stroke-width="1.5"/>
   <circle cx="1172" cy="37" r="2.5" fill="#546E7A"/>
-  <!-- Badge -->
   <circle cx="1178" cy="20" r="5" fill="#F44336"/>
   <text x="1178" y="23" text-anchor="middle" font-size="7" fill="white">3</text>
-  <!-- Avatar -->
   <circle cx="1230" cy="32" r="20" fill="#1976D2"/>
   <text x="1230" y="37" text-anchor="middle" font-size="13" font-weight="700" fill="white">JS</text>
 
@@ -106,7 +128,7 @@
   <!-- Page header -->
   <text x="292" y="98" font-size="13" fill="#78909C">Bem-vindo de volta, João! Aqui está o resumo do seu condomínio.</text>
 
-  <!-- ===== STAT CARDS ===== -->
+  <!-- ===== ROW 1 — STAT CARDS ===== -->
   <!-- Card 1: Condomínios -->
   <rect x="280" y="108" width="230" height="110" rx="12" fill="white" filter="url(#card-shadow)"/>
   <rect x="280" y="108" width="230" height="5" rx="12" fill="#1976D2"/>
@@ -157,10 +179,10 @@
   <text x="1046" y="195" font-size="13" fill="#78909C">Usuários</text>
   <text x="1226" y="195" text-anchor="end" font-size="11" fill="#4CAF50">▲ 5 ativos</text>
 
-  <!-- ===== SECOND ROW: Table + Activity ===== -->
+  <!-- ===== ROW 2 — TABLE + ACTIVITY ===== -->
 
   <!-- Recent Condominios table -->
-  <rect x="280" y="248" width="590" height="340" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <rect x="280" y="248" width="590" height="330" rx="12" fill="white" filter="url(#card-shadow)"/>
   <text x="300" y="280" font-size="15" font-weight="600" fill="#1A2332">Condomínios Recentes</text>
   <text x="844" y="280" text-anchor="end" font-size="12" fill="#1976D2">Ver todos →</text>
   <!-- Table header -->
@@ -193,39 +215,106 @@
   <rect x="720" y="442" width="60" height="20" rx="10" fill="#FFF3E0"/>
   <text x="750" y="456" text-anchor="middle" font-size="11" fill="#E65100">Inativo</text>
   <!-- Pagination -->
-  <text x="580" y="565" text-anchor="middle" font-size="12" fill="#78909C">Mostrando 4 de 4 condomínios</text>
+  <text x="575" y="555" text-anchor="middle" font-size="12" fill="#78909C">Mostrando 4 de 4 condomínios</text>
 
   <!-- Recent Activity panel -->
-  <rect x="890" y="248" width="370" height="340" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <rect x="890" y="248" width="370" height="330" rx="12" fill="white" filter="url(#card-shadow)"/>
   <text x="910" y="280" font-size="15" font-weight="600" fill="#1A2332">Atividade Recente</text>
 
-  <!-- Activity items -->
-  <circle cx="922" cy="315" r="8" fill="#E3F2FD"/>
-  <text x="922" y="319" text-anchor="middle" font-size="10" fill="#1976D2">+</text>
-  <text x="938" y="311" font-size="12" font-weight="500" fill="#1A2332">Novo apartamento criado</text>
-  <text x="938" y="326" font-size="11" fill="#90A4AE">Apto 302 · Bloco A · há 5 min</text>
-  <line x1="922" y1="342" x2="922" y2="360" stroke="#E3E8EF" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <!-- Activity item 1: Apartamento criado -->
+  <circle cx="922" cy="308" r="8" fill="#E3F2FD"/>
+  <text x="922" y="312" text-anchor="middle" font-size="10" fill="#1976D2">+</text>
+  <text x="938" y="304" font-size="12" font-weight="500" fill="#1A2332">Novo apartamento criado</text>
+  <text x="938" y="319" font-size="11" fill="#90A4AE">Apto 302 · Bloco A · há 5 min</text>
+  <line x1="922" y1="334" x2="922" y2="350" stroke="#E3E8EF" stroke-width="1.5" stroke-dasharray="3,3"/>
 
-  <circle cx="922" cy="368" r="8" fill="#E8F5E9"/>
-  <text x="922" y="372" text-anchor="middle" font-size="10" fill="#2E7D32">✓</text>
-  <text x="938" y="364" font-size="12" font-weight="500" fill="#1A2332">Usuário atualizado</text>
-  <text x="938" y="379" font-size="11" fill="#90A4AE">Maria Santos · há 23 min</text>
-  <line x1="922" y1="394" x2="922" y2="412" stroke="#E3E8EF" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <!-- Activity item 2: Usuário atualizado -->
+  <circle cx="922" cy="358" r="8" fill="#E8F5E9"/>
+  <text x="922" y="362" text-anchor="middle" font-size="10" fill="#2E7D32">✓</text>
+  <text x="938" y="354" font-size="12" font-weight="500" fill="#1A2332">Usuário atualizado</text>
+  <text x="938" y="369" font-size="11" fill="#90A4AE">Maria Santos · há 23 min</text>
+  <line x1="922" y1="384" x2="922" y2="400" stroke="#E3E8EF" stroke-width="1.5" stroke-dasharray="3,3"/>
 
-  <circle cx="922" cy="420" r="8" fill="#F3E5F5"/>
-  <text x="922" y="424" text-anchor="middle" font-size="10" fill="#7B1FA2">⊞</text>
-  <text x="938" y="416" font-size="12" font-weight="500" fill="#1A2332">Novo bloco adicionado</text>
-  <text x="938" y="431" font-size="11" fill="#90A4AE">Bloco C · Solar das Flores · há 1h</text>
-  <line x1="922" y1="446" x2="922" y2="464" stroke="#E3E8EF" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <!-- Activity item 3: Orçamento aprovado (financeiro) -->
+  <circle cx="922" cy="408" r="8" fill="#E0F2F1"/>
+  <text x="922" y="412" text-anchor="middle" font-size="9" fill="#00897B">$</text>
+  <text x="938" y="404" font-size="12" font-weight="500" fill="#1A2332">Orçamento 2026 aprovado</text>
+  <text x="938" y="419" font-size="11" fill="#90A4AE">Exercício 2026 · R$ 180.000 · há 1h</text>
+  <line x1="922" y1="434" x2="922" y2="450" stroke="#E3E8EF" stroke-width="1.5" stroke-dasharray="3,3"/>
 
-  <circle cx="922" cy="472" r="8" fill="#FFF3E0"/>
-  <text x="922" y="476" text-anchor="middle" font-size="9" fill="#E65100">🗑</text>
-  <text x="938" y="468" font-size="12" font-weight="500" fill="#1A2332">Condomínio desativado</text>
-  <text x="938" y="483" font-size="11" fill="#90A4AE">Bela Vista · há 3h</text>
-  <line x1="922" y1="498" x2="922" y2="516" stroke="#E3E8EF" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <!-- Activity item 4: Plano de contas atualizado (financeiro) -->
+  <circle cx="922" cy="458" r="8" fill="#EDE7F6"/>
+  <text x="922" y="462" text-anchor="middle" font-size="9" fill="#512DA8">≡</text>
+  <text x="938" y="454" font-size="12" font-weight="500" fill="#1A2332">Plano de contas atualizado</text>
+  <text x="938" y="469" font-size="11" fill="#90A4AE">42 contas ativas · há 3h</text>
+  <line x1="922" y1="484" x2="922" y2="500" stroke="#E3E8EF" stroke-width="1.5" stroke-dasharray="3,3"/>
 
-  <circle cx="922" cy="524" r="8" fill="#E3F2FD"/>
-  <text x="922" y="528" text-anchor="middle" font-size="10" fill="#1976D2">+</text>
-  <text x="938" y="520" font-size="12" font-weight="500" fill="#1A2332">Novo usuário criado</text>
-  <text x="938" y="535" font-size="11" fill="#90A4AE">Carlos Oliveira · há 5h</text>
+  <!-- Activity item 5: Novo bloco -->
+  <circle cx="922" cy="508" r="8" fill="#F3E5F5"/>
+  <text x="922" y="512" text-anchor="middle" font-size="10" fill="#7B1FA2">⊞</text>
+  <text x="938" y="504" font-size="12" font-weight="500" fill="#1A2332">Novo bloco adicionado</text>
+  <text x="938" y="519" font-size="11" fill="#90A4AE">Bloco C · Solar das Flores · há 5h</text>
+
+  <!-- ===== ROW 3 — FINANCEIRO KPI CARDS ===== -->
+  <!-- Section label -->
+  <text x="280" y="612" font-size="14" font-weight="600" fill="#546E7A">Resumo Financeiro</text>
+
+  <!-- Financial Card 1: Fundo de Reserva -->
+  <rect x="280" y="622" width="306" height="108" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <rect x="280" y="622" width="306" height="5" rx="12" fill="#00897B"/>
+  <rect x="280" y="627" width="306" height="3" fill="#00897B"/>
+  <!-- icon bg -->
+  <rect x="296" y="642" width="44" height="44" rx="10" fill="#E0F2F1"/>
+  <!-- coin stack icon -->
+  <ellipse cx="318" cy="654" rx="10" ry="4" fill="none" stroke="#00897B" stroke-width="1.8"/>
+  <line x1="308" y1="654" x2="308" y2="664" stroke="#00897B" stroke-width="1.8"/>
+  <line x1="328" y1="654" x2="328" y2="664" stroke="#00897B" stroke-width="1.8"/>
+  <ellipse cx="318" cy="664" rx="10" ry="4" fill="#E0F2F1" stroke="#00897B" stroke-width="1.8"/>
+  <!-- value -->
+  <text x="352" y="655" font-size="11" fill="#78909C">Saldo atual</text>
+  <text x="352" y="675" font-size="20" font-weight="700" fill="#1A2332">R$ 25.400</text>
+  <text x="296" y="715" font-size="13" fill="#78909C">Fundo de Reserva</text>
+  <text x="562" y="715" text-anchor="end" font-size="11" fill="#4CAF50">▲ R$ 1.200</text>
+
+  <!-- Financial Card 2: Orçamento Anual -->
+  <rect x="606" y="622" width="306" height="108" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <rect x="606" y="622" width="306" height="5" rx="12" fill="#1976D2"/>
+  <rect x="606" y="627" width="306" height="3" fill="#1976D2"/>
+  <!-- icon bg -->
+  <rect x="622" y="642" width="44" height="44" rx="10" fill="#E3F2FD"/>
+  <!-- calendar icon -->
+  <rect x="629" y="649" width="22" height="22" rx="2" fill="none" stroke="#1976D2" stroke-width="1.8"/>
+  <line x1="629" y1="656" x2="651" y2="656" stroke="#1976D2" stroke-width="1.8"/>
+  <line x1="634" y1="646" x2="634" y2="652" stroke="#1976D2" stroke-width="1.8"/>
+  <line x1="645" y1="646" x2="645" y2="652" stroke="#1976D2" stroke-width="1.8"/>
+  <!-- value -->
+  <text x="678" y="655" font-size="11" fill="#78909C">Orçamento 2026</text>
+  <text x="678" y="675" font-size="20" font-weight="700" fill="#1A2332">R$ 180.000</text>
+  <!-- status badge -->
+  <rect x="622" y="700" width="76" height="20" rx="10" fill="#E8F5E9"/>
+  <text x="660" y="714" text-anchor="middle" font-size="11" fill="#2E7D32">APROVADO</text>
+  <text x="888" y="714" text-anchor="end" font-size="11" fill="#78909C">24 itens</text>
+
+  <!-- Financial Card 3: Plano de Contas -->
+  <rect x="932" y="622" width="328" height="108" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <rect x="932" y="622" width="328" height="5" rx="12" fill="#7B1FA2"/>
+  <rect x="932" y="627" width="328" height="3" fill="#7B1FA2"/>
+  <!-- icon bg -->
+  <rect x="948" y="642" width="44" height="44" rx="10" fill="#F3E5F5"/>
+  <!-- list icon -->
+  <rect x="956" y="652" width="6" height="6" rx="1" fill="#7B1FA2"/>
+  <line x1="966" y1="655" x2="984" y2="655" stroke="#7B1FA2" stroke-width="1.5"/>
+  <rect x="956" y="662" width="6" height="6" rx="1" fill="#7B1FA2"/>
+  <line x1="966" y1="665" x2="984" y2="665" stroke="#7B1FA2" stroke-width="1.5"/>
+  <rect x="956" y="672" width="6" height="6" rx="1" fill="#7B1FA2"/>
+  <line x1="966" y1="675" x2="978" y2="675" stroke="#7B1FA2" stroke-width="1.5"/>
+  <!-- value -->
+  <text x="1004" y="655" font-size="11" fill="#78909C">Total de contas</text>
+  <text x="1004" y="675" font-size="32" font-weight="700" fill="#1A2332">42</text>
+  <text x="948" y="715" font-size="13" fill="#78909C">Plano de Contas</text>
+  <!-- breakdown chips -->
+  <rect x="1100" y="702" width="68" height="18" rx="9" fill="#E3F2FD"/>
+  <text x="1134" y="715" text-anchor="middle" font-size="10" fill="#1976D2">18 Receita</text>
+  <rect x="1178" y="702" width="72" height="18" rx="9" fill="#FFF3E0"/>
+  <text x="1214" y="715" text-anchor="middle" font-size="10" fill="#E65100">24 Despesa</text>
 </svg>

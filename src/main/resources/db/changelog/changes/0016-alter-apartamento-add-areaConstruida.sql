@@ -1,0 +1,1 @@
+ALTER TABLE apartamentos ADD COLUMN area_construida NUMERIC(15,2);

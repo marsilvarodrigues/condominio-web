@@ -13,6 +13,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -48,6 +49,9 @@ public class Apartamento {
 
     @Column(nullable = false, length = 20)
     private String numero;
+
+    @Column(nullable = false)
+    private BigDecimal areaConstruida;
 
     @Column(nullable = false)
     @Builder.Default

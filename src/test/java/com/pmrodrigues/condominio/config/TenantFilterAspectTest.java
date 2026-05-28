@@ -1,5 +1,6 @@
 package com.pmrodrigues.condominio.config;
 
+import com.pmrodrigues.commons.config.TenantFilterAspect;
 import com.pmrodrigues.commons.tenant.TenantContext;
 import jakarta.persistence.EntityManager;
 import org.hibernate.Filter;

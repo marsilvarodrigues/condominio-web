@@ -12,6 +12,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,18 +52,19 @@ class ApartamentoMapperTest {
         bloco.setId(5L);
         when(em.getReference(Bloco.class, 5L)).thenReturn(bloco);
 
-        var dto = new CreateApartamentoDTO(5L, "202");
+        var dto = new CreateApartamentoDTO(5L, "202", BigDecimal.TEN);
         var apartamento = mapper.toEntity(dto);
 
         assertThat(apartamento.getNumero()).isEqualTo("202");
         assertThat(apartamento.getBloco()).isNotNull();
         assertThat(apartamento.getBloco().getId()).isEqualTo(5L);
+        assertThat(apartamento.getAreaConstruida()).isEqualTo(BigDecimal.TEN);
         verify(em).getReference(Bloco.class, 5L);
     }
 
     @Test
     void toEntity_whenBlocoIdIsNull_blocoIsNull() {
-        var dto = new CreateApartamentoDTO(null, "101");
+        var dto = new CreateApartamentoDTO(null, "101", BigDecimal.TEN);
 
         var apartamento = mapper.toEntity(dto);
 
@@ -74,7 +77,7 @@ class ApartamentoMapperTest {
         bloco.setId(5L);
         when(em.getReference(Bloco.class, 5L)).thenReturn(bloco);
 
-        var dto = new CreateApartamentoDTO(5L, "101");
+        var dto = new CreateApartamentoDTO(5L, "101", BigDecimal.TEN);
         var apartamento = mapper.toEntity(dto);
 
         assertThat(apartamento.isDeleted()).isFalse();
@@ -92,7 +95,7 @@ class ApartamentoMapperTest {
     @Test
     void updateEntity_updatesNumero() {
         var apartamento = Apartamento.builder().id(1L).numero("101").build();
-        var dto = new ApartamentoDTO(null, null, "202", null, null);
+        var dto = new ApartamentoDTO(null, null, "202", null, null,null);
 
         mapper.updateEntity(apartamento, dto);
 
@@ -104,7 +107,7 @@ class ApartamentoMapperTest {
         var bloco = new Bloco();
         bloco.setId(5L);
         var apartamento = Apartamento.builder().id(1L).bloco(bloco).numero("101").build();
-        var dto = new ApartamentoDTO(null, null, "202", null, null);
+        var dto = new ApartamentoDTO(null, null, "202", null, null, null);
 
         mapper.updateEntity(apartamento, dto);
 
@@ -114,7 +117,7 @@ class ApartamentoMapperTest {
     @Test
     void updateEntity_skipsNullNumero() {
         var apartamento = Apartamento.builder().id(1L).numero("101").build();
-        var dto = new ApartamentoDTO(null, null, null, null, null);
+        var dto = new ApartamentoDTO(null, null, null, null, null, null);
 
         mapper.updateEntity(apartamento, dto);
 

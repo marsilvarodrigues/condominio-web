@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,12 +43,13 @@ class ApartamentoServiceTest {
             if (d.blocoId() != null) {
                 var b = new Bloco(); b.setId(d.blocoId()); ap.setBloco(b);
             }
+            ap.setAreaConstruida(d.areaConstruida());
             return ap;
         });
         lenient().when(mapper.toDTO(any(Apartamento.class))).thenAnswer(inv -> {
             Apartamento a = inv.getArgument(0);
             Long blocoId = a.getBloco() != null ? a.getBloco().getId() : null;
-            return new ApartamentoDTO(a.getId(), blocoId, a.getNumero(), a.getCreatedAt(), a.getUpdatedAt());
+            return new ApartamentoDTO(a.getId(), blocoId, a.getNumero(), a.getCreatedAt(), a.getUpdatedAt(), a.getAreaConstruida());
         });
         lenient().doAnswer(inv -> {
             Apartamento a = inv.getArgument(0);
@@ -57,7 +59,7 @@ class ApartamentoServiceTest {
         }).when(mapper).updateEntity(any(Apartamento.class), any(ApartamentoDTO.class));
     }
 
-    private Apartamento apartamento(Long id, Long blocoId) {
+    private Apartamento apartamento(Long id, Long blocoId, BigDecimal areaConstruida) {
         var b = new Bloco(); b.setId(blocoId);
         return Apartamento.builder().id(id).bloco(b).numero("101").build();
     }
@@ -66,7 +68,7 @@ class ApartamentoServiceTest {
 
     @Test
     void filterBy_withBlocoId_returnsFilteredList() {
-        when(repository.findAll(any(Specification.class))).thenReturn(List.of(apartamento(1L, 5L)));
+        when(repository.findAll(any(Specification.class))).thenReturn(List.of(apartamento(1L, 5L, BigDecimal.TEN)));
 
         var result = service.filterBy(new ApartamentoFilterDTO(5L, null));
 
@@ -77,7 +79,7 @@ class ApartamentoServiceTest {
 
     @Test
     void filterBy_withNumero_returnsFilteredList() {
-        when(repository.findAll(any(Specification.class))).thenReturn(List.of(apartamento(1L, 5L)));
+        when(repository.findAll(any(Specification.class))).thenReturn(List.of(apartamento(1L, 5L, BigDecimal.TEN)));
 
         var result = service.filterBy(new ApartamentoFilterDTO(null, "101"));
 
@@ -87,7 +89,7 @@ class ApartamentoServiceTest {
 
     @Test
     void filterBy_withBothParams_returnsIntersection() {
-        when(repository.findAll(any(Specification.class))).thenReturn(List.of(apartamento(1L, 5L)));
+        when(repository.findAll(any(Specification.class))).thenReturn(List.of(apartamento(1L, 5L, BigDecimal.TEN)));
 
         var result = service.filterBy(new ApartamentoFilterDTO(5L, "101"));
 
@@ -97,7 +99,7 @@ class ApartamentoServiceTest {
     @Test
     void filterBy_withBothNull_returnsAll() {
         when(repository.findAll(any(Specification.class))).thenReturn(
-                List.of(apartamento(1L, 5L), apartamento(2L, 5L)));
+                List.of(apartamento(1L, 5L, BigDecimal.TEN), apartamento(2L, 5L, BigDecimal.TEN)));
 
         var result = service.filterBy(new ApartamentoFilterDTO(null, null));
 
@@ -115,7 +117,7 @@ class ApartamentoServiceTest {
 
     @Test
     void findById_whenFound_returnsDTO() {
-        when(repository.findById(1L)).thenReturn(Optional.of(apartamento(1L, 5L)));
+        when(repository.findById(1L)).thenReturn(Optional.of(apartamento(1L, 5L, BigDecimal.TEN)));
 
         var result = service.findById(1L);
 
@@ -134,7 +136,7 @@ class ApartamentoServiceTest {
 
     @Test
     void create_savesAndReturnsDTO() {
-        var dto = new CreateApartamentoDTO(5L, "202");
+        var dto = new CreateApartamentoDTO(5L, "202", BigDecimal.TEN);
         when(repository.save(any(Apartamento.class))).thenAnswer(inv -> {
             Apartamento a = inv.getArgument(0);
             a.setId(7L);
@@ -152,11 +154,11 @@ class ApartamentoServiceTest {
 
     @Test
     void update_whenFound_updatesAndReturnsDTO() {
-        var entity = apartamento(1L, 5L);
+        var entity = apartamento(1L, 5L, BigDecimal.TEN);
         when(repository.findById(1L)).thenReturn(Optional.of(entity));
         when(repository.save(entity)).thenReturn(entity);
 
-        var result = service.update(new ApartamentoDTO(1L, null, "303", null, null));
+        var result = service.update(new ApartamentoDTO(1L, null, "303", null, null, BigDecimal.TEN));
 
         assertThat(result.numero()).isEqualTo("303");
     }
@@ -165,7 +167,7 @@ class ApartamentoServiceTest {
     void update_whenNotFound_throwsNotFound() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.update(new ApartamentoDTO(99L, null, "101", null, null)))
+        assertThatThrownBy(() -> service.update(new ApartamentoDTO(99L, null, "101", null, null, BigDecimal.TEN)))
                 .isInstanceOf(ResponseStatusException.class)
                 .satisfies(e -> assertThat(((ResponseStatusException) e).getStatusCode().value()).isEqualTo(404));
     }
@@ -174,7 +176,7 @@ class ApartamentoServiceTest {
 
     @Test
     void delete_whenFound_deletesEntity() {
-        var entity = apartamento(1L, 5L);
+        var entity = apartamento(1L, 5L, BigDecimal.TEN);
         when(repository.findById(1L)).thenReturn(Optional.of(entity));
 
         service.delete(1L);

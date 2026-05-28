@@ -104,7 +104,7 @@ public class ApartamentoController {
                                                                HttpServletRequest request) {
         log.info("PUT /apartamentos/{} - updating apartamento", id);
         var updated = apartamentoService.update(
-                new ApartamentoDTO(id, dto.blocoId(), dto.numero(), dto.createdAt(), dto.updatedAt()));
+                new ApartamentoDTO(id, dto.blocoId(), dto.numero(), dto.createdAt(), dto.updatedAt(), dto.areaConstruida()));
         log.info("PUT /apartamentos/{} - apartamento updated", id);
         return ResponseEntity.ok(ApiResponse.of(requestId(request), updated));
     }

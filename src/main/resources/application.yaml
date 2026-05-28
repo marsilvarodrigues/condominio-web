@@ -160,6 +160,18 @@ app:
         l1-ttl: 10m
         l2-ttl: 1h
         max-size: 500
+      plano-contas:
+        l1-ttl: 10m
+        l2-ttl: 1h
+        max-size: 500
+      fundo-reserva:
+        l1-ttl: 5m
+        l2-ttl: 30m
+        max-size: 100
+      orcamentos:
+        l1-ttl: 5m
+        l2-ttl: 30m
+        max-size: 200
 
 # Actuator
 management:

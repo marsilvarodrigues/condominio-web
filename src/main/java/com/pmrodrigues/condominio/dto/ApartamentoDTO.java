@@ -1,7 +1,9 @@
 package com.pmrodrigues.condominio.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -13,6 +15,6 @@ public record ApartamentoDTO(
         Long blocoId,
         @NotBlank String numero,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
-) {
+        LocalDateTime updatedAt,
+        @NotNull BigDecimal areaConstruida) {
 }

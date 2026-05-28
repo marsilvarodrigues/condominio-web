@@ -1,0 +1,188 @@
+<svg width="1280" height="820" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="card-shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="820" fill="#F0F2F5"/>
+
+  <!-- SIDEBAR -->
+  <rect width="260" height="820" fill="#1A2332"/>
+  <rect x="0" y="0" width="260" height="64" fill="#151D2B"/>
+  <text x="58" y="34" font-size="18" font-weight="700" fill="white">CondoGest</text>
+  <text x="58" y="50" font-size="11" fill="#78909C">v1.0</text>
+  <text x="58" y="109" font-size="14" fill="#78909C">Dashboard</text>
+  <text x="58" y="157" font-size="14" fill="#78909C">Condomínios</text>
+  <text x="58" y="205" font-size="14" fill="#78909C">Usuários</text>
+  <rect x="0" y="224" width="260" height="48" fill="#1976D2"/>
+  <rect x="0" y="224" width="4" height="48" fill="#42A5F5"/>
+  <text x="58" y="253" font-size="14" font-weight="500" fill="white">Financeiro</text>
+  <rect x="0" y="272" width="260" height="40" fill="#162030"/>
+  <rect x="0" y="272" width="4" height="40" fill="#42A5F5"/>
+  <text x="72" y="296" font-size="13" font-weight="600" fill="white">Plano de Contas</text>
+  <rect x="0" y="312" width="260" height="40" fill="transparent"/>
+  <text x="72" y="336" font-size="13" fill="#78909C">Fundo de Reserva</text>
+  <rect x="0" y="352" width="260" height="40" fill="transparent"/>
+  <text x="72" y="376" font-size="13" fill="#78909C">Orçamento Anual</text>
+
+  <!-- TOP BAR -->
+  <rect x="260" y="0" width="1020" height="64" fill="white" filter="url(#card-shadow)"/>
+  <text x="284" y="38" font-size="20" font-weight="600" fill="#1A2332">Plano de Contas</text>
+  <text x="284" y="56" font-size="12" fill="#78909C">Financeiro / Plano de Contas</text>
+  <rect x="1140" y="16" width="120" height="32" rx="4" fill="#1976D2"/>
+  <text x="1200" y="37" font-size="13" font-weight="500" fill="white" text-anchor="middle">+ Nova Conta</text>
+
+  <!-- FILTER BAR -->
+  <rect x="280" y="80" width="980" height="56" rx="8" fill="white" filter="url(#card-shadow)"/>
+  <text x="300" y="114" font-size="13" fill="#546E7A">Tipo:</text>
+  <rect x="340" y="96" width="120" height="28" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="356" y="115" font-size="13" fill="#37474F">Todos</text>
+  <text y="115" font-size="11" fill="#78909C" x="450">▼</text>
+  <text x="480" y="114" font-size="13" fill="#546E7A">Rateio:</text>
+  <rect x="530" y="96" width="130" height="28" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="546" y="115" font-size="13" fill="#37474F">Todos</text>
+  <text x="680" y="114" font-size="13" fill="#546E7A">Escopo:</text>
+  <rect x="730" y="96" width="120" height="28" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="746" y="115" font-size="13" fill="#37474F">Todos</text>
+  <!-- View toggle -->
+  <rect x="900" y="96" width="68" height="28" rx="4" fill="#1976D2"/>
+  <text x="934" y="115" font-size="12" font-weight="500" fill="white" text-anchor="middle">Árvore</text>
+  <rect x="972" y="96" width="68" height="28" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="1006" y="115" font-size="12" fill="#546E7A" text-anchor="middle">Lista</text>
+
+  <!-- TREE CARD -->
+  <rect x="280" y="152" width="980" height="604" rx="8" fill="white" filter="url(#card-shadow)"/>
+  <text x="300" y="180" font-size="15" font-weight="600" fill="#1A2332">Estrutura Hierárquica</text>
+
+  <!-- TABLE HEADER -->
+  <rect x="280" y="188" width="980" height="34" fill="#F5F7FA"/>
+  <text x="320" y="210" font-size="11" font-weight="600" fill="#546E7A">CÓDIGO</text>
+  <text x="400" y="210" font-size="11" font-weight="600" fill="#546E7A">DESCRIÇÃO</text>
+  <text x="660" y="210" font-size="11" font-weight="600" fill="#546E7A">TIPO</text>
+  <text x="760" y="210" font-size="11" font-weight="600" fill="#546E7A">RATEIO</text>
+  <text x="880" y="210" font-size="11" font-weight="600" fill="#546E7A">ESCOPO</text>
+  <text x="1000" y="210" font-size="11" font-weight="600" fill="#546E7A">AÇÕES</text>
+
+  <!-- ROW — Receitas (root, expanded) -->
+  <rect x="280" y="222" width="980" height="40" fill="white"/>
+  <rect x="280" y="261" width="980" height="1" fill="#F0F2F5"/>
+  <rect x="296" y="235" width="16" height="16" rx="3" fill="#E3F2FD" stroke="#1976D2" stroke-width="1"/>
+  <text x="304" y="247" font-size="12" fill="#1976D2" text-anchor="middle">▼</text>
+  <text x="320" y="247" font-size="14" font-weight="600" fill="#1A2332">1</text>
+  <text x="400" y="247" font-size="14" font-weight="600" fill="#1A2332">Receitas</text>
+  <rect x="650" y="232" width="72" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="686" y="247" font-size="11" font-weight="600" fill="#2E7D32" text-anchor="middle">RECEITA</text>
+  <text x="760" y="247" font-size="12" fill="#B0BEC5">—</text>
+  <text x="880" y="247" font-size="12" fill="#B0BEC5">—</text>
+  <text x="1000" y="247" font-size="18" fill="#78909C">⋮</text>
+
+  <!-- Child 1.1 — IGUALITARIO / TODOS -->
+  <rect x="280" y="262" width="980" height="40" fill="#FAFAFA"/>
+  <rect x="280" y="301" width="980" height="1" fill="#F0F2F5"/>
+  <text x="340" y="286" font-size="12" fill="#546E7A">└─</text>
+  <text x="360" y="286" font-size="13" fill="#37474F">1.1</text>
+  <text x="400" y="286" font-size="13" fill="#37474F">Taxa de Condomínio</text>
+  <rect x="650" y="272" width="72" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="686" y="287" font-size="11" fill="#2E7D32" text-anchor="middle">RECEITA</text>
+  <rect x="748" y="272" width="88" height="22" rx="11" fill="#E3F2FD"/>
+  <text x="792" y="287" font-size="10" font-weight="600" fill="#1565C0" text-anchor="middle">IGUALITÁRIO</text>
+  <rect x="866" y="272" width="64" height="22" rx="11" fill="#F3E5F5"/>
+  <text x="898" y="287" font-size="10" font-weight="600" fill="#6A1B9A" text-anchor="middle">TODOS</text>
+  <text x="1000" y="286" font-size="18" fill="#B0BEC5">⋮</text>
+
+  <!-- Child 1.2 — FRACAO_IDEAL / POR_BLOCO -->
+  <rect x="280" y="302" width="980" height="40" fill="#FAFAFA"/>
+  <rect x="280" y="341" width="980" height="1" fill="#F0F2F5"/>
+  <text x="340" y="326" font-size="12" fill="#546E7A">└─</text>
+  <text x="360" y="326" font-size="13" fill="#37474F">1.2</text>
+  <text x="400" y="326" font-size="13" fill="#37474F">Taxa Extra</text>
+  <rect x="650" y="312" width="72" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="686" y="327" font-size="11" fill="#2E7D32" text-anchor="middle">RECEITA</text>
+  <rect x="748" y="312" width="88" height="22" rx="11" fill="#E3F2FD"/>
+  <text x="792" y="327" font-size="10" font-weight="600" fill="#1565C0" text-anchor="middle">FRAÇÃO IDEAL</text>
+  <rect x="866" y="312" width="84" height="22" rx="11" fill="#FFF3E0"/>
+  <text x="908" y="327" font-size="10" font-weight="600" fill="#E65100" text-anchor="middle">POR BLOCO</text>
+  <text x="1000" y="326" font-size="18" fill="#B0BEC5">⋮</text>
+
+  <!-- ROW — Despesas (root, expanded) -->
+  <rect x="280" y="342" width="980" height="40" fill="white"/>
+  <rect x="280" y="381" width="980" height="1" fill="#F0F2F5"/>
+  <rect x="296" y="355" width="16" height="16" rx="3" fill="#FFF3E0" stroke="#E65100" stroke-width="1"/>
+  <text x="304" y="367" font-size="12" fill="#E65100" text-anchor="middle">▼</text>
+  <text x="320" y="367" font-size="14" font-weight="600" fill="#1A2332">2</text>
+  <text x="400" y="367" font-size="14" font-weight="600" fill="#1A2332">Despesas</text>
+  <rect x="650" y="352" width="72" height="22" rx="11" fill="#FBE9E7"/>
+  <text x="686" y="367" font-size="11" font-weight="600" fill="#BF360C" text-anchor="middle">DESPESA</text>
+  <text x="760" y="367" font-size="12" fill="#B0BEC5">—</text>
+  <text x="880" y="367" font-size="12" fill="#B0BEC5">—</text>
+  <text x="1000" y="367" font-size="18" fill="#78909C">⋮</text>
+
+  <!-- Child 2.1 — IGUALITARIO / TODOS -->
+  <rect x="280" y="382" width="980" height="40" fill="#FAFAFA"/>
+  <rect x="280" y="421" width="980" height="1" fill="#F0F2F5"/>
+  <text x="340" y="406" font-size="12" fill="#546E7A">└─</text>
+  <text x="360" y="406" font-size="13" fill="#37474F">2.1</text>
+  <text x="400" y="406" font-size="13" fill="#37474F">Manutenção</text>
+  <rect x="650" y="392" width="72" height="22" rx="11" fill="#FBE9E7"/>
+  <text x="686" y="407" font-size="11" fill="#BF360C" text-anchor="middle">DESPESA</text>
+  <rect x="748" y="392" width="88" height="22" rx="11" fill="#E3F2FD"/>
+  <text x="792" y="407" font-size="10" font-weight="600" fill="#1565C0" text-anchor="middle">IGUALITÁRIO</text>
+  <rect x="866" y="392" width="64" height="22" rx="11" fill="#F3E5F5"/>
+  <text x="898" y="407" font-size="10" font-weight="600" fill="#6A1B9A" text-anchor="middle">TODOS</text>
+  <text x="1000" y="406" font-size="18" fill="#B0BEC5">⋮</text>
+
+  <!-- Child 2.2 — FRACAO_IDEAL / POR_BLOCO -->
+  <rect x="280" y="422" width="980" height="40" fill="#FAFAFA"/>
+  <rect x="280" y="461" width="980" height="1" fill="#F0F2F5"/>
+  <text x="340" y="446" font-size="12" fill="#546E7A">└─</text>
+  <text x="360" y="446" font-size="13" fill="#37474F">2.2</text>
+  <text x="400" y="446" font-size="13" fill="#37474F">Limpeza</text>
+  <rect x="650" y="432" width="72" height="22" rx="11" fill="#FBE9E7"/>
+  <text x="686" y="447" font-size="11" fill="#BF360C" text-anchor="middle">DESPESA</text>
+  <rect x="748" y="432" width="88" height="22" rx="11" fill="#E3F2FD"/>
+  <text x="792" y="447" font-size="10" font-weight="600" fill="#1565C0" text-anchor="middle">FRAÇÃO IDEAL</text>
+  <rect x="866" y="432" width="84" height="22" rx="11" fill="#FFF3E0"/>
+  <text x="908" y="447" font-size="10" font-weight="600" fill="#E65100" text-anchor="middle">POR BLOCO</text>
+  <text x="1000" y="446" font-size="18" fill="#B0BEC5">⋮</text>
+
+  <!-- INLINE FORM -->
+  <rect x="360" y="475" width="600" height="220" rx="8" fill="white" filter="url(#card-shadow)" stroke="#E3F2FD" stroke-width="2"/>
+  <text x="660" y="503" font-size="15" font-weight="600" fill="#1A2332" text-anchor="middle">Nova Conta</text>
+
+  <text x="380" y="533" font-size="12" fill="#546E7A">Código *</text>
+  <rect x="380" y="541" width="100" height="30" rx="4" fill="#F5F7FA" stroke="#1976D2" stroke-width="1.5"/>
+  <text x="396" y="561" font-size="13" fill="#37474F">2.3</text>
+
+  <text x="496" y="533" font-size="12" fill="#546E7A">Descrição *</text>
+  <rect x="496" y="541" width="200" height="30" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="512" y="561" font-size="13" fill="#B0BEC5">Ex: Segurança</text>
+
+  <text x="710" y="533" font-size="12" fill="#546E7A">Tipo *</text>
+  <rect x="710" y="541" width="110" height="30" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="726" y="561" font-size="13" fill="#37474F">DESPESA ▼</text>
+
+  <text x="380" y="592" font-size="12" fill="#546E7A">Tipo Rateio</text>
+  <rect x="380" y="600" width="130" height="30" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="396" y="620" font-size="13" fill="#37474F">IGUALITÁRIO ▼</text>
+
+  <text x="524" y="592" font-size="12" fill="#546E7A">Escopo</text>
+  <rect x="524" y="600" width="110" height="30" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="540" y="620" font-size="13" fill="#37474F">TODOS ▼</text>
+
+  <text x="648" y="592" font-size="12" fill="#546E7A">Conta Pai</text>
+  <rect x="648" y="600" width="160" height="30" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="664" y="620" font-size="13" fill="#37474F">2 — Despesas</text>
+
+  <rect x="720" y="648" width="80" height="30" rx="4" fill="white" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="760" y="668" font-size="13" fill="#546E7A" text-anchor="middle">Cancelar</text>
+  <rect x="812" y="648" width="80" height="30" rx="4" fill="#1976D2"/>
+  <text x="852" y="668" font-size="13" font-weight="500" fill="white" text-anchor="middle">Salvar</text>
+
+  <!-- SUMMARY -->
+  <rect x="280" y="718" width="980" height="38" rx="0 0 8 8" fill="#F5F7FA"/>
+  <text x="300" y="742" font-size="12" fill="#546E7A">Total: 2 grupos • 4 contas</text>
+  <text x="700" y="742" font-size="12" fill="#1565C0">Igualitário: 2</text>
+  <text x="820" y="742" font-size="12" fill="#1565C0">Fração Ideal: 2</text>
+  <text x="960" y="742" font-size="12" fill="#546E7A">Todos: 2 · Por Bloco: 2</text>
+</svg>
