@@ -4,12 +4,15 @@ import com.pmrodrigues.condominio.dto.CondominioDTO;
 import com.pmrodrigues.condominio.dto.CondominioFilterDTO;
 import com.pmrodrigues.condominio.dto.CreateCondominioDTO;
 import com.pmrodrigues.condominio.mapper.CondominioMapper;
+import com.pmrodrigues.condominio.repository.ApartamentoRepository;
+import com.pmrodrigues.condominio.repository.BlocoRepository;
 import com.pmrodrigues.condominio.repository.CondominioRepository;
 import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +34,8 @@ public class CondominioService {
 
     private final CondominioRepository repository;
     private final CondominioMapper mapper;
+    private final BlocoRepository blocoRepository;
+    private final ApartamentoRepository apartamentoRepository;
 
     /**
      * Returns condominios matching the supplied filter criteria.
@@ -118,18 +123,25 @@ public class CondominioService {
     }
 
     /**
-     * Soft-deletes the condominio with the given id.
+     * Soft-deletes the condominio with the given id, cascading to all its blocos and apartamentos.
      *
      * @param id primary key of the condominio to delete
      * @throws org.springframework.web.server.ResponseStatusException if no condominio exists with the given id
      */
     @Transactional
     @Timed(value = "condominio.service.delete", description = "Delete condominio")
-    @CacheEvict(value = "condominios", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "condominios", allEntries = true),
+            @CacheEvict(value = "blocos", allEntries = true),
+            @CacheEvict(value = "apartamentos", allEntries = true)
+    })
     public void delete(Long id) {
         log.info("Deleting condominio with id: {}", id);
         var entity = repository.findById(id)
                 .orElseThrow(() -> notFound("Condominio", id));
+        log.info("Cascade soft-deleting blocos and apartamentos for condominioId: {}", id);
+        apartamentoRepository.softDeleteByCondominioId(id);
+        blocoRepository.softDeleteByCondominioId(id);
         repository.delete(entity);
         log.info("Condominio soft-deleted successfully: {}", id);
     }

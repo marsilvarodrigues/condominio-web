@@ -7,12 +7,14 @@ import com.pmrodrigues.condominio.dto.CondominioDTO;
 import com.pmrodrigues.condominio.dto.CreateCondominioDTO;
 import com.pmrodrigues.condominio.dto.CreateCondominioEnderecoDTO;
 import com.pmrodrigues.condominio.model.Condominio;
+import jakarta.persistence.EntityManager;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * MapStruct mapper for converting between {@link Condominio} entities and their DTO representations.
@@ -21,7 +23,14 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
         uses = {EnderecoMapper.class},
         injectionStrategy = InjectionStrategy.CONSTRUCTOR,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface CondominioMapper {
+public abstract class CondominioMapper {
+
+    protected EntityManager em;
+
+    @Autowired(required = false)
+    public void setEntityManager(EntityManager em) {
+        this.em = em;
+    }
 
     /**
      * Converts a {@link Condominio} entity to its full DTO representation.
@@ -29,12 +38,11 @@ public interface CondominioMapper {
      * @param condominio source entity
      * @return mapped DTO
      */
-    CondominioDTO toDTO(Condominio condominio);
+    public abstract CondominioDTO toDTO(Condominio condominio);
 
     /**
      * Creates a new {@link Condominio} entity from a creation payload.
-     * The address state is resolved from its numeric identifier using a JPA reference,
-     * avoiding unnecessary database lookups at mapping time.
+     * The address state is resolved via a JPA reference, avoiding unnecessary database lookups at mapping time.
      *
      * @param dto creation payload
      * @return new entity (audit fields and deleted flag are ignored)
@@ -45,7 +53,7 @@ public interface CondominioMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "endereco", source = "endereco", qualifiedByName = "createEnderecoToEmbeddable")
-    Condominio toEntity(CreateCondominioDTO dto);
+    public abstract Condominio toEntity(CreateCondominioDTO dto);
 
     /**
      * Applies non-null DTO fields onto an existing entity, ignoring id, soft-delete, and audit fields.
@@ -59,24 +67,20 @@ public interface CondominioMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
-    void updateEntity(@MappingTarget Condominio condominio, CondominioDTO dto);
+    public abstract void updateEntity(@MappingTarget Condominio condominio, CondominioDTO dto);
 
     /**
-     * Converts a {@link CreateCondominioEnderecoDTO} (with estado as Long) to the {@link Endereco}
-     * embeddable, creating a JPA entity reference for Estado using only its id.
+     * Converts a {@link CreateCondominioEnderecoDTO} to the {@link Endereco} embeddable,
+     * resolving the estado via a JPA reference instead of a hollow entity.
      */
     @Named("createEnderecoToEmbeddable")
-    default Endereco createEnderecoToEmbeddable(CreateCondominioEnderecoDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        var estado = new Estado();
-        estado.setId(dto.estado());
+    protected Endereco createEnderecoToEmbeddable(CreateCondominioEnderecoDTO dto) {
+        if (dto == null) return null;
         return Endereco.builder()
                 .logradouro(dto.logradouro())
                 .cep(dto.cep())
                 .cidade(dto.cidade())
-                .estado(estado)
+                .estado(em.getReference(Estado.class, dto.estado()))
                 .build();
     }
 }

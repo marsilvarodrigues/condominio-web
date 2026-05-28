@@ -6,6 +6,8 @@ import com.pmrodrigues.condominio.dto.CreateCondominioDTO;
 import com.pmrodrigues.condominio.dto.CreateCondominioEnderecoDTO;
 import com.pmrodrigues.condominio.mapper.CondominioMapper;
 import com.pmrodrigues.condominio.model.Condominio;
+import com.pmrodrigues.condominio.repository.ApartamentoRepository;
+import com.pmrodrigues.condominio.repository.BlocoRepository;
 import com.pmrodrigues.condominio.repository.CondominioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,12 +30,14 @@ class CondominioServiceTest {
 
     @Mock CondominioRepository repository;
     @Mock CondominioMapper mapper;
+    @Mock BlocoRepository blocoRepository;
+    @Mock ApartamentoRepository apartamentoRepository;
 
     CondominioService service;
 
     @BeforeEach
     void setUp() {
-        service = new CondominioService(repository, mapper);
+        service = new CondominioService(repository, mapper, blocoRepository, apartamentoRepository);
 
         lenient().when(mapper.toEntity(any(CreateCondominioDTO.class))).thenAnswer(inv -> {
             CreateCondominioDTO d = inv.getArgument(0);
@@ -199,6 +203,17 @@ class CondominioServiceTest {
         service.delete(1L);
 
         verify(repository).delete(entity);
+    }
+
+    @Test
+    void delete_cascadesSoftDeleteToBlocosAndApartamentos() {
+        var entity = condominio(1L);
+        when(repository.findById(1L)).thenReturn(Optional.of(entity));
+
+        service.delete(1L);
+
+        verify(apartamentoRepository).softDeleteByCondominioId(1L);
+        verify(blocoRepository).softDeleteByCondominioId(1L);
     }
 
     @Test

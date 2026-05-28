@@ -64,4 +64,24 @@ class BlocoRepositoryTest {
                 .getSingleResult();
         assertThat(count.intValue()).isEqualTo(1);
     }
+
+    @Test
+    void softDeleteByCondominioId_marksAllBlocosDeleted() {
+        repository.save(bloco("A", 1));
+        repository.save(bloco("B", 2));
+        em.flush();
+        em.clear();
+
+        repository.softDeleteByCondominioId(condominio.getId());
+        em.flush();
+        em.clear();
+
+        assertThat(repository.findAll()).isEmpty();
+
+        var count = (Number) em.createNativeQuery(
+                        "SELECT COUNT(*) FROM blocos WHERE condominio_id = :cid AND deleted = true")
+                .setParameter("cid", condominio.getId())
+                .getSingleResult();
+        assertThat(count.intValue()).isEqualTo(2);
+    }
 }

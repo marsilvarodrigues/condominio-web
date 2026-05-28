@@ -5,6 +5,7 @@ import com.pmrodrigues.condominio.service.CondominioService;
 import com.pmrodrigues.security.dto.ChangePasswordDTO;
 import com.pmrodrigues.security.dto.CreateUserDTO;
 import com.pmrodrigues.security.dto.UserDTO;
+import com.pmrodrigues.security.dto.UserFilterDTO;
 import com.pmrodrigues.security.mapper.UserMapper;
 import com.pmrodrigues.security.model.PasswordHistory;
 import com.pmrodrigues.security.repository.PasswordHistoryRepository;
@@ -25,6 +26,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import static com.pmrodrigues.security.specification.UserSpecification.hasEmail;
+import static com.pmrodrigues.security.specification.UserSpecification.hasEnabled;
+import static com.pmrodrigues.security.specification.UserSpecification.hasNome;
+import static com.pmrodrigues.security.specification.UserSpecification.hasRole;
+import org.springframework.data.jpa.domain.Specification;
 
 import static com.pmrodrigues.commons.util.Exceptions.notFound;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -94,16 +101,18 @@ public class UserService {
     }
 
     /**
-     * Returns all non-deleted users.
+     * Returns users matching the supplied filter criteria. All filter fields are optional; absent fields are ignored.
      *
-     * @return list of all active users as DTOs
+     * @param dto filter containing optional nome substring, email substring, enabled flag, and role
+     * @return matching user DTOs
      */
     @Transactional(readOnly = true)
-    @Timed(value = "user.service.findAll", description = "Find all users")
-    public List<UserDTO> findAll() {
-        log.info("Retrieving all users");
-        var users = userRepository.findAll().stream().map(mapper::toDTO).toList();
-        log.info("Retrieved {} users", users.size());
+    @Timed(value = "user.service.filterBy", description = "Filter users")
+    public List<UserDTO> filterBy(UserFilterDTO dto) {
+        log.info("Filtering users: nome={}, email={}, enabled={}, role={}", dto.nome(), dto.email(), dto.enabled(), dto.role());
+        var users = userRepository.findAll(Specification.allOf(hasNome(dto.nome()), hasEmail(dto.email()), hasEnabled(dto.enabled()), hasRole(dto.role())))
+                .stream().map(mapper::toDTO).toList();
+        log.info("Filter users: {} results", users.size());
         return users;
     }
 

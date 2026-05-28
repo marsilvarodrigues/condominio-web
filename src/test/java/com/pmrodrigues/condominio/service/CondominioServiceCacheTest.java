@@ -6,6 +6,8 @@ import com.pmrodrigues.condominio.dto.CreateCondominioDTO;
 import com.pmrodrigues.condominio.dto.CreateCondominioEnderecoDTO;
 import com.pmrodrigues.condominio.mapper.CondominioMapper;
 import com.pmrodrigues.condominio.model.Condominio;
+import com.pmrodrigues.condominio.repository.ApartamentoRepository;
+import com.pmrodrigues.condominio.repository.BlocoRepository;
 import com.pmrodrigues.condominio.repository.CondominioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +37,7 @@ class CondominioServiceCacheTest {
     static class TestConfig {
         @Bean
         CacheManager cacheManager() {
-            return new ConcurrentMapCacheManager("condominios");
+            return new ConcurrentMapCacheManager("condominios", "blocos", "apartamentos");
         }
 
         @Bean
@@ -49,8 +51,19 @@ class CondominioServiceCacheTest {
         }
 
         @Bean
-        CondominioService service(CondominioRepository repository, CondominioMapper mapper) {
-            return new CondominioService(repository, mapper);
+        BlocoRepository blocoRepository() {
+            return mock(BlocoRepository.class);
+        }
+
+        @Bean
+        ApartamentoRepository apartamentoRepository() {
+            return mock(ApartamentoRepository.class);
+        }
+
+        @Bean
+        CondominioService service(CondominioRepository repository, CondominioMapper mapper,
+                                   BlocoRepository blocoRepository, ApartamentoRepository apartamentoRepository) {
+            return new CondominioService(repository, mapper, blocoRepository, apartamentoRepository);
         }
     }
 

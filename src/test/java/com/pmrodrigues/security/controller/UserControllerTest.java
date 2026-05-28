@@ -5,6 +5,7 @@ import com.pmrodrigues.commons.interceptor.RequestIdInterceptor;
 import com.pmrodrigues.security.dto.ChangePasswordDTO;
 import com.pmrodrigues.security.dto.CreateUserDTO;
 import com.pmrodrigues.security.dto.UserDTO;
+import com.pmrodrigues.security.dto.UserFilterDTO;
 import com.pmrodrigues.security.service.TokenBlacklistService;
 import com.pmrodrigues.security.service.UserDetailsServiceImpl;
 import com.pmrodrigues.security.service.UserService;
@@ -56,7 +57,7 @@ class UserControllerTest {
     @Test
     @WithMockUser
     void findAll_returnsListWith200() throws Exception {
-        when(userService.findAll()).thenReturn(List.of(
+        when(userService.filterBy(any(UserFilterDTO.class))).thenReturn(List.of(
                 dto(1L, "a@test.com"),
                 dto(2L, "b@test.com")
         ));
@@ -72,7 +73,7 @@ class UserControllerTest {
     @Test
     @WithMockUser
     void findAll_includesRequestIdInResponse() throws Exception {
-        when(userService.findAll()).thenReturn(List.of());
+        when(userService.filterBy(any(UserFilterDTO.class))).thenReturn(List.of());
         var fixedId = UUID.randomUUID().toString();
 
         mockMvc.perform(get("/users").header(RequestIdInterceptor.REQUEST_ID_HEADER, fixedId))
@@ -281,9 +282,6 @@ class UserControllerTest {
     @Test
     @WithMockUser(username = "attacker@test.com", roles = "USER")
     void update_asUser_returns403() throws Exception {
-        doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN, "Acesso negado"))
-                .when(userService).update(any());
-
         mockMvc.perform(put("/users/1")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)

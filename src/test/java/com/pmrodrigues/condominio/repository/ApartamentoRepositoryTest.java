@@ -65,4 +65,24 @@ class ApartamentoRepositoryTest {
                 .getSingleResult();
         assertThat(count.intValue()).isEqualTo(1);
     }
+
+    @Test
+    void softDeleteByCondominioId_marksAllApartamentosDeleted() {
+        repository.save(apartamento("101"));
+        repository.save(apartamento("102"));
+        em.flush();
+        em.clear();
+
+        repository.softDeleteByCondominioId(condominio.getId());
+        em.flush();
+        em.clear();
+
+        assertThat(repository.findAll()).isEmpty();
+
+        var count = (Number) em.createNativeQuery(
+                        "SELECT COUNT(*) FROM apartamentos WHERE condominio_id = :cid AND deleted = true")
+                .setParameter("cid", condominio.getId())
+                .getSingleResult();
+        assertThat(count.intValue()).isEqualTo(2);
+    }
 }

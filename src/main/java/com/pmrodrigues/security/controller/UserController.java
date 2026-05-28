@@ -4,6 +4,7 @@ import com.pmrodrigues.commons.dto.ApiResponse;
 import com.pmrodrigues.security.dto.ChangePasswordDTO;
 import com.pmrodrigues.security.dto.CreateUserDTO;
 import com.pmrodrigues.security.dto.UserDTO;
+import com.pmrodrigues.security.dto.UserFilterDTO;
 import com.pmrodrigues.security.service.UserService;
 import com.pmrodrigues.commons.versioning.ApiVersion;
 import io.micrometer.core.annotation.Timed;
@@ -36,15 +37,16 @@ public class UserController {
     private final UserService userService;
 
     /**
-     * Returns all users visible to the current tenant.
+     * Returns users matching optional filter criteria.
      *
+     * @param dto optional filters: nome substring, email substring, enabled flag, role
      * @return {@code 200} with a list of {@link UserDTO}
      */
     @GetMapping
     @Timed(value = "user.controller.findAll", description = "Find all users")
-    public ResponseEntity<ApiResponse<List<UserDTO>>> findAll(HttpServletRequest request) {
-        log.info("GET /users - finding all users");
-        var users = userService.findAll();
+    public ResponseEntity<ApiResponse<List<UserDTO>>> findAll(@ModelAttribute UserFilterDTO dto, HttpServletRequest request) {
+        log.info("GET /users - filtering users");
+        var users = userService.filterBy(dto);
         log.info("GET /users - returning {} users", users.size());
         return ResponseEntity.ok(ApiResponse.of(requestId(request), users));
     }
@@ -90,6 +92,7 @@ public class UserController {
      */
     @PutMapping("/{id}")
     @Timed(value = "user.controller.update", description = "Update user")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or #dto.email() == authentication.name")
     public ResponseEntity<ApiResponse<UserDTO>> update(@PathVariable Long id,
                                                        @RequestBody @Valid UserDTO dto,
                                                        HttpServletRequest request) {

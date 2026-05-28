@@ -2,13 +2,14 @@ package com.pmrodrigues.security.repository;
 
 import com.pmrodrigues.security.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
 
 /**
- * Spring Data JPA repository for {@link User} entities.
+ * Spring Data JPA repository for {@link User} entities, supporting specification-based filtering.
  */
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
 
     /**
      * Finds an active (non-deleted) user by email address.

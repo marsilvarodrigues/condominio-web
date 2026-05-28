@@ -10,21 +10,32 @@ import com.pmrodrigues.condominio.dto.CondominioDTO;
 import com.pmrodrigues.condominio.dto.CreateCondominioDTO;
 import com.pmrodrigues.condominio.dto.CreateCondominioEnderecoDTO;
 import com.pmrodrigues.condominio.model.Condominio;
+import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {EstadoMapperImpl.class, EnderecoMapperImpl.class, CondominioMapperImpl.class})
 class CondominioMapperTest {
 
     @Autowired CondominioMapper mapper;
+    @MockitoBean EntityManager em;
+
+    @BeforeEach
+    void setUp() {
+        when(em.getReference(Estado.class, 1L)).thenReturn(new Estado(1L, null, null));
+    }
 
     // ── toDTO ─────────────────────────────────────────────────────────────
 
@@ -72,6 +83,7 @@ class CondominioMapperTest {
         assertThat(entity.getEndereco().getLogradouro()).isEqualTo("Rua C, 30");
         assertThat(entity.getEndereco().getCidade()).isEqualTo("São Paulo");
         assertThat(entity.getEndereco().getEstado().getId()).isEqualTo(1L);
+        verify(em).getReference(Estado.class, 1L);
     }
 
     @Test

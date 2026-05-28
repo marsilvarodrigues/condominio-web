@@ -4,19 +4,24 @@ import com.pmrodrigues.condominio.dto.ApartamentoDTO;
 import com.pmrodrigues.condominio.dto.CreateApartamentoDTO;
 import com.pmrodrigues.condominio.model.Apartamento;
 import com.pmrodrigues.condominio.model.Bloco;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApartamentoMapperImpl.class)
 class ApartamentoMapperTest {
 
     @Autowired ApartamentoMapper mapper;
+    @MockitoBean EntityManager em;
 
     // ── toDTO ─────────────────────────────────────────────────────────────
 
@@ -40,14 +45,18 @@ class ApartamentoMapperTest {
     // ── toEntity (CreateApartamentoDTO) ───────────────────────────────────
 
     @Test
-    void toEntity_mapsNumeroAndCreatesBlocoStub() {
-        var dto = new CreateApartamentoDTO(5L, "202");
+    void toEntity_mapsNumeroAndCreatesBlocoProxy() {
+        var bloco = new Bloco();
+        bloco.setId(5L);
+        when(em.getReference(Bloco.class, 5L)).thenReturn(bloco);
 
+        var dto = new CreateApartamentoDTO(5L, "202");
         var apartamento = mapper.toEntity(dto);
 
         assertThat(apartamento.getNumero()).isEqualTo("202");
         assertThat(apartamento.getBloco()).isNotNull();
         assertThat(apartamento.getBloco().getId()).isEqualTo(5L);
+        verify(em).getReference(Bloco.class, 5L);
     }
 
     @Test
@@ -61,8 +70,11 @@ class ApartamentoMapperTest {
 
     @Test
     void toEntity_ignoresServerManagedFields() {
-        var dto = new CreateApartamentoDTO(5L, "101");
+        var bloco = new Bloco();
+        bloco.setId(5L);
+        when(em.getReference(Bloco.class, 5L)).thenReturn(bloco);
 
+        var dto = new CreateApartamentoDTO(5L, "101");
         var apartamento = mapper.toEntity(dto);
 
         assertThat(apartamento.isDeleted()).isFalse();
