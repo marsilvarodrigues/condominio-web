@@ -81,15 +81,16 @@ class BancoServiceTest {
 
         var result = service.findById(1L);
 
-        assertThat(result).isPresent();
-        assertThat(result.get().codigo()).isEqualTo("341");
+        assertThat(result.codigo()).isEqualTo("341");
     }
 
     @Test
-    void findById_whenNotFound_returnsEmpty() {
+    void findById_whenNotFound_throwsNotFound() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThat(service.findById(99L)).isEmpty();
+        assertThatThrownBy(() -> service.findById(99L))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(e -> assertThat(((ResponseStatusException) e).getStatusCode().value()).isEqualTo(404));
     }
 
     // ── create ────────────────────────────────────────────────────────────

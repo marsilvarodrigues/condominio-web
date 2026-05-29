@@ -15,13 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.net.URI;
 import java.util.List;
 
 import static com.pmrodrigues.commons.util.RequestContextHelper.requestId;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 /**
  * REST controller exposing CRUD endpoints for {@link com.pmrodrigues.commons.model.Banco}.
@@ -63,8 +60,7 @@ public class BancoController {
     @Timed(value = "banco.controller.findById", description = "Find banco by id")
     public ResponseEntity<ApiResponse<BancoDTO>> findById(@PathVariable Long id, HttpServletRequest request) {
         log.info("GET /bancos/{} - finding banco by id", id);
-        var banco = bancoService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Banco not found: " + id));
+        var banco = bancoService.findById(id);
         log.info("GET /bancos/{} - banco found", id);
         return ResponseEntity.ok(ApiResponse.of(requestId(request), banco));
     }

@@ -94,9 +94,7 @@ public class ContaBancariaService {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Já existe uma conta do tipo FUNDO_RESERVA para este condomínio");
         }
-        // Validate banco exists via cross-module service call, then create a proxy reference for JPA
-        bancoService.findById(dto.bancoId())
-                .orElseThrow(() -> notFound("Banco", dto.bancoId()));
+        bancoService.findById(dto.bancoId()); // throws 404 if banco not found
         var bancoRef = new Banco();
         bancoRef.setId(dto.bancoId());
         ContaBancaria entity = mapper.toEntity(dto);

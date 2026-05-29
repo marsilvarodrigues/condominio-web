@@ -130,7 +130,7 @@ INSERT INTO bancos (codigo, nome, ispb) VALUES
 ('292',  'BS2 Distribuidora de Títulos e Investimentos',    '28650236'),
 ('293',  'Lastro RDV DTVM Ltda.',                           '71590442'),
 ('296',  'OZ Corretora de Câmbio S.A.',                     '04062902'),
-('298',  'Vip's CC Ltda.',                                  '17772370'),
+('298',  'Vip s CC Ltda.',                                  '17772370'),
 ('299',  'Sorocred CFI S.A.',                               '04814563'),
 ('300',  'Banco de la Nacion Argentina',                    '33042151'),
 ('301',  'BPP Instituição de Pagamento S.A.',               '13370835'),

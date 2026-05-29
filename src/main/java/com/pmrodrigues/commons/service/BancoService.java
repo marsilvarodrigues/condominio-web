@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.pmrodrigues.commons.specification.BancoSpecification.hasCodigo;
 import static com.pmrodrigues.commons.specification.BancoSpecification.hasNome;
@@ -56,15 +55,18 @@ public class BancoService {
      * Looks up a single banco by its primary key.
      *
      * @param id the banco identifier
-     * @return the found DTO, or empty if none exists
+     * @return the found DTO
+     * @throws org.springframework.web.server.ResponseStatusException 404 if no banco exists with the given id
      */
     @Transactional(readOnly = true)
     @Timed(value = "banco.service.findById", description = "Find banco by id")
-    @Cacheable(value = CACHE, key = "#id", unless = "#result == null")
-    public Optional<BancoDTO> findById(Long id) {
+    @Cacheable(value = CACHE, key = "#id")
+    public BancoDTO findById(Long id) {
         log.info("Looking up banco by id: {}", id);
-        var result = repository.findById(id).map(mapper::toDTO);
-        log.info("Banco lookup by id {}: {}", id, result.isPresent() ? "found" : "not found");
+        var result = repository.findById(id)
+                .map(mapper::toDTO)
+                .orElseThrow(() -> notFound("Banco", id));
+        log.info("Banco lookup by id {}: found", id);
         return result;
     }
 

@@ -7,7 +7,6 @@ import com.pmrodrigues.financeiro.model.FundoReserva;
 import com.pmrodrigues.financeiro.model.FundoReservaMovimentacao;
 import com.pmrodrigues.financeiro.model.TipoContaBancaria;
 import com.pmrodrigues.financeiro.model.TipoMovimentacao;
-import com.pmrodrigues.financeiro.repository.ContaBancariaRepository;
 import com.pmrodrigues.financeiro.repository.FundoReservaMovimentacaoRepository;
 import com.pmrodrigues.financeiro.repository.FundoReservaRepository;
 import io.micrometer.core.annotation.Timed;
@@ -39,7 +38,7 @@ public class FundoReservaService {
 
     private final FundoReservaRepository repository;
     private final FundoReservaMovimentacaoRepository movimentacaoRepository;
-    private final ContaBancariaRepository contaBancariaRepository;
+    private final ContaBancariaService contaBancariaService;
     private final FundoReservaMapper mapper;
 
     /**
@@ -178,14 +177,15 @@ public class FundoReservaService {
     }
 
     private ContaBancaria resolveContaBancaria(Long contaBancariaId) {
-        var conta = contaBancariaRepository.findById(contaBancariaId)
-                .orElseThrow(() -> notFound("ContaBancaria", contaBancariaId));
-        if (conta.getTipo() != TipoContaBancaria.FUNDO_RESERVA) {
+        var contaDTO = contaBancariaService.findById(contaBancariaId); // throws 404 if not found
+        if (contaDTO.tipo() != TipoContaBancaria.FUNDO_RESERVA) {
             log.error("ContaBancaria {} is not of type FUNDO_RESERVA", contaBancariaId);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "A conta bancária vinculada ao Fundo de Reserva deve ser do tipo FUNDO_RESERVA");
         }
-        return conta;
+        var contaRef = new ContaBancaria();
+        contaRef.setId(contaBancariaId);
+        return contaRef;
     }
 
     private FundoReservaMovimentacao buildMovimentacao(FundoReserva fundo, TipoMovimentacao tipo,

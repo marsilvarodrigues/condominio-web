@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -102,7 +103,7 @@ class ContaBancariaServiceTest {
         var bancoDTO = new BancoDTO(1L, "341", "Itaú", "60701190");
         var newEntity = entity(null, TipoContaBancaria.CORRENTE);
         when(mapper.toEntity(createDTO)).thenReturn(newEntity);
-        when(bancoService.findById(1L)).thenReturn(Optional.of(bancoDTO));
+        when(bancoService.findById(1L)).thenReturn(bancoDTO);
         when(repository.save(newEntity)).thenAnswer(inv -> {
             ContaBancaria c = inv.getArgument(0);
             c.setId(1L);
@@ -128,7 +129,7 @@ class ContaBancariaServiceTest {
     @Test
     void create_whenBancoNotFound_throwsNotFound() {
         var createDTO = new CreateContaBancariaDTO(99L, TipoContaBancaria.CORRENTE, "0001", "12345", null, null, null);
-        when(bancoService.findById(99L)).thenReturn(Optional.empty());
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND)).when(bancoService).findById(99L);
 
         assertThatThrownBy(() -> service.create(createDTO))
                 .isInstanceOf(ResponseStatusException.class)

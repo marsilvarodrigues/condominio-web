@@ -4,8 +4,8 @@ import com.pmrodrigues.financeiro.dto.*;
 import com.pmrodrigues.financeiro.mapper.FundoReservaMapper;
 import com.pmrodrigues.financeiro.model.FundoReserva;
 import com.pmrodrigues.financeiro.model.FundoReservaMovimentacao;
+import com.pmrodrigues.financeiro.model.TipoContaBancaria;
 import com.pmrodrigues.financeiro.model.TipoMovimentacao;
-import com.pmrodrigues.financeiro.repository.ContaBancariaRepository;
 import com.pmrodrigues.financeiro.repository.FundoReservaMovimentacaoRepository;
 import com.pmrodrigues.financeiro.repository.FundoReservaRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.server.ResponseStatusException;
@@ -34,7 +35,7 @@ class FundoReservaServiceTest {
 
     @Mock FundoReservaRepository repository;
     @Mock FundoReservaMovimentacaoRepository movimentacaoRepository;
-    @Mock ContaBancariaRepository contaBancariaRepository;
+    @Mock ContaBancariaService contaBancariaService;
     @Mock FundoReservaMapper mapper;
 
     FundoReservaService service;
@@ -48,7 +49,7 @@ class FundoReservaServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new FundoReservaService(repository, movimentacaoRepository, contaBancariaRepository, mapper);
+        service = new FundoReservaService(repository, movimentacaoRepository, contaBancariaService, mapper);
         lenient().when(mapper.toDTO(any(FundoReserva.class))).thenReturn(dto);
         lenient().when(mapper.toEntity(any(CreateFundoReservaDTO.class))).thenReturn(entity);
     }
@@ -87,6 +88,42 @@ class FundoReservaServiceTest {
     }
 
     @Test
+    void create_withContaBancaria_fundoReservaType_saves() {
+        var contaDTO = new ContaBancariaDTO(1L, null, null, null, TipoContaBancaria.FUNDO_RESERVA,
+                null, null, null, null, null, null, true, null, null);
+        when(repository.existsByDeletedFalse()).thenReturn(false);
+        when(repository.save(entity)).thenReturn(entity);
+        when(contaBancariaService.findById(1L)).thenReturn(contaDTO);
+
+        service.create(new CreateFundoReservaDTO(new BigDecimal("10.00"), 1L));
+
+        verify(contaBancariaService).findById(1L);
+        verify(repository).save(entity);
+    }
+
+    @Test
+    void create_withContaBancaria_typeMismatch_throwsBadRequest() {
+        var contaDTO = new ContaBancariaDTO(1L, null, null, null, TipoContaBancaria.CORRENTE,
+                null, null, null, null, null, null, true, null, null);
+        when(repository.existsByDeletedFalse()).thenReturn(false);
+        when(contaBancariaService.findById(1L)).thenReturn(contaDTO);
+
+        assertThatThrownBy(() -> service.create(new CreateFundoReservaDTO(new BigDecimal("10.00"), 1L)))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(e -> assertThat(((ResponseStatusException) e).getStatusCode().value()).isEqualTo(400));
+    }
+
+    @Test
+    void create_withContaBancaria_notFound_throwsNotFound() {
+        when(repository.existsByDeletedFalse()).thenReturn(false);
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND)).when(contaBancariaService).findById(99L);
+
+        assertThatThrownBy(() -> service.create(new CreateFundoReservaDTO(new BigDecimal("10.00"), 99L)))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(e -> assertThat(((ResponseStatusException) e).getStatusCode().value()).isEqualTo(404));
+    }
+
+    @Test
     void create_whenAlreadyExists_throwsConflict() {
         when(repository.existsByDeletedFalse()).thenReturn(true);
 
@@ -107,6 +144,34 @@ class FundoReservaServiceTest {
 
         verify(mapper).updateEntity(eq(entity), eq(updateDTO));
         verify(repository).save(entity);
+    }
+
+    @Test
+    void update_withContaBancaria_fundoReservaType_updates() {
+        var updateDTO = new UpdateFundoReservaDTO(new BigDecimal("15.00"), 1L);
+        var contaDTO = new ContaBancariaDTO(1L, null, null, null, TipoContaBancaria.FUNDO_RESERVA,
+                null, null, null, null, null, null, true, null, null);
+        when(repository.findFirstBy()).thenReturn(Optional.of(entity));
+        when(repository.save(any())).thenReturn(entity);
+        when(contaBancariaService.findById(1L)).thenReturn(contaDTO);
+
+        service.update(updateDTO);
+
+        verify(contaBancariaService).findById(1L);
+        verify(repository).save(entity);
+    }
+
+    @Test
+    void update_withContaBancaria_typeMismatch_throwsBadRequest() {
+        var updateDTO = new UpdateFundoReservaDTO(new BigDecimal("15.00"), 1L);
+        var contaDTO = new ContaBancariaDTO(1L, null, null, null, TipoContaBancaria.CORRENTE,
+                null, null, null, null, null, null, true, null, null);
+        when(repository.findFirstBy()).thenReturn(Optional.of(entity));
+        when(contaBancariaService.findById(1L)).thenReturn(contaDTO);
+
+        assertThatThrownBy(() -> service.update(updateDTO))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(e -> assertThat(((ResponseStatusException) e).getStatusCode().value()).isEqualTo(400));
     }
 
     // ── creditar ──────────────────────────────────────────────────────────
