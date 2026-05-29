@@ -1,0 +1,301 @@
+<svg width="1280" height="820" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="card-shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="820" fill="#F0F2F5"/>
+
+  <!-- SIDEBAR -->
+  <rect width="260" height="820" fill="#1A2332"/>
+  <rect x="0" y="0" width="260" height="64" fill="#151D2B"/>
+  <rect x="20" y="17" width="30" height="30" rx="6" fill="#1976D2"/>
+  <rect x="25" y="22" width="20" height="22" rx="2" fill="white" opacity="0.9"/>
+  <rect x="28" y="27" width="5" height="7" rx="1" fill="#1976D2"/>
+  <rect x="36" y="27" width="5" height="7" rx="1" fill="#1976D2"/>
+  <rect x="28" y="36" width="5" height="6" rx="1" fill="#1976D2"/>
+  <rect x="36" y="36" width="5" height="6" rx="1" fill="#1976D2"/>
+  <text x="58" y="34" font-size="18" font-weight="700" fill="white">CondoGest</text>
+  <text x="58" y="50" font-size="11" fill="#78909C">v1.0</text>
+
+  <!-- Dashboard active -->
+  <rect x="0" y="80" width="260" height="48" fill="#1976D2"/>
+  <rect x="0" y="80" width="4" height="48" fill="#42A5F5"/>
+  <rect x="26" y="92" width="8" height="8" rx="1" fill="white"/>
+  <rect x="37" y="92" width="8" height="8" rx="1" fill="white"/>
+  <rect x="26" y="103" width="8" height="8" rx="1" fill="white"/>
+  <rect x="37" y="103" width="8" height="8" rx="1" fill="white"/>
+  <text x="58" y="109" font-size="14" font-weight="500" fill="white">Dashboard</text>
+
+  <!-- Condomínios -->
+  <rect x="0" y="128" width="260" height="48" fill="transparent"/>
+  <rect x="26" y="142" width="18" height="20" rx="2" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <rect x="29" y="148" width="4" height="6" rx="0.5" fill="#78909C"/>
+  <rect x="35" y="148" width="4" height="6" rx="0.5" fill="#78909C"/>
+  <rect x="29" y="157" width="4" height="5" rx="0.5" fill="#78909C"/>
+  <rect x="35" y="157" width="4" height="5" rx="0.5" fill="#78909C"/>
+  <text x="58" y="157" font-size="14" fill="#90A4AE">Condomínios</text>
+
+  <!-- Usuários -->
+  <rect x="0" y="176" width="260" height="48" fill="transparent"/>
+  <circle cx="31" cy="189" r="5" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <path d="M22 202 Q27 196 40 202" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <circle cx="42" cy="188" r="4" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <text x="58" y="205" font-size="14" fill="#90A4AE">Usuários</text>
+
+  <line x1="20" y1="236" x2="240" y2="236" stroke="#2A3445" stroke-width="1"/>
+  <text x="22" y="258" font-size="10" font-weight="700" fill="#546E7A" letter-spacing="1.2">SISTEMA</text>
+
+  <!-- Configurações -->
+  <rect x="0" y="264" width="260" height="40" fill="transparent"/>
+  <circle cx="35" cy="283" r="7" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <circle cx="35" cy="283" r="3" fill="#78909C"/>
+  <text x="52" y="288" font-size="13" fill="#90A4AE">Configurações</text>
+
+  <!-- Relatórios -->
+  <rect x="0" y="304" width="260" height="40" fill="transparent"/>
+  <rect x="27" y="313" width="16" height="20" rx="2" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <line x1="30" y1="320" x2="40" y2="320" stroke="#78909C" stroke-width="1.2"/>
+  <line x1="30" y1="325" x2="40" y2="325" stroke="#78909C" stroke-width="1.2"/>
+  <line x1="30" y1="330" x2="37" y2="330" stroke="#78909C" stroke-width="1.2"/>
+  <text x="52" y="328" font-size="13" fill="#90A4AE">Relatórios</text>
+
+  <!-- User profile -->
+  <rect x="0" y="756" width="260" height="64" fill="#151D2B"/>
+  <circle cx="36" cy="788" r="18" fill="#C62828"/>
+  <text x="36" y="793" text-anchor="middle" font-size="14" font-weight="700" fill="white">MA</text>
+  <text x="62" y="783" font-size="13" font-weight="600" fill="white">Maria Admin</text>
+  <text x="62" y="799" font-size="11" fill="#78909C">Admin Master</text>
+  <path d="M228 780 L240 788 L228 796" fill="none" stroke="#78909C" stroke-width="1.5"/>
+  <path d="M236 788 L218 788" stroke="#78909C" stroke-width="1.5"/>
+
+  <!-- APPBAR -->
+  <rect x="260" y="0" width="1020" height="64" fill="white" filter="url(#card-shadow)"/>
+  <text x="292" y="38" font-size="20" font-weight="600" fill="#1A2332">Dashboard Global</text>
+  <text x="292" y="55" font-size="11" fill="#90A4AE">Início  ›  Dashboard</text>
+  <path d="M1170 22 Q1174 18 1178 22 L1178 34 L1166 34 Z" fill="none" stroke="#546E7A" stroke-width="1.5"/>
+  <circle cx="1172" cy="37" r="2.5" fill="#546E7A"/>
+  <circle cx="1178" cy="20" r="5" fill="#F44336"/>
+  <text x="1178" y="23" text-anchor="middle" font-size="7" fill="white">5</text>
+  <circle cx="1230" cy="32" r="20" fill="#C62828"/>
+  <text x="1230" y="37" text-anchor="middle" font-size="13" font-weight="700" fill="white">MA</text>
+
+  <text x="292" y="98" font-size="13" fill="#78909C">Visão geral do sistema — administração centralizada de todos os condomínios.</text>
+
+  <!-- ROW 1: 5 KPI CARDS (y=108, h=100) -->
+  <!-- Card 1: Total Condomínios (x=280, w=184) -->
+  <rect x="280" y="108" width="184" height="100" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <rect x="280" y="108" width="184" height="5" rx="12" fill="#1976D2"/>
+  <rect x="280" y="113" width="184" height="3" fill="#1976D2"/>
+  <rect x="292" y="122" width="36" height="36" rx="8" fill="#E3F2FD"/>
+  <rect x="299" y="129" width="20" height="22" rx="2" fill="none" stroke="#1976D2" stroke-width="1.8"/>
+  <rect x="302" y="133" width="4" height="5" rx="0.5" fill="#1976D2"/>
+  <rect x="309" y="133" width="4" height="5" rx="0.5" fill="#1976D2"/>
+  <rect x="302" y="141" width="4" height="4" rx="0.5" fill="#1976D2"/>
+  <rect x="309" y="141" width="4" height="4" rx="0.5" fill="#1976D2"/>
+  <text x="338" y="150" font-size="30" font-weight="700" fill="#1A2332">8</text>
+  <text x="292" y="198" font-size="11" fill="#78909C">Total Condomínios</text>
+
+  <!-- Card 2: Condomínios Ativos (x=479, w=184) -->
+  <rect x="479" y="108" width="184" height="100" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <rect x="479" y="108" width="184" height="5" rx="12" fill="#2E7D32"/>
+  <rect x="479" y="113" width="184" height="3" fill="#2E7D32"/>
+  <rect x="491" y="122" width="36" height="36" rx="8" fill="#E8F5E9"/>
+  <circle cx="509" cy="140" r="10" fill="none" stroke="#2E7D32" stroke-width="1.8"/>
+  <path d="M503 140 L507 144 L515 136" fill="none" stroke="#2E7D32" stroke-width="2"/>
+  <text x="537" y="150" font-size="30" font-weight="700" fill="#1A2332">6</text>
+  <text x="491" y="198" font-size="11" fill="#78909C">Condomínios Ativos</text>
+
+  <!-- Card 3: Total Usuários (x=678, w=184) -->
+  <rect x="678" y="108" width="184" height="100" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <rect x="678" y="108" width="184" height="5" rx="12" fill="#E65100"/>
+  <rect x="678" y="113" width="184" height="3" fill="#E65100"/>
+  <rect x="690" y="122" width="36" height="36" rx="8" fill="#FFF3E0"/>
+  <circle cx="700" cy="133" r="5" fill="none" stroke="#E65100" stroke-width="1.8"/>
+  <path d="M692 150 Q696 144 708 144" fill="none" stroke="#E65100" stroke-width="1.8"/>
+  <circle cx="712" cy="132" r="4" fill="none" stroke="#E65100" stroke-width="1.5"/>
+  <text x="737" y="150" font-size="30" font-weight="700" fill="#1A2332">47</text>
+  <text x="690" y="198" font-size="11" fill="#78909C">Total Usuários</text>
+
+  <!-- Card 4: Total Blocos (x=877, w=184) -->
+  <rect x="877" y="108" width="184" height="100" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <rect x="877" y="108" width="184" height="5" rx="12" fill="#00897B"/>
+  <rect x="877" y="113" width="184" height="3" fill="#00897B"/>
+  <rect x="889" y="122" width="36" height="36" rx="8" fill="#E0F2F1"/>
+  <rect x="895" y="128" width="11" height="11" rx="1.5" fill="none" stroke="#00897B" stroke-width="1.8"/>
+  <rect x="909" y="128" width="11" height="11" rx="1.5" fill="none" stroke="#00897B" stroke-width="1.8"/>
+  <rect x="895" y="142" width="25" height="10" rx="1.5" fill="none" stroke="#00897B" stroke-width="1.8"/>
+  <text x="936" y="150" font-size="30" font-weight="700" fill="#1A2332">32</text>
+  <text x="889" y="198" font-size="11" fill="#78909C">Total Blocos</text>
+
+  <!-- Card 5: Total Apartamentos (x=1076, w=184) -->
+  <rect x="1076" y="108" width="184" height="100" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <rect x="1076" y="108" width="184" height="5" rx="12" fill="#7B1FA2"/>
+  <rect x="1076" y="113" width="184" height="3" fill="#7B1FA2"/>
+  <rect x="1088" y="122" width="36" height="36" rx="8" fill="#F3E5F5"/>
+  <rect x="1095" y="128" width="18" height="22" rx="2" fill="none" stroke="#7B1FA2" stroke-width="1.8"/>
+  <circle cx="1110" cy="139" r="2.5" fill="#7B1FA2"/>
+  <text x="1122" y="150" font-size="28" font-weight="700" fill="#1A2332">256</text>
+  <text x="1088" y="198" font-size="11" fill="#78909C">Total Apartamentos</text>
+
+  <!-- ROW 2: TABLE (x=280, w=596, y=224, h=340) + ACTIVITIES (x=892, w=368, h=340) -->
+
+  <!-- Condominiums table panel -->
+  <rect x="280" y="224" width="596" height="340" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <text x="300" y="254" font-size="15" font-weight="600" fill="#1A2332">Condomínios Recentes</text>
+  <text x="856" y="254" text-anchor="end" font-size="12" fill="#1976D2">Ver todos →</text>
+
+  <!-- Table header -->
+  <rect x="280" y="262" width="596" height="32" fill="#F8FAFC"/>
+  <text x="300" y="282" font-size="11" font-weight="600" fill="#546E7A">NOME</text>
+  <text x="466" y="282" font-size="11" font-weight="600" fill="#546E7A">CNPJ</text>
+  <text x="628" y="282" font-size="11" font-weight="600" fill="#546E7A">BLOCOS</text>
+  <text x="680" y="282" font-size="11" font-weight="600" fill="#546E7A">APTOS</text>
+  <text x="742" y="282" font-size="11" font-weight="600" fill="#546E7A">STATUS</text>
+  <text x="826" y="282" font-size="11" font-weight="600" fill="#546E7A">CADASTRO</text>
+
+  <!-- Row 1 -->
+  <line x1="280" y1="294" x2="876" y2="294" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="313" font-size="12" fill="#1A2332">Solar das Flores</text>
+  <text x="466" y="313" font-size="11" fill="#546E7A">12.345.678/0001-90</text>
+  <text x="644" y="313" text-anchor="middle" font-size="12" fill="#546E7A">5</text>
+  <text x="696" y="313" text-anchor="middle" font-size="12" fill="#546E7A">40</text>
+  <rect x="734" y="302" width="46" height="18" rx="9" fill="#E8F5E9"/>
+  <text x="757" y="315" text-anchor="middle" font-size="10" fill="#2E7D32">Ativo</text>
+  <text x="826" y="313" font-size="11" fill="#90A4AE">12/03/2024</text>
+
+  <!-- Row 2 -->
+  <line x1="280" y1="326" x2="876" y2="326" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="345" font-size="12" fill="#1A2332">Parque das Acácias</text>
+  <text x="466" y="345" font-size="11" fill="#546E7A">98.765.432/0001-11</text>
+  <text x="644" y="345" text-anchor="middle" font-size="12" fill="#546E7A">3</text>
+  <text x="696" y="345" text-anchor="middle" font-size="12" fill="#546E7A">24</text>
+  <rect x="734" y="334" width="46" height="18" rx="9" fill="#E8F5E9"/>
+  <text x="757" y="347" text-anchor="middle" font-size="10" fill="#2E7D32">Ativo</text>
+  <text x="826" y="345" font-size="11" fill="#90A4AE">28/04/2024</text>
+
+  <!-- Row 3 -->
+  <line x1="280" y1="358" x2="876" y2="358" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="377" font-size="12" fill="#1A2332">Residencial Vista Mar</text>
+  <text x="466" y="377" font-size="11" fill="#546E7A">11.222.333/0001-44</text>
+  <text x="644" y="377" text-anchor="middle" font-size="12" fill="#546E7A">7</text>
+  <text x="696" y="377" text-anchor="middle" font-size="12" fill="#546E7A">84</text>
+  <rect x="734" y="366" width="46" height="18" rx="9" fill="#E8F5E9"/>
+  <text x="757" y="379" text-anchor="middle" font-size="10" fill="#2E7D32">Ativo</text>
+  <text x="826" y="377" font-size="11" fill="#90A4AE">10/01/2025</text>
+
+  <!-- Row 4 -->
+  <line x1="280" y1="390" x2="876" y2="390" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="409" font-size="12" fill="#1A2332">Jardins do Sul</text>
+  <text x="466" y="409" font-size="11" fill="#546E7A">55.444.333/0001-22</text>
+  <text x="644" y="409" text-anchor="middle" font-size="12" fill="#546E7A">4</text>
+  <text x="696" y="409" text-anchor="middle" font-size="12" fill="#546E7A">32</text>
+  <rect x="734" y="398" width="46" height="18" rx="9" fill="#E8F5E9"/>
+  <text x="757" y="411" text-anchor="middle" font-size="10" fill="#2E7D32">Ativo</text>
+  <text x="826" y="409" font-size="11" fill="#90A4AE">05/02/2025</text>
+
+  <!-- Row 5 -->
+  <line x1="280" y1="422" x2="876" y2="422" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="441" font-size="12" fill="#1A2332">Condomínio das Palmeiras</text>
+  <text x="466" y="441" font-size="11" fill="#546E7A">77.888.999/0001-55</text>
+  <text x="644" y="441" text-anchor="middle" font-size="12" fill="#546E7A">6</text>
+  <text x="696" y="441" text-anchor="middle" font-size="12" fill="#546E7A">48</text>
+  <rect x="730" y="430" width="54" height="18" rx="9" fill="#FFF8E1"/>
+  <text x="757" y="443" text-anchor="middle" font-size="10" fill="#F57C00">Inativo</text>
+  <text x="826" y="441" font-size="11" fill="#90A4AE">18/03/2025</text>
+
+  <!-- Row 6 -->
+  <line x1="280" y1="454" x2="876" y2="454" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="473" font-size="12" fill="#1A2332">Torre do Parque</text>
+  <text x="466" y="473" font-size="11" fill="#546E7A">33.444.555/0001-66</text>
+  <text x="644" y="473" text-anchor="middle" font-size="12" fill="#546E7A">2</text>
+  <text x="696" y="473" text-anchor="middle" font-size="12" fill="#546E7A">28</text>
+  <rect x="734" y="462" width="46" height="18" rx="9" fill="#E8F5E9"/>
+  <text x="757" y="475" text-anchor="middle" font-size="10" fill="#2E7D32">Ativo</text>
+  <text x="826" y="473" font-size="11" fill="#90A4AE">22/04/2025</text>
+
+  <!-- Row 7 -->
+  <line x1="280" y1="486" x2="876" y2="486" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="505" font-size="12" fill="#1A2332">Residencial das Orquídeas</text>
+  <text x="466" y="505" font-size="11" fill="#546E7A">66.777.888/0001-99</text>
+  <text x="644" y="505" text-anchor="middle" font-size="12" fill="#546E7A">8</text>
+  <text x="696" y="505" text-anchor="middle" font-size="12" fill="#546E7A">64</text>
+  <rect x="730" y="494" width="54" height="18" rx="9" fill="#FFF8E1"/>
+  <text x="757" y="507" text-anchor="middle" font-size="10" fill="#F57C00">Inativo</text>
+  <text x="826" y="505" font-size="11" fill="#90A4AE">15/05/2025</text>
+
+  <!-- Pagination -->
+  <text x="300" y="548" font-size="11" fill="#90A4AE">Exibindo 7 de 8 condomínios</text>
+  <rect x="790" y="534" width="28" height="22" rx="4" fill="#1976D2"/>
+  <text x="804" y="549" text-anchor="middle" font-size="11" fill="white">1</text>
+  <rect x="822" y="534" width="28" height="22" rx="4" fill="#F0F2F5"/>
+  <text x="836" y="549" text-anchor="middle" font-size="11" fill="#546E7A">2</text>
+  <rect x="854" y="534" width="28" height="22" rx="4" fill="#F0F2F5"/>
+  <text x="868" y="549" text-anchor="middle" font-size="11" fill="#546E7A">›</text>
+
+  <!-- Activities panel (x=892, w=368, y=224, h=340) -->
+  <rect x="892" y="224" width="368" height="340" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <text x="912" y="254" font-size="15" font-weight="600" fill="#1A2332">Atividades por Condomínio</text>
+
+  <!-- Activity 1 -->
+  <rect x="892" y="268" width="4" height="48" rx="2" fill="#1976D2"/>
+  <text x="906" y="286" font-size="12" font-weight="600" fill="#1A2332">Solar das Flores</text>
+  <text x="906" y="300" font-size="11" fill="#546E7A">3 ocorrências abertas · 12 pagamentos</text>
+  <text x="906" y="312" font-size="10" fill="#90A4AE">Hoje às 14:32</text>
+  <line x1="906" y1="326" x2="1252" y2="326" stroke="#F0F2F5" stroke-width="1"/>
+
+  <!-- Activity 2 -->
+  <rect x="892" y="334" width="4" height="48" rx="2" fill="#2E7D32"/>
+  <text x="906" y="352" font-size="12" font-weight="600" fill="#1A2332">Parque das Acácias</text>
+  <text x="906" y="366" font-size="11" fill="#546E7A">1 ocorrência aberta · 8 pagamentos</text>
+  <text x="906" y="378" font-size="10" fill="#90A4AE">Ontem às 09:15</text>
+  <line x1="906" y1="392" x2="1252" y2="392" stroke="#F0F2F5" stroke-width="1"/>
+
+  <!-- Activity 3 -->
+  <rect x="892" y="400" width="4" height="48" rx="2" fill="#E65100"/>
+  <text x="906" y="418" font-size="12" font-weight="600" fill="#1A2332">Residencial Vista Mar</text>
+  <text x="906" y="432" font-size="11" fill="#546E7A">5 ocorrências abertas · 20 pagamentos</text>
+  <text x="906" y="444" font-size="10" fill="#90A4AE">Hoje às 11:00</text>
+  <line x1="906" y1="458" x2="1252" y2="458" stroke="#F0F2F5" stroke-width="1"/>
+
+  <!-- Activity 4 -->
+  <rect x="892" y="466" width="4" height="48" rx="2" fill="#7B1FA2"/>
+  <text x="906" y="484" font-size="12" font-weight="600" fill="#1A2332">Jardins do Sul</text>
+  <text x="906" y="498" font-size="11" fill="#546E7A">2 ocorrências abertas · 15 pagamentos</text>
+  <text x="906" y="510" font-size="10" fill="#90A4AE">27/05 às 16:45</text>
+  <line x1="906" y1="524" x2="1252" y2="524" stroke="#F0F2F5" stroke-width="1"/>
+
+  <!-- Activity 5 -->
+  <rect x="892" y="530" width="4" height="30" rx="2" fill="#00897B"/>
+  <text x="906" y="548" font-size="12" font-weight="600" fill="#1A2332">Torre do Parque</text>
+  <text x="906" y="560" font-size="10" fill="#90A4AE">25/05 às 10:22</text>
+
+  <!-- ROW 3: SUMMARY CARDS (y=582, h=76) -->
+
+  <!-- Summary 1: Novos esta semana -->
+  <rect x="280" y="582" width="233" height="76" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <text x="300" y="606" font-size="12" fill="#78909C">Novos esta semana</text>
+  <text x="300" y="638" font-size="26" font-weight="700" fill="#1976D2">3</text>
+  <text x="498" y="638" text-anchor="end" font-size="11" fill="#4CAF50">▲ condomínios</text>
+
+  <!-- Summary 2: Logins hoje -->
+  <rect x="529" y="582" width="233" height="76" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <text x="549" y="606" font-size="12" fill="#78909C">Logins hoje</text>
+  <text x="549" y="638" font-size="26" font-weight="700" fill="#00897B">12</text>
+  <text x="748" y="638" text-anchor="end" font-size="11" fill="#78909C">sessões ativas</text>
+
+  <!-- Summary 3: Usuários novos -->
+  <rect x="778" y="582" width="233" height="76" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <text x="798" y="606" font-size="12" fill="#78909C">Usuários novos</text>
+  <text x="798" y="638" font-size="26" font-weight="700" fill="#E65100">4</text>
+  <text x="997" y="638" text-anchor="end" font-size="11" fill="#4CAF50">▲ este mês</text>
+
+  <!-- Summary 4: Status sistema -->
+  <rect x="1027" y="582" width="233" height="76" rx="12" fill="white" filter="url(#card-shadow)"/>
+  <text x="1047" y="606" font-size="12" fill="#78909C">Status do sistema</text>
+  <circle cx="1053" cy="630" r="6" fill="#4CAF50"/>
+  <text x="1066" y="636" font-size="15" font-weight="700" fill="#2E7D32">Operacional</text>
+  <text x="1047" y="652" font-size="10" fill="#90A4AE">Todos os serviços ativos</text>
+
+</svg>
