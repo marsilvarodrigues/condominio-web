@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TenantFilterAspect {
 
+    public static final String CONDOMINIO_FILTER = "condominioFilter";
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -38,7 +39,7 @@ public class TenantFilterAspect {
         }
         log.debug("Enabling condominioFilter for condominioId={}", condominioId);
         entityManager.unwrap(Session.class)
-                .enableFilter("condominioFilter")
+                .enableFilter(CONDOMINIO_FILTER)
                 .setParameter("condominioId", condominioId);
     }
 }

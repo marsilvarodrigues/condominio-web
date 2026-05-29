@@ -1,5 +1,6 @@
 package com.pmrodrigues.condominio.model;
 
+import com.pmrodrigues.commons.config.TenantFilterAspect;
 import com.pmrodrigues.commons.tenant.TenantContext;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,7 +29,7 @@ import java.time.LocalDateTime;
 @Table(name = "blocos")
 @SQLDelete(sql = "UPDATE blocos SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
-@Filter(name = "condominioFilter", condition = "condominio_id = :condominioId")
+@Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @EntityListeners(AuditingEntityListener.class)
 public class Bloco {
 
