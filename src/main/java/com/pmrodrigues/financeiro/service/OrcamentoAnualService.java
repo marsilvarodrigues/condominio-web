@@ -4,12 +4,10 @@ import com.pmrodrigues.financeiro.dto.*;
 import com.pmrodrigues.financeiro.mapper.OrcamentoAnualMapper;
 import com.pmrodrigues.financeiro.model.ItemOrcamento;
 import com.pmrodrigues.financeiro.model.OrcamentoAnual;
-import com.pmrodrigues.financeiro.model.PlanoContas;
 import com.pmrodrigues.financeiro.model.StatusOrcamento;
 import com.pmrodrigues.financeiro.repository.ItemOrcamentoRepository;
 import com.pmrodrigues.financeiro.repository.OrcamentoAnualRepository;
 import io.micrometer.core.annotation.Timed;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -43,7 +41,6 @@ public class OrcamentoAnualService {
     private final OrcamentoAnualRepository repository;
     private final ItemOrcamentoRepository itemRepository;
     private final OrcamentoAnualMapper mapper;
-    private final EntityManager entityManager;
 
     /**
      * Returns budgets matching the supplied filter criteria.
@@ -185,12 +182,7 @@ public class OrcamentoAnualService {
     public ItemOrcamentoDTO addItem(Long orcamentoId, CreateItemOrcamentoDTO dto) {
         log.info("Adding item to orcamento id={}: planoContasId={}", orcamentoId, dto.planoContasId());
         var orcamento = findRascunho(orcamentoId);
-        var item = ItemOrcamento.builder()
-                .orcamentoAnual(orcamento)
-                .planoContas(entityManager.getReference(PlanoContas.class, dto.planoContasId()))
-                .valorPrevisto(dto.valorPrevisto())
-                .valorRealizado(BigDecimal.ZERO)
-                .build();
+        var item = mapper.toItemEntity(orcamento, dto);
         var saved = itemRepository.save(item);
         log.info("Item added to orcamento: itemId={}", saved.getId());
         return mapper.toItemDTO(saved);
@@ -228,6 +220,20 @@ public class OrcamentoAnualService {
         var item = itemRepository.findById(itemId).orElseThrow(() -> notFound("ItemOrcamento", itemId));
         itemRepository.delete(item);
         log.info("Item soft-deleted: {}", itemId);
+    }
+
+    /**
+     * Soft-deletes all OrcamentoAnual items and the budgets themselves for the given condominio.
+     *
+     * @param condominioId the condominio whose budget data must be soft-deleted
+     */
+    @Transactional
+    @Timed(value = "orcamento.service.softDeleteByCondominioId", description = "Cascade soft-delete orcamentos by condominio")
+    @CacheEvict(value = CACHE, allEntries = true)
+    public void softDeleteByCondominioId(Long condominioId) {
+        log.info("Cascade soft-deleting orcamentos for condominioId={}", condominioId);
+        itemRepository.softDeleteByCondominioId(condominioId);
+        repository.softDeleteByCondominioId(condominioId);
     }
 
     private OrcamentoAnual findRascunho(Long id) {

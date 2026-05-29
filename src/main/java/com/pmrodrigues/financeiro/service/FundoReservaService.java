@@ -81,8 +81,7 @@ public class FundoReservaService {
     public FundoReservaDTO update(UpdateFundoReservaDTO dto) {
         log.info("Updating fundo de reserva");
         var entity = repository.findFirstBy().orElseThrow(() -> notFound("FundoReserva", "current"));
-        entity.setPercentualArrecadacao(dto.percentualArrecadacao());
-        entity.setContaBancariaDestino(dto.contaBancariaDestino());
+        mapper.updateEntity(entity, dto);
         var saved = repository.save(entity);
         log.info("FundoReserva updated: {}", saved.getId());
         return mapper.toDTO(saved);
@@ -147,6 +146,20 @@ public class FundoReservaService {
         return movimentacaoRepository
                 .findByFundoReservaIdOrderByDataMovimentacaoDesc(fundo.getId(), pageable)
                 .map(mapper::toMovimentacaoDTO);
+    }
+
+    /**
+     * Soft-deletes all FundoReserva movements and the fund itself for the given condominio.
+     *
+     * @param condominioId the condominio whose reserve fund data must be soft-deleted
+     */
+    @Transactional
+    @Timed(value = "fundo.service.softDeleteByCondominioId", description = "Cascade soft-delete fundo de reserva by condominio")
+    @CacheEvict(value = CACHE, allEntries = true)
+    public void softDeleteByCondominioId(Long condominioId) {
+        log.info("Cascade soft-deleting fundo de reserva for condominioId={}", condominioId);
+        movimentacaoRepository.softDeleteByCondominioId(condominioId);
+        repository.softDeleteByCondominioId(condominioId);
     }
 
     private FundoReservaMovimentacao buildMovimentacao(FundoReserva fundo, TipoMovimentacao tipo,

@@ -98,16 +98,14 @@ class FundoReservaServiceTest {
 
     @Test
     void update_whenExists_updatesFields() {
-        var updatedEntity = FundoReserva.builder().id(1L)
-                .percentualArrecadacao(new BigDecimal("15.00"))
-                .saldoAtual(new BigDecimal("5000.00"))
-                .contaBancariaDestino("002-2").build();
+        var updateDTO = new UpdateFundoReservaDTO(new BigDecimal("15.00"), "002-2");
         when(repository.findFirstBy()).thenReturn(Optional.of(entity));
-        when(repository.save(any())).thenReturn(updatedEntity);
+        when(repository.save(any())).thenReturn(entity);
 
-        service.update(new UpdateFundoReservaDTO(new BigDecimal("15.00"), "002-2"));
+        service.update(updateDTO);
 
-        verify(repository).save(any(FundoReserva.class));
+        verify(mapper).updateEntity(eq(entity), eq(updateDTO));
+        verify(repository).save(entity);
     }
 
     // ── creditar ──────────────────────────────────────────────────────────
@@ -181,5 +179,17 @@ class FundoReservaServiceTest {
         var page = service.listMovimentacoes(pageable);
 
         assertThat(page.getContent()).isEmpty();
+    }
+
+    // ── softDeleteByCondominioId ──────────────────────────────────────────
+
+    @Test
+    void softDeleteByCondominioId_softDeletesMovimentacoesFirst() {
+        var inOrder = inOrder(movimentacaoRepository, repository);
+
+        service.softDeleteByCondominioId(42L);
+
+        inOrder.verify(movimentacaoRepository).softDeleteByCondominioId(42L);
+        inOrder.verify(repository).softDeleteByCondominioId(42L);
     }
 }

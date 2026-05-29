@@ -134,6 +134,19 @@ public class PlanoContasService {
         log.info("PlanoContas soft-deleted: {}", id);
     }
 
+    /**
+     * Soft-deletes all PlanoContas belonging to the given condominio.
+     *
+     * @param condominioId the condominio whose accounts must be soft-deleted
+     */
+    @Transactional
+    @Timed(value = "planocontas.service.softDeleteByCondominioId", description = "Cascade soft-delete plano de contas by condominio")
+    @CacheEvict(value = CACHE, allEntries = true)
+    public void softDeleteByCondominioId(Long condominioId) {
+        log.info("Cascade soft-deleting plano de contas for condominioId={}", condominioId);
+        repository.softDeleteByCondominioId(condominioId);
+    }
+
     private PlanoContasNodeDTO toNode(PlanoContas pc) {
         var filhosDTO = pc.getFilhos().stream().map(this::toNode).toList();
         return new PlanoContasNodeDTO(pc.getId(), pc.getCodigo(), pc.getDescricao(), pc.getTipo(),

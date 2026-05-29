@@ -26,4 +26,11 @@ public interface ItemOrcamentoRepository extends JpaRepository<ItemOrcamento, Lo
     @Modifying
     @Query("UPDATE ItemOrcamento i SET i.deleted = true WHERE i.orcamentoAnual.id = :orcamentoId")
     void softDeleteByOrcamentoAnualId(@Param("orcamentoId") Long orcamentoId);
+
+    /**
+     * Soft-deletes all items belonging to the given condominio (via their parent OrcamentoAnual).
+     */
+    @Modifying
+    @Query("UPDATE ItemOrcamento i SET i.deleted = true WHERE i.orcamentoAnual.condominio.id = :condominioId")
+    void softDeleteByCondominioId(@Param("condominioId") Long condominioId);
 }

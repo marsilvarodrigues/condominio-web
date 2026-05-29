@@ -88,12 +88,12 @@ class ArchitectureTest {
             .as("Services must not access repositories from other modules — call the target module's service instead");
 
     @ArchTest
-    static final ArchRule condominio_service_public_methods_must_be_timed =
+    static final ArchRule all_service_public_methods_must_be_timed =
         methods()
-            .that().areDeclaredInClassesThat().resideInAPackage("com.pmrodrigues.condominio.service..")
+            .that().areDeclaredInClassesThat().resideInAPackage("com.pmrodrigues..service..")
             .and().arePublic()
             .should().beAnnotatedWith(Timed.class)
-            .as("All public methods in com.pmrodrigues.condominio.service must be annotated with @Timed");
+            .as("All public methods in any *.service package must be annotated with @Timed");
 
     private static ArchCondition<JavaClass> notAccessRepositoriesFromOtherModules() {
         return new ArchCondition<>("not access repositories from other modules") {

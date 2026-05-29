@@ -1,5 +1,6 @@
 package com.pmrodrigues.commons.service;
 
+import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class MeterService {
      * @param description human-readable description of the counter
      * @param httpStatus  HTTP status code recorded as the {@code http_status} tag
      */
+    @Timed(value = "meter.service.incrementError", description = "Increment error counter")
     public void incrementError(String meterName, String errorType, String description, int httpStatus) {
         log.info("Incrementing error counter - meter: {}, errorType: {}, httpStatus: {}", meterName, errorType, httpStatus);
         Counter.builder(meterName)

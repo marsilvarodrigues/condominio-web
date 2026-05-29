@@ -228,4 +228,13 @@ class PlanoContasServiceTest {
                 .isInstanceOf(ResponseStatusException.class)
                 .satisfies(e -> assertThat(((ResponseStatusException) e).getStatusCode().value()).isEqualTo(404));
     }
+
+    // ── softDeleteByCondominioId ──────────────────────────────────────────
+
+    @Test
+    void softDeleteByCondominioId_callsRepository() {
+        service.softDeleteByCondominioId(42L);
+
+        verify(repository).softDeleteByCondominioId(42L);
+    }
 }

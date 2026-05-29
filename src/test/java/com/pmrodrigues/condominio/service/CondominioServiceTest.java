@@ -9,6 +9,9 @@ import com.pmrodrigues.condominio.model.Condominio;
 import com.pmrodrigues.condominio.repository.ApartamentoRepository;
 import com.pmrodrigues.condominio.repository.BlocoRepository;
 import com.pmrodrigues.condominio.repository.CondominioRepository;
+import com.pmrodrigues.financeiro.service.FundoReservaService;
+import com.pmrodrigues.financeiro.service.OrcamentoAnualService;
+import com.pmrodrigues.financeiro.service.PlanoContasService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,12 +35,16 @@ class CondominioServiceTest {
     @Mock CondominioMapper mapper;
     @Mock BlocoRepository blocoRepository;
     @Mock ApartamentoRepository apartamentoRepository;
+    @Mock PlanoContasService planoContasService;
+    @Mock FundoReservaService fundoReservaService;
+    @Mock OrcamentoAnualService orcamentoAnualService;
 
     CondominioService service;
 
     @BeforeEach
     void setUp() {
-        service = new CondominioService(repository, mapper, blocoRepository, apartamentoRepository);
+        service = new CondominioService(repository, mapper, blocoRepository, apartamentoRepository,
+                planoContasService, fundoReservaService, orcamentoAnualService);
 
         lenient().when(mapper.toEntity(any(CreateCondominioDTO.class))).thenAnswer(inv -> {
             CreateCondominioDTO d = inv.getArgument(0);
@@ -214,6 +221,18 @@ class CondominioServiceTest {
 
         verify(apartamentoRepository).softDeleteByCondominioId(1L);
         verify(blocoRepository).softDeleteByCondominioId(1L);
+    }
+
+    @Test
+    void delete_cascadesSoftDeleteToFinanceiroServices() {
+        var entity = condominio(1L);
+        when(repository.findById(1L)).thenReturn(Optional.of(entity));
+
+        service.delete(1L);
+
+        verify(planoContasService).softDeleteByCondominioId(1L);
+        verify(fundoReservaService).softDeleteByCondominioId(1L);
+        verify(orcamentoAnualService).softDeleteByCondominioId(1L);
     }
 
     @Test

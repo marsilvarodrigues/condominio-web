@@ -1,5 +1,6 @@
 package com.pmrodrigues.financeiro.mapper;
 
+import com.pmrodrigues.financeiro.dto.CreateItemOrcamentoDTO;
 import com.pmrodrigues.financeiro.dto.CreateOrcamentoAnualDTO;
 import com.pmrodrigues.financeiro.dto.ItemOrcamentoDTO;
 import com.pmrodrigues.financeiro.dto.OrcamentoAnualDTO;
@@ -54,6 +55,18 @@ public abstract class OrcamentoAnualMapper {
     @Mapping(target = "planoContasDescricao", source = "planoContas.descricao")
     @Mapping(target = "tipoConta", source = "planoContas.tipo")
     public abstract ItemOrcamentoDTO toItemDTO(ItemOrcamento item);
+
+    /**
+     * Builds a new ItemOrcamento using the mapper's EntityManager proxy for PlanoContas.
+     */
+    public ItemOrcamento toItemEntity(OrcamentoAnual orcamento, CreateItemOrcamentoDTO dto) {
+        return ItemOrcamento.builder()
+                .orcamentoAnual(orcamento)
+                .planoContas(planoContasFromId(dto.planoContasId()))
+                .valorPrevisto(dto.valorPrevisto())
+                .valorRealizado(java.math.BigDecimal.ZERO)
+                .build();
+    }
 
     protected PlanoContas planoContasFromId(Long id) {
         if (id == null) return null;

@@ -4,6 +4,9 @@ import com.pmrodrigues.financeiro.model.OrcamentoAnual;
 import com.pmrodrigues.financeiro.model.StatusOrcamento;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -23,4 +26,11 @@ public interface OrcamentoAnualRepository extends JpaRepository<OrcamentoAnual, 
      * Finds an approved budget for the given exercise year (tenant-scoped).
      */
     Optional<OrcamentoAnual> findByExercicioAndStatus(Integer exercicio, StatusOrcamento status);
+
+    /**
+     * Soft-deletes all OrcamentoAnual belonging to the given condominio.
+     */
+    @Modifying
+    @Query("UPDATE OrcamentoAnual o SET o.deleted = true WHERE o.condominio.id = :condominioId")
+    void softDeleteByCondominioId(@Param("condominioId") Long condominioId);
 }

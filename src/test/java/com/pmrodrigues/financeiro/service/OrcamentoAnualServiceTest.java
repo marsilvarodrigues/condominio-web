@@ -8,7 +8,6 @@ import com.pmrodrigues.financeiro.model.StatusOrcamento;
 import com.pmrodrigues.financeiro.model.TipoConta;
 import com.pmrodrigues.financeiro.repository.ItemOrcamentoRepository;
 import com.pmrodrigues.financeiro.repository.OrcamentoAnualRepository;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,7 +34,6 @@ class OrcamentoAnualServiceTest {
     @Mock OrcamentoAnualRepository repository;
     @Mock ItemOrcamentoRepository itemRepository;
     @Mock OrcamentoAnualMapper mapper;
-    @Mock EntityManager entityManager;
 
     OrcamentoAnualService service;
 
@@ -48,7 +47,7 @@ class OrcamentoAnualServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new OrcamentoAnualService(repository, itemRepository, mapper, entityManager);
+        service = new OrcamentoAnualService(repository, itemRepository, mapper);
         lenient().when(mapper.toDTO(any(OrcamentoAnual.class))).thenAnswer(inv -> {
             OrcamentoAnual o = inv.getArgument(0);
             return dto(o.getId(), o.getStatus());
@@ -200,15 +199,17 @@ class OrcamentoAnualServiceTest {
     void addItem_rascunho_savesItem() {
         var entity = rascunho();
         when(repository.findById(1L)).thenReturn(Optional.of(entity));
-        var savedItem = ItemOrcamento.builder().id(10L).valorPrevisto(new BigDecimal("500")).build();
-        when(itemRepository.save(any())).thenReturn(savedItem);
-        when(mapper.toItemDTO(savedItem)).thenReturn(
+        var itemToSave = ItemOrcamento.builder().id(10L).valorPrevisto(new BigDecimal("500")).build();
+        when(mapper.toItemEntity(any(OrcamentoAnual.class), any(CreateItemOrcamentoDTO.class))).thenReturn(itemToSave);
+        when(itemRepository.save(any())).thenReturn(itemToSave);
+        when(mapper.toItemDTO(itemToSave)).thenReturn(
                 new ItemOrcamentoDTO(10L, 5L, "Limpeza", TipoConta.DESPESA, new BigDecimal("500"), BigDecimal.ZERO));
 
         var result = service.addItem(1L, new CreateItemOrcamentoDTO(5L, new BigDecimal("500")));
 
         assertThat(result.id()).isEqualTo(10L);
-        verify(itemRepository).save(any(ItemOrcamento.class));
+        verify(mapper).toItemEntity(eq(entity), any(CreateItemOrcamentoDTO.class));
+        verify(itemRepository).save(itemToSave);
     }
 
     // ── deleteItem ────────────────────────────────────────────────────────
@@ -222,5 +223,17 @@ class OrcamentoAnualServiceTest {
         service.deleteItem(1L, 10L);
 
         verify(itemRepository).delete(item);
+    }
+
+    // ── softDeleteByCondominioId ──────────────────────────────────────────
+
+    @Test
+    void softDeleteByCondominioId_softDeletesItensFirst() {
+        var inOrder = inOrder(itemRepository, repository);
+
+        service.softDeleteByCondominioId(42L);
+
+        inOrder.verify(itemRepository).softDeleteByCondominioId(42L);
+        inOrder.verify(repository).softDeleteByCondominioId(42L);
     }
 }
