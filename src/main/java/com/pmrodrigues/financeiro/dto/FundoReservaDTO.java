@@ -10,7 +10,8 @@ public record FundoReservaDTO(
         Long id,
         BigDecimal percentualArrecadacao,
         BigDecimal saldoAtual,
-        String contaBancariaDestino,
+        Long contaBancariaId,
+        String contaBancariaDescricao,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {

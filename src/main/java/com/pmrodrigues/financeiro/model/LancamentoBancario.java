@@ -16,11 +16,11 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * Reserve fund for a condominium, tracking the balance and monthly credit percentage.
- * Each condominium may have at most one active FundoReserva.
+ * Individual debit or credit entry on a bank account, partitioned by condominio_id.
  */
 @Getter
 @Setter
@@ -29,12 +29,12 @@ import java.time.LocalDateTime;
 @Builder
 @Accessors(chain = true)
 @Entity
-@Table(name = "fundo_reserva")
-@SQLDelete(sql = "UPDATE fundo_reserva SET deleted = true WHERE id = ?")
+@Table(name = "lancamentos_bancarios")
+@SQLDelete(sql = "UPDATE lancamentos_bancarios SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @EntityListeners(AuditingEntityListener.class)
-public class FundoReserva {
+public class LancamentoBancario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,19 +43,37 @@ public class FundoReserva {
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "condominio_id", nullable = false, unique = true)
+    @JoinColumn(name = "condominio_id", nullable = false)
     private Condominio condominio;
 
-    @Column(name = "percentual_arrecadacao", nullable = false, precision = 5, scale = 2)
-    private BigDecimal percentualArrecadacao;
-
-    @Column(name = "saldo_atual", nullable = false, precision = 15, scale = 2)
-    @Builder.Default
-    private BigDecimal saldoAtual = BigDecimal.ZERO;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "conta_bancaria_id")
+    @JoinColumn(name = "conta_bancaria_id", nullable = false)
     private ContaBancaria contaBancaria;
+
+    @Column(name = "data_lancamento", nullable = false)
+    private LocalDate dataLancamento;
+
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal valor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private TipoLancamento tipo;
+
+    @Column(nullable = false, length = 500)
+    private String descricao;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private OrigemLancamento origem;
+
+    @Column(name = "referencia_id")
+    private Long referenciaId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 15)
+    @Builder.Default
+    private StatusLancamento status = StatusLancamento.PENDENTE;
 
     @Column(nullable = false)
     @Builder.Default

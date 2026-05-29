@@ -5,6 +5,7 @@ import com.pmrodrigues.financeiro.mapper.FundoReservaMapper;
 import com.pmrodrigues.financeiro.model.FundoReserva;
 import com.pmrodrigues.financeiro.model.FundoReservaMovimentacao;
 import com.pmrodrigues.financeiro.model.TipoMovimentacao;
+import com.pmrodrigues.financeiro.repository.ContaBancariaRepository;
 import com.pmrodrigues.financeiro.repository.FundoReservaMovimentacaoRepository;
 import com.pmrodrigues.financeiro.repository.FundoReservaRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,21 +34,21 @@ class FundoReservaServiceTest {
 
     @Mock FundoReservaRepository repository;
     @Mock FundoReservaMovimentacaoRepository movimentacaoRepository;
+    @Mock ContaBancariaRepository contaBancariaRepository;
     @Mock FundoReservaMapper mapper;
 
     FundoReservaService service;
 
     private final FundoReserva entity = FundoReserva.builder().id(1L)
             .percentualArrecadacao(new BigDecimal("10.00"))
-            .saldoAtual(new BigDecimal("5000.00"))
-            .contaBancariaDestino("001-1").build();
+            .saldoAtual(new BigDecimal("5000.00")).build();
 
     private final FundoReservaDTO dto = new FundoReservaDTO(1L, new BigDecimal("10.00"),
-            new BigDecimal("5000.00"), "001-1", LocalDateTime.now(), LocalDateTime.now());
+            new BigDecimal("5000.00"), null, null, LocalDateTime.now(), LocalDateTime.now());
 
     @BeforeEach
     void setUp() {
-        service = new FundoReservaService(repository, movimentacaoRepository, mapper);
+        service = new FundoReservaService(repository, movimentacaoRepository, contaBancariaRepository, mapper);
         lenient().when(mapper.toDTO(any(FundoReserva.class))).thenReturn(dto);
         lenient().when(mapper.toEntity(any(CreateFundoReservaDTO.class))).thenReturn(entity);
     }
@@ -80,7 +81,7 @@ class FundoReservaServiceTest {
         when(repository.existsByDeletedFalse()).thenReturn(false);
         when(repository.save(entity)).thenReturn(entity);
 
-        service.create(new CreateFundoReservaDTO(new BigDecimal("10.00"), "001-1"));
+        service.create(new CreateFundoReservaDTO(new BigDecimal("10.00"), null));
 
         verify(repository).save(entity);
     }
@@ -89,7 +90,7 @@ class FundoReservaServiceTest {
     void create_whenAlreadyExists_throwsConflict() {
         when(repository.existsByDeletedFalse()).thenReturn(true);
 
-        assertThatThrownBy(() -> service.create(new CreateFundoReservaDTO(new BigDecimal("10.00"), "001-1")))
+        assertThatThrownBy(() -> service.create(new CreateFundoReservaDTO(new BigDecimal("10.00"), null)))
                 .isInstanceOf(ResponseStatusException.class)
                 .satisfies(e -> assertThat(((ResponseStatusException) e).getStatusCode().value()).isEqualTo(409));
     }
@@ -98,7 +99,7 @@ class FundoReservaServiceTest {
 
     @Test
     void update_whenExists_updatesFields() {
-        var updateDTO = new UpdateFundoReservaDTO(new BigDecimal("15.00"), "002-2");
+        var updateDTO = new UpdateFundoReservaDTO(new BigDecimal("15.00"), null);
         when(repository.findFirstBy()).thenReturn(Optional.of(entity));
         when(repository.save(any())).thenReturn(entity);
 

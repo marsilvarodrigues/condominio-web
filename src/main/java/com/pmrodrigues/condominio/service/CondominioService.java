@@ -7,7 +7,9 @@ import com.pmrodrigues.condominio.mapper.CondominioMapper;
 import com.pmrodrigues.condominio.repository.ApartamentoRepository;
 import com.pmrodrigues.condominio.repository.BlocoRepository;
 import com.pmrodrigues.condominio.repository.CondominioRepository;
+import com.pmrodrigues.financeiro.service.ContaBancariaService;
 import com.pmrodrigues.financeiro.service.FundoReservaService;
+import com.pmrodrigues.financeiro.service.LancamentoBancarioService;
 import com.pmrodrigues.financeiro.service.OrcamentoAnualService;
 import com.pmrodrigues.financeiro.service.PlanoContasService;
 import io.micrometer.core.annotation.Timed;
@@ -42,6 +44,8 @@ public class CondominioService {
     private final PlanoContasService planoContasService;
     private final FundoReservaService fundoReservaService;
     private final OrcamentoAnualService orcamentoAnualService;
+    private final ContaBancariaService contaBancariaService;
+    private final LancamentoBancarioService lancamentoBancarioService;
 
     /**
      * Returns condominios matching the supplied filter criteria.
@@ -137,12 +141,13 @@ public class CondominioService {
     @Transactional
     @Timed(value = "condominio.service.delete", description = "Delete condominio")
     @Caching(evict = {
-            @CacheEvict(value = "condominios",   allEntries = true),
-            @CacheEvict(value = "blocos",        allEntries = true),
-            @CacheEvict(value = "apartamentos",  allEntries = true),
-            @CacheEvict(value = "plano-contas",  allEntries = true),
-            @CacheEvict(value = "fundo-reserva", allEntries = true),
-            @CacheEvict(value = "orcamentos",    allEntries = true)
+            @CacheEvict(value = "condominios",       allEntries = true),
+            @CacheEvict(value = "blocos",            allEntries = true),
+            @CacheEvict(value = "apartamentos",      allEntries = true),
+            @CacheEvict(value = "plano-contas",      allEntries = true),
+            @CacheEvict(value = "fundo-reserva",     allEntries = true),
+            @CacheEvict(value = "orcamentos",        allEntries = true),
+            @CacheEvict(value = "contas-bancarias",  allEntries = true)
     })
     public void delete(Long id) {
         log.info("Deleting condominio with id: {}", id);
@@ -155,6 +160,8 @@ public class CondominioService {
         planoContasService.softDeleteByCondominioId(id);
         fundoReservaService.softDeleteByCondominioId(id);
         orcamentoAnualService.softDeleteByCondominioId(id);
+        contaBancariaService.softDeleteByCondominioId(id);
+        lancamentoBancarioService.softDeleteByCondominioId(id);
         repository.delete(entity);
         log.info("Condominio soft-deleted successfully: {}", id);
     }

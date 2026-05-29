@@ -1,0 +1,171 @@
+<svg width="1280" height="800" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="card-shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="800" fill="#F0F2F5"/>
+
+  <!-- ===== SIDEBAR ===== -->
+  <rect width="260" height="800" fill="#1A2332"/>
+  <rect x="0" y="0" width="260" height="64" fill="#151D2B"/>
+  <text x="58" y="34" font-size="18" font-weight="700" fill="white">CondoGest</text>
+  <text x="58" y="50" font-size="11" fill="#78909C">v1.0</text>
+  <text x="58" y="109" font-size="14" fill="#78909C">Dashboard</text>
+  <text x="58" y="157" font-size="14" fill="#78909C">Condomínios</text>
+  <text x="58" y="205" font-size="14" fill="#78909C">Usuários</text>
+  <rect x="0" y="224" width="260" height="48" fill="#1976D2"/>
+  <rect x="0" y="224" width="4" height="48" fill="#42A5F5"/>
+  <text x="58" y="253" font-size="14" font-weight="500" fill="white">Financeiro</text>
+  <rect x="0" y="272" width="260" height="36" fill="transparent"/>
+  <text x="72" y="295" font-size="13" fill="#78909C">Plano de Contas</text>
+  <rect x="0" y="308" width="260" height="36" fill="transparent"/>
+  <text x="72" y="331" font-size="13" fill="#78909C">Fundo de Reserva</text>
+  <rect x="0" y="344" width="260" height="36" fill="transparent"/>
+  <text x="72" y="367" font-size="13" fill="#78909C">Orçamento Anual</text>
+  <rect x="0" y="380" width="260" height="36" fill="#162030"/>
+  <rect x="0" y="380" width="4" height="36" fill="#42A5F5"/>
+  <text x="72" y="403" font-size="13" font-weight="600" fill="white">Bancos</text>
+  <rect x="0" y="416" width="260" height="36" fill="transparent"/>
+  <text x="72" y="439" font-size="13" fill="#78909C">Contas Bancárias</text>
+  <rect x="0" y="452" width="260" height="36" fill="transparent"/>
+  <text x="72" y="475" font-size="13" fill="#78909C">Lançamentos</text>
+  <rect x="0" y="488" width="260" height="36" fill="transparent"/>
+  <text x="72" y="511" font-size="13" fill="#78909C">Conciliação</text>
+
+  <!-- ===== TOP BAR ===== -->
+  <rect x="260" y="0" width="1020" height="64" fill="white" filter="url(#card-shadow)"/>
+  <text x="284" y="38" font-size="20" font-weight="600" fill="#1A2332">Catálogo de Bancos</text>
+  <text x="284" y="56" font-size="12" fill="#78909C">Financeiro / Bancos</text>
+  <rect x="1128" y="16" width="132" height="32" rx="4" fill="#1976D2"/>
+  <text x="1194" y="37" font-size="13" font-weight="500" fill="white" text-anchor="middle">+ Novo Banco</text>
+
+  <!-- ===== FILTER BAR ===== -->
+  <rect x="280" y="80" width="980" height="56" rx="8" fill="white" filter="url(#card-shadow)"/>
+  <text x="300" y="114" font-size="13" fill="#546E7A">Código:</text>
+  <rect x="356" y="96" width="100" height="28" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="372" y="115" font-size="13" fill="#B0BEC5">341...</text>
+  <text x="474" y="114" font-size="13" fill="#546E7A">Nome:</text>
+  <rect x="516" y="96" width="240" height="28" rx="4" fill="#F5F7FA" stroke="#1976D2" stroke-width="1.5"/>
+  <text x="532" y="115" font-size="13" fill="#37474F">Itaú</text>
+  <rect x="776" y="96" width="80" height="28" rx="4" fill="#1976D2"/>
+  <text x="816" y="115" font-size="13" font-weight="500" fill="white" text-anchor="middle">Buscar</text>
+  <rect x="868" y="96" width="80" height="28" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="908" y="115" font-size="13" fill="#546E7A" text-anchor="middle">Limpar</text>
+
+  <!-- ===== TABLE CARD ===== -->
+  <rect x="280" y="152" width="980" height="560" rx="8" fill="white" filter="url(#card-shadow)"/>
+
+  <!-- Table header -->
+  <rect x="280" y="152" width="980" height="40" rx="8" fill="#F5F7FA"/>
+  <rect x="280" y="172" width="980" height="20" fill="#F5F7FA"/>
+  <text x="308" y="177" font-size="11" font-weight="600" fill="#546E7A">CÓDIGO</text>
+  <text x="420" y="177" font-size="11" font-weight="600" fill="#546E7A">NOME</text>
+  <text x="820" y="177" font-size="11" font-weight="600" fill="#546E7A">ISPB</text>
+  <text x="1040" y="177" font-size="11" font-weight="600" fill="#546E7A">AÇÕES</text>
+
+  <!-- Row 1 -->
+  <rect x="280" y="192" width="980" height="44" fill="white"/>
+  <text x="308" y="219" font-size="13" fill="#37474F">001</text>
+  <text x="420" y="219" font-size="13" fill="#37474F">Banco do Brasil S.A.</text>
+  <text x="820" y="219" font-size="13" fill="#546E7A">00.000.000</text>
+  <rect x="1040" y="203" width="60" height="24" rx="4" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="1070" y="220" font-size="12" fill="#1565C0" text-anchor="middle">Editar</text>
+  <rect x="1112" y="203" width="60" height="24" rx="4" fill="#FBE9E7" stroke="#FFAB91" stroke-width="1"/>
+  <text x="1142" y="220" font-size="12" fill="#BF360C" text-anchor="middle">Excluir</text>
+  <rect x="280" y="235" width="980" height="1" fill="#F0F2F5"/>
+
+  <!-- Row 2 -->
+  <rect x="280" y="236" width="980" height="44" fill="#FAFAFA"/>
+  <text x="308" y="263" font-size="13" fill="#37474F">033</text>
+  <text x="420" y="263" font-size="13" fill="#37474F">Banco Santander (Brasil) S.A.</text>
+  <text x="820" y="263" font-size="13" fill="#546E7A">90.400.888</text>
+  <rect x="1040" y="247" width="60" height="24" rx="4" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="1070" y="264" font-size="12" fill="#1565C0" text-anchor="middle">Editar</text>
+  <rect x="1112" y="247" width="60" height="24" rx="4" fill="#FBE9E7" stroke="#FFAB91" stroke-width="1"/>
+  <text x="1142" y="264" font-size="12" fill="#BF360C" text-anchor="middle">Excluir</text>
+  <rect x="280" y="279" width="980" height="1" fill="#F0F2F5"/>
+
+  <!-- Row 3 — highlighted (search result) -->
+  <rect x="280" y="280" width="980" height="44" fill="#E3F2FD"/>
+  <text x="308" y="307" font-size="13" fill="#37474F">341</text>
+  <text x="420" y="307" font-size="13" font-weight="600" fill="#1565C0">Itaú Unibanco S.A.</text>
+  <text x="820" y="307" font-size="13" fill="#546E7A">60.701.190</text>
+  <rect x="1040" y="291" width="60" height="24" rx="4" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="1070" y="308" font-size="12" fill="#1565C0" text-anchor="middle">Editar</text>
+  <rect x="1112" y="291" width="60" height="24" rx="4" fill="#FBE9E7" stroke="#FFAB91" stroke-width="1"/>
+  <text x="1142" y="308" font-size="12" fill="#BF360C" text-anchor="middle">Excluir</text>
+  <rect x="280" y="323" width="980" height="1" fill="#F0F2F5"/>
+
+  <!-- Row 4 -->
+  <rect x="280" y="324" width="980" height="44" fill="white"/>
+  <text x="308" y="351" font-size="13" fill="#37474F">104</text>
+  <text x="420" y="351" font-size="13" fill="#37474F">Caixa Econômica Federal</text>
+  <text x="820" y="351" font-size="13" fill="#546E7A">36.007.691</text>
+  <rect x="1040" y="335" width="60" height="24" rx="4" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="1070" y="352" font-size="12" fill="#1565C0" text-anchor="middle">Editar</text>
+  <rect x="1112" y="335" width="60" height="24" rx="4" fill="#FBE9E7" stroke="#FFAB91" stroke-width="1"/>
+  <text x="1142" y="352" font-size="12" fill="#BF360C" text-anchor="middle">Excluir</text>
+  <rect x="280" y="367" width="980" height="1" fill="#F0F2F5"/>
+
+  <!-- Row 5 -->
+  <rect x="280" y="368" width="980" height="44" fill="#FAFAFA"/>
+  <text x="308" y="395" font-size="13" fill="#37474F">237</text>
+  <text x="420" y="395" font-size="13" fill="#37474F">Banco Bradesco S.A.</text>
+  <text x="820" y="395" font-size="13" fill="#546E7A">60.746.948</text>
+  <rect x="1040" y="379" width="60" height="24" rx="4" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="1070" y="396" font-size="12" fill="#1565C0" text-anchor="middle">Editar</text>
+  <rect x="1112" y="379" width="60" height="24" rx="4" fill="#FBE9E7" stroke="#FFAB91" stroke-width="1"/>
+  <text x="1142" y="396" font-size="12" fill="#BF360C" text-anchor="middle">Excluir</text>
+  <rect x="280" y="411" width="980" height="1" fill="#F0F2F5"/>
+
+  <!-- Row 6 -->
+  <rect x="280" y="412" width="980" height="44" fill="white"/>
+  <text x="308" y="439" font-size="13" fill="#37474F">260</text>
+  <text x="420" y="439" font-size="13" fill="#37474F">Nu Pagamentos S.A. (Nubank)</text>
+  <text x="820" y="439" font-size="13" fill="#546E7A">18.236.120</text>
+  <rect x="1040" y="423" width="60" height="24" rx="4" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="1070" y="440" font-size="12" fill="#1565C0" text-anchor="middle">Editar</text>
+  <rect x="1112" y="423" width="60" height="24" rx="4" fill="#FBE9E7" stroke="#FFAB91" stroke-width="1"/>
+  <text x="1142" y="440" font-size="12" fill="#BF360C" text-anchor="middle">Excluir</text>
+  <rect x="280" y="455" width="980" height="1" fill="#F0F2F5"/>
+
+  <!-- Row 7 -->
+  <rect x="280" y="456" width="980" height="44" fill="#FAFAFA"/>
+  <text x="308" y="483" font-size="13" fill="#37474F">422</text>
+  <text x="420" y="483" font-size="13" fill="#37474F">Banco Safra S.A.</text>
+  <text x="820" y="483" font-size="13" fill="#546E7A">58.160.789</text>
+  <rect x="1040" y="467" width="60" height="24" rx="4" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="1070" y="484" font-size="12" fill="#1565C0" text-anchor="middle">Editar</text>
+  <rect x="1112" y="467" width="60" height="24" rx="4" fill="#FBE9E7" stroke="#FFAB91" stroke-width="1"/>
+  <text x="1142" y="484" font-size="12" fill="#BF360C" text-anchor="middle">Excluir</text>
+  <rect x="280" y="499" width="980" height="1" fill="#F0F2F5"/>
+
+  <!-- Row 8 -->
+  <rect x="280" y="500" width="980" height="44" fill="white"/>
+  <text x="308" y="527" font-size="13" fill="#37474F">756</text>
+  <text x="420" y="527" font-size="13" fill="#37474F">Banco Cooperativo do Brasil S.A. (Bancoob)</text>
+  <text x="820" y="527" font-size="13" fill="#546E7A">02.038.232</text>
+  <rect x="1040" y="511" width="60" height="24" rx="4" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="1070" y="528" font-size="12" fill="#1565C0" text-anchor="middle">Editar</text>
+  <rect x="1112" y="511" width="60" height="24" rx="4" fill="#FBE9E7" stroke="#FFAB91" stroke-width="1"/>
+  <text x="1142" y="528" font-size="12" fill="#BF360C" text-anchor="middle">Excluir</text>
+  <rect x="280" y="543" width="980" height="1" fill="#F0F2F5"/>
+
+  <!-- ===== PAGINATION ===== -->
+  <rect x="280" y="680" width="980" height="32" fill="transparent"/>
+  <text x="300" y="700" font-size="12" fill="#78909C">Exibindo 1–8 de 212 bancos</text>
+  <rect x="1100" y="684" width="28" height="24" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="1114" y="700" font-size="12" fill="#546E7A" text-anchor="middle">‹</text>
+  <rect x="1132" y="684" width="28" height="24" rx="4" fill="#1976D2"/>
+  <text x="1146" y="700" font-size="12" fill="white" text-anchor="middle">1</text>
+  <rect x="1164" y="684" width="28" height="24" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="1178" y="700" font-size="12" fill="#546E7A" text-anchor="middle">2</text>
+  <rect x="1196" y="684" width="28" height="24" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="1210" y="700" font-size="12" fill="#546E7A" text-anchor="middle">›</text>
+
+  <!-- Info note -->
+  <rect x="280" y="728" width="980" height="36" rx="4" fill="#FFF8E1" stroke="#FFE082" stroke-width="1"/>
+  <text x="300" y="750" font-size="12" fill="#F57F17">ℹ  Catálogo global — alterações afetam todos os condomínios. Somente administradores podem criar, editar ou excluir bancos.</text>
+</svg>

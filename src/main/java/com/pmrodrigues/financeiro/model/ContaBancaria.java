@@ -1,6 +1,7 @@
 package com.pmrodrigues.financeiro.model;
 
 import com.pmrodrigues.commons.config.TenantFilterAspect;
+import com.pmrodrigues.commons.model.Banco;
 import com.pmrodrigues.commons.tenant.TenantContext;
 import com.pmrodrigues.condominio.model.Condominio;
 import jakarta.persistence.*;
@@ -19,8 +20,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Reserve fund for a condominium, tracking the balance and monthly credit percentage.
- * Each condominium may have at most one active FundoReserva.
+ * Bank account belonging to a condominium, partitioned by condominio_id.
+ * At most one account may have tipo {@link TipoContaBancaria#FUNDO_RESERVA} per condominium.
  */
 @Getter
 @Setter
@@ -29,12 +30,12 @@ import java.time.LocalDateTime;
 @Builder
 @Accessors(chain = true)
 @Entity
-@Table(name = "fundo_reserva")
-@SQLDelete(sql = "UPDATE fundo_reserva SET deleted = true WHERE id = ?")
+@Table(name = "contas_bancarias")
+@SQLDelete(sql = "UPDATE contas_bancarias SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @EntityListeners(AuditingEntityListener.class)
-public class FundoReserva {
+public class ContaBancaria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,19 +44,39 @@ public class FundoReserva {
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "condominio_id", nullable = false, unique = true)
+    @JoinColumn(name = "condominio_id", nullable = false)
     private Condominio condominio;
 
-    @Column(name = "percentual_arrecadacao", nullable = false, precision = 5, scale = 2)
-    private BigDecimal percentualArrecadacao;
-
-    @Column(name = "saldo_atual", nullable = false, precision = 15, scale = 2)
-    @Builder.Default
-    private BigDecimal saldoAtual = BigDecimal.ZERO;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "conta_bancaria_id")
-    private ContaBancaria contaBancaria;
+    @JoinColumn(name = "banco_id", nullable = false)
+    private Banco banco;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 15)
+    private TipoContaBancaria tipo;
+
+    @Column(nullable = false, length = 10)
+    private String agencia;
+
+    @Column(nullable = false, length = 20)
+    private String conta;
+
+    @Column(length = 2)
+    private String digito;
+
+    @Column(length = 255)
+    private String descricao;
+
+    @Column(name = "chave_pix", length = 255)
+    private String chavePix;
+
+    @Column(name = "saldo_contabil", nullable = false, precision = 15, scale = 2)
+    @Builder.Default
+    private BigDecimal saldoContabil = BigDecimal.ZERO;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean ativa = true;
 
     @Column(nullable = false)
     @Builder.Default

@@ -2,9 +2,12 @@ package com.pmrodrigues.financeiro.service;
 
 import com.pmrodrigues.financeiro.dto.*;
 import com.pmrodrigues.financeiro.mapper.FundoReservaMapper;
+import com.pmrodrigues.financeiro.model.ContaBancaria;
 import com.pmrodrigues.financeiro.model.FundoReserva;
 import com.pmrodrigues.financeiro.model.FundoReservaMovimentacao;
+import com.pmrodrigues.financeiro.model.TipoContaBancaria;
 import com.pmrodrigues.financeiro.model.TipoMovimentacao;
+import com.pmrodrigues.financeiro.repository.ContaBancariaRepository;
 import com.pmrodrigues.financeiro.repository.FundoReservaMovimentacaoRepository;
 import com.pmrodrigues.financeiro.repository.FundoReservaRepository;
 import io.micrometer.core.annotation.Timed;
@@ -36,6 +39,7 @@ public class FundoReservaService {
 
     private final FundoReservaRepository repository;
     private final FundoReservaMovimentacaoRepository movimentacaoRepository;
+    private final ContaBancariaRepository contaBancariaRepository;
     private final FundoReservaMapper mapper;
 
     /**
@@ -55,6 +59,7 @@ public class FundoReservaService {
      * Creates the reserve fund for the current condominium, refusing if one already exists.
      *
      * @throws ResponseStatusException 409 if a fund already exists
+     * @throws ResponseStatusException 400 if the referenced conta is not of type FUNDO_RESERVA
      */
     @Transactional
     @Timed(value = "fundo.service.create", description = "Create fundo de reserva")
@@ -65,15 +70,20 @@ public class FundoReservaService {
             log.error("FundoReserva already exists for this condominium");
             throw new ResponseStatusException(HttpStatus.CONFLICT, "FundoReserva already exists for this condominium");
         }
-        var saved = repository.save(mapper.toEntity(dto));
+        var entity = mapper.toEntity(dto);
+        if (dto.contaBancariaId() != null) {
+            entity.setContaBancaria(resolveContaBancaria(dto.contaBancariaId()));
+        }
+        var saved = repository.save(entity);
         log.info("FundoReserva created with id: {}", saved.getId());
         return mapper.toDTO(saved);
     }
 
     /**
-     * Updates the percentual and bank account destination of the existing fund.
+     * Updates the percentual and bank account of the existing fund.
      *
      * @throws ResponseStatusException 404 if no fund exists
+     * @throws ResponseStatusException 400 if the referenced conta is not of type FUNDO_RESERVA
      */
     @Transactional
     @Timed(value = "fundo.service.update", description = "Update fundo de reserva")
@@ -82,6 +92,11 @@ public class FundoReservaService {
         log.info("Updating fundo de reserva");
         var entity = repository.findFirstBy().orElseThrow(() -> notFound("FundoReserva", "current"));
         mapper.updateEntity(entity, dto);
+        if (dto.contaBancariaId() != null) {
+            entity.setContaBancaria(resolveContaBancaria(dto.contaBancariaId()));
+        } else {
+            entity.setContaBancaria(null);
+        }
         var saved = repository.save(entity);
         log.info("FundoReserva updated: {}", saved.getId());
         return mapper.toDTO(saved);
@@ -160,6 +175,17 @@ public class FundoReservaService {
         log.info("Cascade soft-deleting fundo de reserva for condominioId={}", condominioId);
         movimentacaoRepository.softDeleteByCondominioId(condominioId);
         repository.softDeleteByCondominioId(condominioId);
+    }
+
+    private ContaBancaria resolveContaBancaria(Long contaBancariaId) {
+        var conta = contaBancariaRepository.findById(contaBancariaId)
+                .orElseThrow(() -> notFound("ContaBancaria", contaBancariaId));
+        if (conta.getTipo() != TipoContaBancaria.FUNDO_RESERVA) {
+            log.error("ContaBancaria {} is not of type FUNDO_RESERVA", contaBancariaId);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "A conta bancária vinculada ao Fundo de Reserva deve ser do tipo FUNDO_RESERVA");
+        }
+        return conta;
     }
 
     private FundoReservaMovimentacao buildMovimentacao(FundoReserva fundo, TipoMovimentacao tipo,

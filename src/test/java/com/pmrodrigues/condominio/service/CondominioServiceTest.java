@@ -9,7 +9,9 @@ import com.pmrodrigues.condominio.model.Condominio;
 import com.pmrodrigues.condominio.repository.ApartamentoRepository;
 import com.pmrodrigues.condominio.repository.BlocoRepository;
 import com.pmrodrigues.condominio.repository.CondominioRepository;
+import com.pmrodrigues.financeiro.service.ContaBancariaService;
 import com.pmrodrigues.financeiro.service.FundoReservaService;
+import com.pmrodrigues.financeiro.service.LancamentoBancarioService;
 import com.pmrodrigues.financeiro.service.OrcamentoAnualService;
 import com.pmrodrigues.financeiro.service.PlanoContasService;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,13 +40,16 @@ class CondominioServiceTest {
     @Mock PlanoContasService planoContasService;
     @Mock FundoReservaService fundoReservaService;
     @Mock OrcamentoAnualService orcamentoAnualService;
+    @Mock ContaBancariaService contaBancariaService;
+    @Mock LancamentoBancarioService lancamentoBancarioService;
 
     CondominioService service;
 
     @BeforeEach
     void setUp() {
         service = new CondominioService(repository, mapper, blocoRepository, apartamentoRepository,
-                planoContasService, fundoReservaService, orcamentoAnualService);
+                planoContasService, fundoReservaService, orcamentoAnualService, contaBancariaService,
+                lancamentoBancarioService);
 
         lenient().when(mapper.toEntity(any(CreateCondominioDTO.class))).thenAnswer(inv -> {
             CreateCondominioDTO d = inv.getArgument(0);
@@ -233,6 +238,8 @@ class CondominioServiceTest {
         verify(planoContasService).softDeleteByCondominioId(1L);
         verify(fundoReservaService).softDeleteByCondominioId(1L);
         verify(orcamentoAnualService).softDeleteByCondominioId(1L);
+        verify(contaBancariaService).softDeleteByCondominioId(1L);
+        verify(lancamentoBancarioService).softDeleteByCondominioId(1L);
     }
 
     @Test

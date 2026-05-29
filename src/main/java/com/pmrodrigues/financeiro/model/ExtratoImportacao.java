@@ -15,12 +15,11 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * Reserve fund for a condominium, tracking the balance and monthly credit percentage.
- * Each condominium may have at most one active FundoReserva.
+ * Header record for a bank statement import (OFX or CSV), partitioned by condominio_id.
  */
 @Getter
 @Setter
@@ -29,12 +28,12 @@ import java.time.LocalDateTime;
 @Builder
 @Accessors(chain = true)
 @Entity
-@Table(name = "fundo_reserva")
-@SQLDelete(sql = "UPDATE fundo_reserva SET deleted = true WHERE id = ?")
+@Table(name = "extrato_importacoes")
+@SQLDelete(sql = "UPDATE extrato_importacoes SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @EntityListeners(AuditingEntityListener.class)
-public class FundoReserva {
+public class ExtratoImportacao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,19 +42,48 @@ public class FundoReserva {
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "condominio_id", nullable = false, unique = true)
+    @JoinColumn(name = "condominio_id", nullable = false)
     private Condominio condominio;
 
-    @Column(name = "percentual_arrecadacao", nullable = false, precision = 5, scale = 2)
-    private BigDecimal percentualArrecadacao;
-
-    @Column(name = "saldo_atual", nullable = false, precision = 15, scale = 2)
-    @Builder.Default
-    private BigDecimal saldoAtual = BigDecimal.ZERO;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "conta_bancaria_id")
+    @JoinColumn(name = "conta_bancaria_id", nullable = false)
     private ContaBancaria contaBancaria;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private FormatoExtrato formato;
+
+    @Column(name = "data_importacao", nullable = false)
+    private LocalDateTime dataImportacao;
+
+    @Column(name = "data_inicio")
+    private LocalDate dataInicio;
+
+    @Column(name = "data_fim")
+    private LocalDate dataFim;
+
+    @Column(name = "total_itens", nullable = false)
+    @Builder.Default
+    private int totalItens = 0;
+
+    @Column(name = "itens_conciliados", nullable = false)
+    @Builder.Default
+    private int itensConciliados = 0;
+
+    @Column(name = "itens_pendentes", nullable = false)
+    @Builder.Default
+    private int itensPendentes = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 15)
+    @Builder.Default
+    private StatusExtrato status = StatusExtrato.PROCESSANDO;
+
+    @Column(name = "mensagem_erro")
+    private String mensagemErro;
+
+    @Column(name = "nome_arquivo", length = 500)
+    private String nomeArquivo;
 
     @Column(nullable = false)
     @Builder.Default

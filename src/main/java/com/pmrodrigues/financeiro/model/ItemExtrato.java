@@ -11,16 +11,15 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * Reserve fund for a condominium, tracking the balance and monthly credit percentage.
- * Each condominium may have at most one active FundoReserva.
+ * Single transaction line from an imported bank statement, partitioned by condominio_id.
+ * {@code lancamento} is populated when the item is matched to an existing entry.
  */
 @Getter
 @Setter
@@ -29,12 +28,12 @@ import java.time.LocalDateTime;
 @Builder
 @Accessors(chain = true)
 @Entity
-@Table(name = "fundo_reserva")
-@SQLDelete(sql = "UPDATE fundo_reserva SET deleted = true WHERE id = ?")
+@Table(name = "itens_extrato")
+@SQLDelete(sql = "UPDATE itens_extrato SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @EntityListeners(AuditingEntityListener.class)
-public class FundoReserva {
+public class ItemExtrato {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,19 +42,37 @@ public class FundoReserva {
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "condominio_id", nullable = false, unique = true)
+    @JoinColumn(name = "condominio_id", nullable = false)
     private Condominio condominio;
 
-    @Column(name = "percentual_arrecadacao", nullable = false, precision = 5, scale = 2)
-    private BigDecimal percentualArrecadacao;
-
-    @Column(name = "saldo_atual", nullable = false, precision = 15, scale = 2)
-    @Builder.Default
-    private BigDecimal saldoAtual = BigDecimal.ZERO;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "extrato_importacao_id", nullable = false)
+    private ExtratoImportacao extratoImportacao;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "conta_bancaria_id")
-    private ContaBancaria contaBancaria;
+    @JoinColumn(name = "lancamento_id")
+    private LancamentoBancario lancamento;
+
+    @Column(name = "data_lancamento", nullable = false)
+    private LocalDate dataLancamento;
+
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal valor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private TipoLancamento tipo;
+
+    @Column(length = 500)
+    private String descricao;
+
+    @Column(name = "numero_documento", length = 100)
+    private String numeroDocumento;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 15)
+    @Builder.Default
+    private StatusItemExtrato status = StatusItemExtrato.PENDENTE;
 
     @Column(nullable = false)
     @Builder.Default
@@ -68,14 +85,6 @@ public class FundoReserva {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @CreatedBy
-    @Column(name = "created_by", updatable = false)
-    private String createdBy;
-
-    @LastModifiedBy
-    @Column(name = "updated_by")
-    private String updatedBy;
 
     /**
      * Sets the {@code condominio} from {@link TenantContext} before the entity is first persisted.

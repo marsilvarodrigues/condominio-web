@@ -4,7 +4,7 @@ Feature: Gerenciamento de Fundo de Reserva
     Given estou autenticado como admin do condomínio
     When eu crio um fundo de reserva com percentual "10.00" e conta "001-1"
     Then o status da resposta é 201
-    And a resposta tem o campo "$.data.contaBancariaDestino" com valor "001-1"
+    And a resposta tem o campo "$.data.percentualArrecadacao" com valor "10.0"
 
   Scenario: Dados inválidos retornam 400
     Given estou autenticado como admin do condomínio
@@ -26,7 +26,7 @@ Feature: Gerenciamento de Fundo de Reserva
     When eu crio um fundo de reserva com percentual "10.00" e conta "001-1"
     And eu faço GET para "/fundo-reserva"
     Then o status da resposta é 200
-    And a resposta tem o campo "$.data.contaBancariaDestino" com valor "001-1"
+    And a resposta tem o campo "$.data.percentualArrecadacao" com valor "10.0"
 
   Scenario: Admin credita no fundo de reserva retorna 201
     Given estou autenticado como admin do condomínio
@@ -60,4 +60,4 @@ Feature: Gerenciamento de Fundo de Reserva
     When eu crio um fundo de reserva com percentual "10.00" e conta "001-1"
     And eu atualizo o fundo de reserva com percentual "15.00" e conta "002-2"
     Then o status da resposta é 200
-    And a resposta tem o campo "$.data.contaBancariaDestino" com valor "002-2"
+    And a resposta tem o campo "$.data.percentualArrecadacao" com valor "15.0"

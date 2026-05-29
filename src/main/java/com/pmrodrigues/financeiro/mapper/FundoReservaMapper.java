@@ -18,12 +18,16 @@ public interface FundoReservaMapper {
     /**
      * Maps FundoReserva to its DTO.
      */
+    @Mapping(target = "contaBancariaId", source = "contaBancaria.id")
+    @Mapping(target = "contaBancariaDescricao", source = "contaBancaria.descricao")
     FundoReservaDTO toDTO(FundoReserva entity);
 
     /**
      * Maps a creation payload to a new FundoReserva entity.
+     * The {@code contaBancaria} association is resolved and set by the service.
      */
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "contaBancaria", ignore = true)
     @Mapping(target = "saldoAtual", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -34,8 +38,10 @@ public interface FundoReservaMapper {
 
     /**
      * Updates mutable fields of an existing FundoReserva from an update DTO.
+     * The {@code contaBancaria} association is resolved and set by the service.
      */
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "contaBancaria", ignore = true)
     @Mapping(target = "saldoAtual", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

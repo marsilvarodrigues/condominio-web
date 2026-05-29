@@ -74,7 +74,7 @@ public class FinanceiroSteps {
     public void criarFundoReserva(String percentual, String conta) throws Exception {
         Map<String, Object> body = new HashMap<>();
         body.put("percentualArrecadacao", new java.math.BigDecimal(percentual));
-        body.put("contaBancariaDestino", conta);
+        // contaBancariaId is optional (Long); BDD tests omit it
         http.post("/fundo-reserva", objectMapper.writeValueAsString(body));
     }
 
@@ -82,7 +82,7 @@ public class FinanceiroSteps {
     public void tentarCriarFundoReservaInvalido() throws Exception {
         Map<String, Object> body = new HashMap<>();
         body.put("percentualArrecadacao", new java.math.BigDecimal("150.00"));
-        body.put("contaBancariaDestino", "001-1");
+        // contaBancariaId is optional (Long); omit in invalid-percentual test
         http.post("/fundo-reserva", objectMapper.writeValueAsString(body));
     }
 
@@ -106,7 +106,7 @@ public class FinanceiroSteps {
     public void atualizarFundoReserva(String percentual, String conta) throws Exception {
         Map<String, Object> body = new HashMap<>();
         body.put("percentualArrecadacao", new java.math.BigDecimal(percentual));
-        body.put("contaBancariaDestino", conta);
+        // contaBancariaId is optional (Long); BDD tests omit it
         http.put("/fundo-reserva", objectMapper.writeValueAsString(body));
     }
 

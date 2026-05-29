@@ -47,3 +47,18 @@ databaseChangeLog:
   - include:
       file: db/changelog/changes/0016-alter-apartamento-add-areaConstruida.sql
       relativeToChangelogFile: false
+  - include:
+      file: db/changelog/changes/0017-create-bancos.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/changes/0018-create-contas-bancarias.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/changes/0019-create-lancamentos-bancarios.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/changes/0020-create-extrato-importacao.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/changes/0021-refactor-fundo-reserva-conta-bancaria.sql
+      relativeToChangelogFile: false

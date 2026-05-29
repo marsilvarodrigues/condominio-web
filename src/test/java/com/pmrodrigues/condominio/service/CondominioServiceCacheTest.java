@@ -9,7 +9,9 @@ import com.pmrodrigues.condominio.model.Condominio;
 import com.pmrodrigues.condominio.repository.ApartamentoRepository;
 import com.pmrodrigues.condominio.repository.BlocoRepository;
 import com.pmrodrigues.condominio.repository.CondominioRepository;
+import com.pmrodrigues.financeiro.service.ContaBancariaService;
 import com.pmrodrigues.financeiro.service.FundoReservaService;
+import com.pmrodrigues.financeiro.service.LancamentoBancarioService;
 import com.pmrodrigues.financeiro.service.OrcamentoAnualService;
 import com.pmrodrigues.financeiro.service.PlanoContasService;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +43,7 @@ class CondominioServiceCacheTest {
         @Bean
         CacheManager cacheManager() {
             return new ConcurrentMapCacheManager("condominios", "blocos", "apartamentos",
-                    "plano-contas", "fundo-reserva", "orcamentos");
+                    "plano-contas", "fundo-reserva", "orcamentos", "contas-bancarias");
         }
 
         @Bean
@@ -80,12 +82,25 @@ class CondominioServiceCacheTest {
         }
 
         @Bean
+        ContaBancariaService contaBancariaService() {
+            return mock(ContaBancariaService.class);
+        }
+
+        @Bean
+        LancamentoBancarioService lancamentoBancarioService() {
+            return mock(LancamentoBancarioService.class);
+        }
+
+        @Bean
         CondominioService service(CondominioRepository repository, CondominioMapper mapper,
                                    BlocoRepository blocoRepository, ApartamentoRepository apartamentoRepository,
                                    PlanoContasService planoContasService, FundoReservaService fundoReservaService,
-                                   OrcamentoAnualService orcamentoAnualService) {
+                                   OrcamentoAnualService orcamentoAnualService,
+                                   ContaBancariaService contaBancariaService,
+                                   LancamentoBancarioService lancamentoBancarioService) {
             return new CondominioService(repository, mapper, blocoRepository, apartamentoRepository,
-                    planoContasService, fundoReservaService, orcamentoAnualService);
+                    planoContasService, fundoReservaService, orcamentoAnualService, contaBancariaService,
+                    lancamentoBancarioService);
         }
     }
 

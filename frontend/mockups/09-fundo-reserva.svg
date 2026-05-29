@@ -19,13 +19,21 @@
   <rect x="0" y="224" width="260" height="48" fill="#1976D2"/>
   <rect x="0" y="224" width="4" height="48" fill="#42A5F5"/>
   <text x="58" y="253" font-size="14" font-weight="500" fill="white">Financeiro</text>
-  <rect x="0" y="272" width="260" height="40" fill="transparent"/>
-  <text x="72" y="296" font-size="13" fill="#78909C">Plano de Contas</text>
-  <rect x="0" y="312" width="260" height="40" fill="#162030"/>
-  <rect x="0" y="312" width="4" height="40" fill="#42A5F5"/>
-  <text x="72" y="336" font-size="13" font-weight="600" fill="white">Fundo de Reserva</text>
-  <rect x="0" y="352" width="260" height="40" fill="transparent"/>
-  <text x="72" y="376" font-size="13" fill="#78909C">Orçamento Anual</text>
+  <rect x="0" y="272" width="260" height="36" fill="transparent"/>
+  <text x="72" y="295" font-size="13" fill="#78909C">Plano de Contas</text>
+  <rect x="0" y="308" width="260" height="36" fill="#162030"/>
+  <rect x="0" y="308" width="4" height="36" fill="#42A5F5"/>
+  <text x="72" y="331" font-size="13" font-weight="600" fill="white">Fundo de Reserva</text>
+  <rect x="0" y="344" width="260" height="36" fill="transparent"/>
+  <text x="72" y="367" font-size="13" fill="#78909C">Orçamento Anual</text>
+  <rect x="0" y="380" width="260" height="36" fill="transparent"/>
+  <text x="72" y="403" font-size="13" fill="#78909C">Bancos</text>
+  <rect x="0" y="416" width="260" height="36" fill="transparent"/>
+  <text x="72" y="439" font-size="13" fill="#78909C">Contas Bancárias</text>
+  <rect x="0" y="452" width="260" height="36" fill="transparent"/>
+  <text x="72" y="475" font-size="13" fill="#78909C">Lançamentos</text>
+  <rect x="0" y="488" width="260" height="36" fill="transparent"/>
+  <text x="72" y="511" font-size="13" fill="#78909C">Conciliação</text>
 
   <!-- ===== MAIN CONTENT ===== -->
   <rect x="260" y="0" width="1020" height="64" fill="white" filter="url(#card-shadow)"/>
@@ -37,18 +45,15 @@
   <text x="310" y="114" font-size="14" fill="rgba(255,255,255,0.8)">Saldo Atual</text>
   <text x="310" y="168" font-size="40" font-weight="700" fill="white">R$ 45.320,00</text>
   <text x="310" y="200" font-size="13" fill="rgba(255,255,255,0.7)">Percentual de arrecadação: 10,00%</text>
-  <text x="310" y="220" font-size="13" fill="rgba(255,255,255,0.7)">Conta destino: 001-1  •  Ag 0001</text>
+  <text x="310" y="220" font-size="13" fill="rgba(255,255,255,0.7)">Conta bancária: Caixa Principal (CC 12345-1)</text>
 
   <!-- ===== ACTIONS CARD ===== -->
   <rect x="760" y="80" width="500" height="160" rx="8" fill="white" filter="url(#card-shadow)"/>
   <text x="780" y="114" font-size="15" font-weight="600" fill="#1A2332">Movimentar Fundo</text>
-  <!-- Creditar btn -->
   <rect x="780" y="124" width="200" height="40" rx="4" fill="#E8F5E9" stroke="#A5D6A7" stroke-width="1"/>
   <text x="880" y="149" font-size="14" font-weight="500" fill="#2E7D32" text-anchor="middle">+ Creditar</text>
-  <!-- Debitar btn -->
   <rect x="1000" y="124" width="200" height="40" rx="4" fill="#FBE9E7" stroke="#FFAB91" stroke-width="1"/>
   <text x="1100" y="149" font-size="14" font-weight="500" fill="#BF360C" text-anchor="middle">− Debitar</text>
-  <!-- Config -->
   <text x="780" y="196" font-size="12" fill="#546E7A">Configurações</text>
   <rect x="780" y="204" width="120" height="28" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
   <text x="840" y="223" font-size="12" fill="#37474F" text-anchor="middle">Editar Fundo</text>
@@ -56,32 +61,26 @@
   <!-- Inline credit form (expanded) -->
   <rect x="280" y="256" width="460" height="148" rx="8" fill="white" filter="url(#card-shadow)"/>
   <text x="300" y="284" font-size="14" font-weight="600" fill="#2E7D32">Novo Crédito</text>
-  <!-- Valor -->
   <text x="300" y="312" font-size="12" fill="#546E7A">Valor *</text>
   <rect x="300" y="320" width="160" height="32" rx="4" fill="#F5F7FA" stroke="#1976D2" stroke-width="1.5"/>
   <text x="316" y="341" font-size="13" fill="#37474F">R$ 1.000,00</text>
-  <!-- Data -->
   <text x="480" y="312" font-size="12" fill="#546E7A">Data</text>
   <rect x="480" y="320" width="140" height="32" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
   <text x="496" y="341" font-size="13" fill="#37474F">28/05/2026</text>
-  <!-- Justificativa -->
   <text x="300" y="372" font-size="12" fill="#546E7A">Justificativa</text>
   <rect x="300" y="380" width="320" height="32" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
   <text x="316" y="401" font-size="13" fill="#B0BEC5">Descrição opcional...</text>
-  <!-- Save btn -->
   <rect x="630" y="380" width="90" height="32" rx="4" fill="#1976D2"/>
   <text x="675" y="401" font-size="13" font-weight="500" fill="white" text-anchor="middle">Confirmar</text>
 
   <!-- ===== MOVEMENT HISTORY ===== -->
   <rect x="760" y="256" width="500" height="484" rx="8" fill="white" filter="url(#card-shadow)"/>
   <text x="780" y="284" font-size="15" font-weight="600" fill="#1A2332">Histórico de Movimentações</text>
-  <!-- Headers -->
   <rect x="760" y="292" width="500" height="32" fill="#F5F7FA"/>
   <text x="780" y="312" font-size="11" font-weight="600" fill="#546E7A">DATA</text>
   <text x="850" y="312" font-size="11" font-weight="600" fill="#546E7A">TIPO</text>
   <text x="940" y="312" font-size="11" font-weight="600" fill="#546E7A">VALOR</text>
   <text x="1060" y="312" font-size="11" font-weight="600" fill="#546E7A">JUSTIFICATIVA</text>
-  <!-- Row 1 CREDITO -->
   <rect x="760" y="324" width="500" height="38" fill="white"/>
   <text x="780" y="347" font-size="12" fill="#37474F">28/05/2026</text>
   <rect x="840" y="333" width="60" height="20" rx="10" fill="#E8F5E9"/>
@@ -89,7 +88,6 @@
   <text x="940" y="347" font-size="12" fill="#2E7D32">+ R$ 1.000,00</text>
   <text x="1060" y="347" font-size="12" fill="#78909C">—</text>
   <rect x="760" y="361" width="500" height="1" fill="#F0F2F5"/>
-  <!-- Row 2 DEBITO -->
   <rect x="760" y="362" width="500" height="38" fill="#FAFAFA"/>
   <text x="780" y="385" font-size="12" fill="#37474F">25/05/2026</text>
   <rect x="840" y="371" width="56" height="20" rx="10" fill="#FBE9E7"/>
@@ -97,7 +95,6 @@
   <text x="940" y="385" font-size="12" fill="#BF360C">− R$ 500,00</text>
   <text x="1060" y="385" font-size="12" fill="#546E7A">Conserto portão</text>
   <rect x="760" y="399" width="500" height="1" fill="#F0F2F5"/>
-  <!-- Row 3 CREDITO -->
   <rect x="760" y="400" width="500" height="38" fill="white"/>
   <text x="780" y="423" font-size="12" fill="#37474F">20/05/2026</text>
   <rect x="840" y="409" width="60" height="20" rx="10" fill="#E8F5E9"/>
@@ -105,7 +102,6 @@
   <text x="940" y="423" font-size="12" fill="#2E7D32">+ R$ 2.000,00</text>
   <text x="1060" y="423" font-size="12" fill="#78909C">—</text>
   <rect x="760" y="437" width="500" height="1" fill="#F0F2F5"/>
-  <!-- Row 4 DEBITO -->
   <rect x="760" y="438" width="500" height="38" fill="#FAFAFA"/>
   <text x="780" y="461" font-size="12" fill="#37474F">15/05/2026</text>
   <rect x="840" y="447" width="56" height="20" rx="10" fill="#FBE9E7"/>
@@ -113,9 +109,7 @@
   <text x="940" y="461" font-size="12" fill="#BF360C">− R$ 320,00</text>
   <text x="1060" y="461" font-size="12" fill="#546E7A">Dedetização</text>
   <rect x="760" y="475" width="500" height="1" fill="#F0F2F5"/>
-  <!-- Mini chart label -->
   <text x="780" y="510" font-size="13" font-weight="600" fill="#1A2332">Evolução do Saldo</text>
-  <!-- Simple bar chart -->
   <rect x="780" y="560" width="40" height="80" rx="2" fill="#90CAF9" opacity="0.7"/>
   <rect x="836" y="540" width="40" height="100" rx="2" fill="#90CAF9" opacity="0.7"/>
   <rect x="892" y="530" width="40" height="110" rx="2" fill="#42A5F5"/>
@@ -129,7 +123,6 @@
   <text x="1004" y="650" font-size="10" fill="#78909C">Mai</text>
   <text x="1060" y="650" font-size="10" fill="#78909C">Jun</text>
   <line x1="772" y1="640" x2="1112" y2="640" stroke="#E0E0E0" stroke-width="1"/>
-  <!-- Pagination -->
   <rect x="780" y="700" width="440" height="32" fill="transparent"/>
   <text x="780" y="720" font-size="12" fill="#78909C">Exibindo 1–4 de 24 registros</text>
   <rect x="1100" y="704" width="28" height="24" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
@@ -140,7 +133,6 @@
   <!-- Progress bar -->
   <rect x="280" y="420" width="460" height="8" rx="4" fill="#E3F2FD"/>
   <rect x="280" y="420" width="80" height="8" rx="4" fill="#1976D2"/>
-  <!-- chart label -->
   <text x="300" y="448" font-size="13" font-weight="600" fill="#1A2332">% Arrecadação / Orçamento</text>
   <text x="660" y="448" font-size="12" fill="#78909C" text-anchor="end">17%</text>
 </svg>

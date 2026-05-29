@@ -1,0 +1,200 @@
+<svg width="1280" height="860" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="card-shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="860" fill="#F0F2F5"/>
+
+  <!-- ===== SIDEBAR ===== -->
+  <rect width="260" height="860" fill="#1A2332"/>
+  <rect x="0" y="0" width="260" height="64" fill="#151D2B"/>
+  <text x="58" y="34" font-size="18" font-weight="700" fill="white">CondoGest</text>
+  <text x="58" y="50" font-size="11" fill="#78909C">v1.0</text>
+  <text x="58" y="109" font-size="14" fill="#78909C">Dashboard</text>
+  <text x="58" y="157" font-size="14" fill="#78909C">Condomínios</text>
+  <text x="58" y="205" font-size="14" fill="#78909C">Usuários</text>
+  <rect x="0" y="224" width="260" height="48" fill="#1976D2"/>
+  <rect x="0" y="224" width="4" height="48" fill="#42A5F5"/>
+  <text x="58" y="253" font-size="14" font-weight="500" fill="white">Financeiro</text>
+  <rect x="0" y="272" width="260" height="36" fill="transparent"/>
+  <text x="72" y="295" font-size="13" fill="#78909C">Plano de Contas</text>
+  <rect x="0" y="308" width="260" height="36" fill="transparent"/>
+  <text x="72" y="331" font-size="13" fill="#78909C">Fundo de Reserva</text>
+  <rect x="0" y="344" width="260" height="36" fill="transparent"/>
+  <text x="72" y="367" font-size="13" fill="#78909C">Orçamento Anual</text>
+  <rect x="0" y="380" width="260" height="36" fill="transparent"/>
+  <text x="72" y="403" font-size="13" fill="#78909C">Bancos</text>
+  <rect x="0" y="416" width="260" height="36" fill="#162030"/>
+  <rect x="0" y="416" width="4" height="36" fill="#42A5F5"/>
+  <text x="72" y="439" font-size="13" font-weight="600" fill="white">Contas Bancárias</text>
+  <rect x="0" y="452" width="260" height="36" fill="transparent"/>
+  <text x="72" y="475" font-size="13" fill="#78909C">Lançamentos</text>
+  <rect x="0" y="488" width="260" height="36" fill="transparent"/>
+  <text x="72" y="511" font-size="13" fill="#78909C">Conciliação</text>
+
+  <!-- ===== TOP BAR ===== -->
+  <rect x="260" y="0" width="1020" height="64" fill="white" filter="url(#card-shadow)"/>
+  <text x="284" y="28" font-size="13" fill="#78909C">← Contas Bancárias</text>
+  <text x="284" y="50" font-size="20" font-weight="600" fill="#1A2332">Caixa Principal — Itaú 341 | Ag. 0001 / CC 12345-1</text>
+
+  <!-- ===== HEADER INFO CARD ===== -->
+  <rect x="280" y="80" width="980" height="88" rx="8" fill="white" filter="url(#card-shadow)"/>
+  <!-- Tipo badge -->
+  <rect x="300" y="96" width="88" height="24" rx="12" fill="#E3F2FD"/>
+  <text x="344" y="112" font-size="12" fill="#1565C0" text-anchor="middle">CORRENTE</text>
+  <!-- Saldo contábil -->
+  <text x="300" y="150" font-size="28" font-weight="700" fill="#1A2332">R$ 42.130,00</text>
+  <text x="300" y="163" font-size="11" fill="#78909C">Saldo Contábil</text>
+  <!-- Banco info -->
+  <text x="600" y="112" font-size="12" fill="#78909C">Banco</text>
+  <text x="600" y="132" font-size="14" font-weight="600" fill="#37474F">Itaú Unibanco S.A. (341)</text>
+  <text x="600" y="152" font-size="12" fill="#78909C">ISPB: 60.701.190</text>
+  <!-- Conta info -->
+  <text x="820" y="112" font-size="12" fill="#78909C">Agência / Conta</text>
+  <text x="820" y="132" font-size="14" font-weight="600" fill="#37474F">0001 / 12345-1</text>
+  <text x="820" y="152" font-size="12" fill="#78909C">Chave Pix: —</text>
+  <!-- Ativa badge -->
+  <rect x="1150" y="96" width="80" height="28" rx="14" fill="#E8F5E9"/>
+  <text x="1190" y="115" font-size="13" font-weight="600" fill="#2E7D32" text-anchor="middle">● Ativa</text>
+
+  <!-- ===== TABS ===== -->
+  <rect x="280" y="184" width="980" height="44" rx="8" fill="white" filter="url(#card-shadow)"/>
+  <rect x="280" y="204" width="980" height="24" fill="white"/>
+  <!-- Dados tab -->
+  <text x="320" y="213" font-size="14" fill="#78909C">Dados da Conta</text>
+  <!-- Lançamentos tab (active) -->
+  <rect x="444" y="184" width="130" height="44" fill="white"/>
+  <rect x="444" y="224" width="130" height="4" fill="#1976D2"/>
+  <text x="509" y="213" font-size="14" font-weight="600" fill="#1976D2" text-anchor="middle">Lançamentos</text>
+  <!-- Conciliação tab -->
+  <text x="620" y="213" font-size="14" fill="#78909C">Conciliação</text>
+
+  <!-- ===== FILTER BAR FOR LANÇAMENTOS ===== -->
+  <rect x="280" y="244" width="980" height="56" rx="8" fill="white" filter="url(#card-shadow)"/>
+  <text x="300" y="277" font-size="12" fill="#546E7A">Tipo:</text>
+  <rect x="334" y="259" width="100" height="28" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="350" y="278" font-size="12" fill="#37474F">Todos</text>
+  <text x="424" y="278" font-size="10" fill="#78909C">▼</text>
+  <text x="446" y="277" font-size="12" fill="#546E7A">Origem:</text>
+  <rect x="496" y="259" width="120" height="28" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="512" y="278" font-size="12" fill="#37474F">Todas</text>
+  <text x="606" y="278" font-size="10" fill="#78909C">▼</text>
+  <text x="628" y="277" font-size="12" fill="#546E7A">Status:</text>
+  <rect x="674" y="259" width="100" height="28" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="690" y="278" font-size="12" fill="#37474F">Todos</text>
+  <text x="764" y="278" font-size="10" fill="#78909C">▼</text>
+  <text x="786" y="277" font-size="12" fill="#546E7A">De:</text>
+  <rect x="806" y="259" width="110" height="28" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="822" y="278" font-size="12" fill="#37474F">01/05/2026</text>
+  <text x="924" y="277" font-size="12" fill="#546E7A">Até:</text>
+  <rect x="950" y="259" width="110" height="28" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="966" y="278" font-size="12" fill="#37474F">31/05/2026</text>
+  <rect x="1072" y="259" width="84" height="28" rx="4" fill="#1976D2"/>
+  <text x="1114" y="278" font-size="12" font-weight="500" fill="white" text-anchor="middle">Filtrar</text>
+
+  <!-- Add lancamento button -->
+  <rect x="1160" y="259" width="88" height="28" rx="4" fill="#E8F5E9" stroke="#A5D6A7" stroke-width="1"/>
+  <text x="1204" y="278" font-size="12" font-weight="500" fill="#2E7D32" text-anchor="middle">+ Lançar</text>
+
+  <!-- ===== LANCAMENTOS TABLE ===== -->
+  <rect x="280" y="316" width="980" height="476" rx="8" fill="white" filter="url(#card-shadow)"/>
+
+  <!-- Table header -->
+  <rect x="280" y="316" width="980" height="36" rx="8" fill="#F5F7FA"/>
+  <rect x="280" y="332" width="980" height="20" fill="#F5F7FA"/>
+  <text x="300" y="339" font-size="11" font-weight="600" fill="#546E7A">DATA</text>
+  <text x="370" y="339" font-size="11" font-weight="600" fill="#546E7A">TIPO</text>
+  <text x="440" y="339" font-size="11" font-weight="600" fill="#546E7A">VALOR</text>
+  <text x="530" y="339" font-size="11" font-weight="600" fill="#546E7A">DESCRIÇÃO</text>
+  <text x="760" y="339" font-size="11" font-weight="600" fill="#546E7A">ORIGEM</text>
+  <text x="920" y="339" font-size="11" font-weight="600" fill="#546E7A">STATUS</text>
+  <text x="1030" y="339" font-size="11" font-weight="600" fill="#546E7A">AÇÕES</text>
+
+  <!-- Row 1 — CREDITO, CONCILIADO -->
+  <rect x="280" y="352" width="980" height="44" fill="white"/>
+  <text x="300" y="378" font-size="12" fill="#37474F">28/05/2026</text>
+  <rect x="370" y="360" width="52" height="20" rx="10" fill="#E8F5E9"/>
+  <text x="396" y="374" font-size="11" fill="#2E7D32" text-anchor="middle">CRED.</text>
+  <text x="440" y="378" font-size="12" font-weight="600" fill="#2E7D32">+ R$ 5.000,00</text>
+  <text x="530" y="378" font-size="12" fill="#37474F">Cota condomínio — Mai/2026</text>
+  <text x="760" y="378" font-size="11" fill="#546E7A">COTA</text>
+  <rect x="920" y="360" width="80" height="20" rx="10" fill="#E8F5E9"/>
+  <text x="960" y="374" font-size="11" fill="#2E7D32" text-anchor="middle">CONCILIADO</text>
+  <rect x="1030" y="360" width="52" height="20" rx="4" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="1056" y="374" font-size="11" fill="#1565C0" text-anchor="middle">Editar</text>
+  <rect x="280" y="395" width="980" height="1" fill="#F0F2F5"/>
+
+  <!-- Row 2 — DEBITO, PENDENTE -->
+  <rect x="280" y="396" width="980" height="44" fill="#FAFAFA"/>
+  <text x="300" y="422" font-size="12" fill="#37474F">25/05/2026</text>
+  <rect x="370" y="404" width="52" height="20" rx="10" fill="#FBE9E7"/>
+  <text x="396" y="418" font-size="11" fill="#BF360C" text-anchor="middle">DÉB.</text>
+  <text x="440" y="422" font-size="12" font-weight="600" fill="#BF360C">− R$ 1.200,00</text>
+  <text x="530" y="422" font-size="12" fill="#37474F">Manutenção elevador</text>
+  <text x="760" y="422" font-size="11" fill="#546E7A">DESP. ORDINÁRIA</text>
+  <rect x="920" y="404" width="74" height="20" rx="10" fill="#FFF3E0"/>
+  <text x="957" y="418" font-size="11" fill="#E65100" text-anchor="middle">PENDENTE</text>
+  <rect x="1030" y="404" width="52" height="20" rx="4" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="1056" y="418" font-size="11" fill="#1565C0" text-anchor="middle">Editar</text>
+  <rect x="1090" y="404" width="52" height="20" rx="4" fill="#FBE9E7" stroke="#FFAB91" stroke-width="1"/>
+  <text x="1116" y="418" font-size="11" fill="#BF360C" text-anchor="middle">Excluir</text>
+  <rect x="280" y="439" width="980" height="1" fill="#F0F2F5"/>
+
+  <!-- Row 3 — CREDITO, PENDENTE -->
+  <rect x="280" y="440" width="980" height="44" fill="white"/>
+  <text x="300" y="466" font-size="12" fill="#37474F">20/05/2026</text>
+  <rect x="370" y="448" width="52" height="20" rx="10" fill="#E8F5E9"/>
+  <text x="396" y="462" font-size="11" fill="#2E7D32" text-anchor="middle">CRED.</text>
+  <text x="440" y="466" font-size="12" font-weight="600" fill="#2E7D32">+ R$ 5.000,00</text>
+  <text x="530" y="466" font-size="12" fill="#37474F">Cota condomínio — Mai/2026 (Ap 202)</text>
+  <text x="760" y="466" font-size="11" fill="#546E7A">COTA</text>
+  <rect x="920" y="448" width="74" height="20" rx="10" fill="#FFF3E0"/>
+  <text x="957" y="462" font-size="11" fill="#E65100" text-anchor="middle">PENDENTE</text>
+  <rect x="1030" y="448" width="52" height="20" rx="4" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="1056" y="462" font-size="11" fill="#1565C0" text-anchor="middle">Editar</text>
+  <rect x="1090" y="448" width="52" height="20" rx="4" fill="#FBE9E7" stroke="#FFAB91" stroke-width="1"/>
+  <text x="1116" y="462" font-size="11" fill="#BF360C" text-anchor="middle">Excluir</text>
+  <rect x="280" y="483" width="980" height="1" fill="#F0F2F5"/>
+
+  <!-- Row 4 — DEBITO, CONCILIADO -->
+  <rect x="280" y="484" width="980" height="44" fill="#FAFAFA"/>
+  <text x="300" y="510" font-size="12" fill="#37474F">15/05/2026</text>
+  <rect x="370" y="492" width="52" height="20" rx="10" fill="#FBE9E7"/>
+  <text x="396" y="506" font-size="11" fill="#BF360C" text-anchor="middle">DÉB.</text>
+  <text x="440" y="510" font-size="12" font-weight="600" fill="#BF360C">− R$ 380,00</text>
+  <text x="530" y="510" font-size="12" fill="#37474F">Conta de água — Mai/2026</text>
+  <text x="760" y="510" font-size="11" fill="#546E7A">DESP. ORDINÁRIA</text>
+  <rect x="920" y="492" width="80" height="20" rx="10" fill="#E8F5E9"/>
+  <text x="960" y="506" font-size="11" fill="#2E7D32" text-anchor="middle">CONCILIADO</text>
+  <rect x="1030" y="492" width="52" height="20" rx="4" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="1056" y="506" font-size="11" fill="#1565C0" text-anchor="middle">Editar</text>
+  <rect x="280" y="527" width="980" height="1" fill="#F0F2F5"/>
+
+  <!-- Row 5 -->
+  <rect x="280" y="528" width="980" height="44" fill="white"/>
+  <text x="300" y="554" font-size="12" fill="#37474F">10/05/2026</text>
+  <rect x="370" y="536" width="52" height="20" rx="10" fill="#FBE9E7"/>
+  <text x="396" y="550" font-size="11" fill="#BF360C" text-anchor="middle">DÉB.</text>
+  <text x="440" y="554" font-size="12" font-weight="600" fill="#BF360C">− R$ 2.500,00</text>
+  <text x="530" y="554" font-size="12" fill="#37474F">Seguro predial anual</text>
+  <text x="760" y="554" font-size="11" fill="#546E7A">DESP. EXTRAORD.</text>
+  <rect x="920" y="536" width="74" height="20" rx="10" fill="#FFF3E0"/>
+  <text x="957" y="550" font-size="11" fill="#E65100" text-anchor="middle">PENDENTE</text>
+  <rect x="1030" y="536" width="52" height="20" rx="4" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="1056" y="550" font-size="11" fill="#1565C0" text-anchor="middle">Editar</text>
+  <rect x="1090" y="536" width="52" height="20" rx="4" fill="#FBE9E7" stroke="#FFAB91" stroke-width="1"/>
+  <text x="1116" y="550" font-size="11" fill="#BF360C" text-anchor="middle">Excluir</text>
+
+  <!-- ===== PAGINATION ===== -->
+  <text x="300" y="770" font-size="12" fill="#78909C">Exibindo 1–5 de 38 lançamentos em Mai/2026</text>
+  <rect x="1100" y="754" width="28" height="24" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="1114" y="770" font-size="12" fill="#546E7A" text-anchor="middle">‹</text>
+  <rect x="1132" y="754" width="28" height="24" rx="4" fill="#1976D2"/>
+  <text x="1146" y="770" font-size="12" fill="white" text-anchor="middle">1</text>
+  <rect x="1164" y="754" width="28" height="24" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="1178" y="770" font-size="12" fill="#546E7A" text-anchor="middle">2</text>
+  <rect x="1196" y="754" width="28" height="24" rx="4" fill="#F5F7FA" stroke="#DDE3EA" stroke-width="1"/>
+  <text x="1210" y="770" font-size="12" fill="#546E7A" text-anchor="middle">›</text>
+</svg>

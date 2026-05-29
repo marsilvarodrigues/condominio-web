@@ -50,7 +50,7 @@ class FundoReservaControllerTest {
 
     private FundoReservaDTO fundoDto() {
         return new FundoReservaDTO(1L, new BigDecimal("10.00"), new BigDecimal("5000.00"),
-                "001-1", LocalDateTime.now(), LocalDateTime.now());
+                null, null, LocalDateTime.now(), LocalDateTime.now());
     }
 
     private FundoReservaMovimentacaoDTO movDto(TipoMovimentacao tipo) {
@@ -67,7 +67,7 @@ class FundoReservaControllerTest {
 
         mockMvc.perform(get("/fundo-reserva").header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.contaBancariaDestino").value("001-1"));
+                .andExpect(jsonPath("$.data.id").value(1));
     }
 
     @Test
@@ -87,7 +87,7 @@ class FundoReservaControllerTest {
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateFundoReservaDTO(new BigDecimal("10.00"), "001-1"))))
+                                new CreateFundoReservaDTO(new BigDecimal("10.00"), null))))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.id").value(1));
     }
@@ -102,7 +102,7 @@ class FundoReservaControllerTest {
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateFundoReservaDTO(new BigDecimal("10.00"), "001-1"))))
+                                new CreateFundoReservaDTO(new BigDecimal("10.00"), null))))
                 .andExpect(status().isConflict());
     }
 
@@ -112,7 +112,7 @@ class FundoReservaControllerTest {
         mockMvc.perform(post("/fundo-reserva")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"percentualArrecadacao\":150.00,\"contaBancariaDestino\":\"001-1\"}"))
+                        .content("{\"percentualArrecadacao\":150.00}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -123,7 +123,7 @@ class FundoReservaControllerTest {
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateFundoReservaDTO(new BigDecimal("10.00"), "001-1"))))
+                                new CreateFundoReservaDTO(new BigDecimal("10.00"), null))))
                 .andExpect(status().isForbidden());
     }
 
@@ -133,7 +133,7 @@ class FundoReservaControllerTest {
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateFundoReservaDTO(new BigDecimal("10.00"), "001-1"))))
+                                new CreateFundoReservaDTO(new BigDecimal("10.00"), null))))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -148,7 +148,7 @@ class FundoReservaControllerTest {
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new UpdateFundoReservaDTO(new BigDecimal("15.00"), "002-2"))))
+                                new UpdateFundoReservaDTO(new BigDecimal("15.00"), null))))
                 .andExpect(status().isOk());
     }
 
@@ -159,7 +159,7 @@ class FundoReservaControllerTest {
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new UpdateFundoReservaDTO(new BigDecimal("15.00"), "002-2"))))
+                                new UpdateFundoReservaDTO(new BigDecimal("15.00"), null))))
                 .andExpect(status().isForbidden());
     }
 

@@ -172,6 +172,14 @@ app:
         l1-ttl: 5m
         l2-ttl: 30m
         max-size: 200
+      bancos:
+        l1-ttl: 60m
+        l2-ttl: 24h
+        max-size: 200
+      contas-bancarias:
+        l1-ttl: 10m
+        l2-ttl: 30m
+        max-size: 500
 
 # Actuator
 management:
