@@ -53,6 +53,10 @@ public class ItemExtrato {
     @JoinColumn(name = "lancamento_id")
     private LancamentoBancario lancamento;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_orcamento_id")
+    private ItemOrcamento itemOrcamento;
+
     @Column(name = "data_lancamento", nullable = false)
     private LocalDate dataLancamento;
 

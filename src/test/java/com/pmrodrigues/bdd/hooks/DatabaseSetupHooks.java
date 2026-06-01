@@ -96,11 +96,17 @@ public class DatabaseSetupHooks {
     }
 
     private void limparTabelas() {
+        // itens_extrato FK → item_orcamento, extrato_importacoes, lancamentos_bancarios
+        jdbc.update("DELETE FROM itens_extrato");
+        jdbc.update("DELETE FROM extrato_importacoes");
         jdbc.update("DELETE FROM item_orcamento");
         jdbc.update("DELETE FROM orcamento_anual");
         jdbc.update("DELETE FROM fundo_reserva_movimentacao");
         jdbc.update("DELETE FROM fundo_reserva");
         jdbc.update("DELETE FROM plano_contas");
+        jdbc.update("DELETE FROM lancamentos_bancarios");
+        jdbc.update("DELETE FROM contas_bancarias");
+        jdbc.update("DELETE FROM bancos");
         jdbc.update("DELETE FROM apartamentos");
         jdbc.update("DELETE FROM blocos");
         jdbc.update("DELETE FROM user_roles");

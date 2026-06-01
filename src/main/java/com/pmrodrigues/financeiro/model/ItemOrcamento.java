@@ -15,6 +15,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A single budget line item linking a PlanoContas category to an OrcamentoAnual with predicted and realized values.
@@ -50,6 +52,10 @@ public class ItemOrcamento {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plano_contas_id", nullable = false)
     private PlanoContas planoContas;
+
+    @OneToMany(mappedBy = "itemOrcamento", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<ItemExtrato> itensExtrato = new ArrayList<>();
 
     @Column(name = "valor_previsto", nullable = false, precision = 15, scale = 2)
     private BigDecimal valorPrevisto;

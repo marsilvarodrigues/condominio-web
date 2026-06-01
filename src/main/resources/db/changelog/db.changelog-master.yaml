@@ -62,3 +62,6 @@ databaseChangeLog:
   - include:
       file: db/changelog/changes/0021-refactor-fundo-reserva-conta-bancaria.sql
       relativeToChangelogFile: false
+  - include:
+      file: db/changelog/changes/0022-add-item-orcamento-to-itens-extrato.sql
+      relativeToChangelogFile: false

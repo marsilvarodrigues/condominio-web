@@ -79,6 +79,10 @@ public class HttpTestHelper {
         execute(HttpMethod.DELETE, path, null);
     }
 
+    public void deleteWithBody(String path, String body) {
+        execute(HttpMethod.DELETE, path, body);
+    }
+
     private void execute(HttpMethod method, String path, String body) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(REQUEST_ID_HEADER, UUID.randomUUID().toString());

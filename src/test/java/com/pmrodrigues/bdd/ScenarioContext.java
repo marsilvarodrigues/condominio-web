@@ -43,4 +43,8 @@ public class ScenarioContext {
     private Long masterUserId;
     private Long regularUserId;
     private Long testPlanoContasId;
+    private Long testBancoId;
+    private Long testContaBancariaId;
+    private Long testItemOrcamentoId;
+    private Long testItemExtratoId;
 }
