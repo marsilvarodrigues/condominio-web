@@ -67,7 +67,7 @@ class AssociacaoOrcamentoControllerTest {
         mockMvc.perform(post("/conciliacao/associacao/20")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"itemOrcamentoId\":10}"))
+                        .content(objectMapper.writeValueAsString(new AssociarItemOrcamentoRequest(10L))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(20))
                 .andExpect(jsonPath("$.data.itemOrcamento.id").value(10));
@@ -79,7 +79,7 @@ class AssociacaoOrcamentoControllerTest {
         mockMvc.perform(post("/conciliacao/associacao/20")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"itemOrcamentoId\":null}"))
+                        .content(objectMapper.writeValueAsString(new AssociarItemOrcamentoRequest(null))))
                 .andExpect(status().isBadRequest());
     }
 
@@ -92,7 +92,7 @@ class AssociacaoOrcamentoControllerTest {
         mockMvc.perform(post("/conciliacao/associacao/99")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"itemOrcamentoId\":10}"))
+                        .content(objectMapper.writeValueAsString(new AssociarItemOrcamentoRequest(10L))))
                 .andExpect(status().isNotFound());
     }
 
@@ -102,7 +102,7 @@ class AssociacaoOrcamentoControllerTest {
         mockMvc.perform(post("/conciliacao/associacao/20")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"itemOrcamentoId\":10}"))
+                        .content(objectMapper.writeValueAsString(new AssociarItemOrcamentoRequest(10L))))
                 .andExpect(status().isForbidden());
     }
 
@@ -111,7 +111,7 @@ class AssociacaoOrcamentoControllerTest {
         mockMvc.perform(post("/conciliacao/associacao/20")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"itemOrcamentoId\":10}"))
+                        .content(objectMapper.writeValueAsString(new AssociarItemOrcamentoRequest(10L))))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -125,7 +125,7 @@ class AssociacaoOrcamentoControllerTest {
         mockMvc.perform(delete("/conciliacao/associacao/20")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"justificativa\":\"Erro de classificação\"}"))
+                        .content(objectMapper.writeValueAsString(new DesassociarItemOrcamentoRequest("Erro de classificação"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(20))
                 .andExpect(jsonPath("$.data.itemOrcamento").doesNotExist());
@@ -137,7 +137,7 @@ class AssociacaoOrcamentoControllerTest {
         mockMvc.perform(delete("/conciliacao/associacao/20")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"justificativa\":\"\"}"))
+                        .content(objectMapper.writeValueAsString(new DesassociarItemOrcamentoRequest(""))))
                 .andExpect(status().isBadRequest());
     }
 
@@ -150,7 +150,7 @@ class AssociacaoOrcamentoControllerTest {
         mockMvc.perform(delete("/conciliacao/associacao/99")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"justificativa\":\"Justificativa\"}"))
+                        .content(objectMapper.writeValueAsString(new DesassociarItemOrcamentoRequest("Justificativa"))))
                 .andExpect(status().isNotFound());
     }
 
@@ -160,7 +160,7 @@ class AssociacaoOrcamentoControllerTest {
         mockMvc.perform(delete("/conciliacao/associacao/20")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"justificativa\":\"Justificativa\"}"))
+                        .content(objectMapper.writeValueAsString(new DesassociarItemOrcamentoRequest("Justificativa"))))
                 .andExpect(status().isForbidden());
     }
 
@@ -169,7 +169,7 @@ class AssociacaoOrcamentoControllerTest {
         mockMvc.perform(delete("/conciliacao/associacao/20")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"justificativa\":\"Justificativa\"}"))
+                        .content(objectMapper.writeValueAsString(new DesassociarItemOrcamentoRequest("Justificativa"))))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -216,7 +216,7 @@ class AssociacaoOrcamentoControllerTest {
     void contribuicao_returns200WithData() throws Exception {
         var response = new ContribuicaoResponse(
                 10L, BigDecimal.valueOf(1000), BigDecimal.valueOf(500),
-                new java.math.BigDecimal("50.00"), 2);
+                new BigDecimal("50.00"), 2);
         when(associacaoService.calcularContribuicao(10L)).thenReturn(response);
 
         mockMvc.perform(get("/conciliacao/associacao/contribuicao/10")
