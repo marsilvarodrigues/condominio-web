@@ -73,5 +73,7 @@ public abstract class AbstractIntegrationTest {
         registry.add("security.jwt.refresh-token-expiration", () -> "86400");
         registry.add("security.jwt.client-id",                () -> "condominio");
         registry.add("security.jwt.client-secret",            () -> "condominio-secret");
+        registry.add("app.security.rate-limit.login.max-requests",   () -> "1000");
+        registry.add("app.security.rate-limit.refresh.max-requests", () -> "1000");
     }
 }

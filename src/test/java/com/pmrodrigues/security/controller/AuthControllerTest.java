@@ -3,6 +3,7 @@ package com.pmrodrigues.security.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pmrodrigues.security.dto.UserDTO;
 import com.pmrodrigues.security.service.JwtService;
+import com.pmrodrigues.security.service.RateLimitService;
 import com.pmrodrigues.security.service.TokenBlacklistService;
 import com.pmrodrigues.security.service.UserDetailsServiceImpl;
 import com.pmrodrigues.security.service.UserService;
@@ -55,6 +56,9 @@ class AuthControllerTest {
 
     @MockitoBean
     TokenBlacklistService tokenBlacklistService;
+
+    @MockitoBean
+    RateLimitService rateLimitService;
 
     @MockitoBean
     UserDetailsServiceImpl userDetailsService;

@@ -11,7 +11,11 @@ import org.mockito.quality.Strictness;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
+import java.util.HexFormat;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -80,33 +84,35 @@ class TokenBlacklistServiceTest {
 
     @Test
     void storeRefreshToken_storesBothEntries() {
+        var tokenHash = hash("refresh-uuid");
         service.storeRefreshToken("user@test.com", "refresh-uuid", Duration.ofDays(1));
 
-        verify(valueOperations).set("jwt:refresh:refresh-uuid", "user@test.com", Duration.ofDays(1));
-        verify(valueOperations).set("jwt:user_refresh:user@test.com", "refresh-uuid", Duration.ofDays(1));
+        verify(valueOperations).set("jwt:refresh:" + tokenHash, "user@test.com", Duration.ofDays(1));
+        verify(valueOperations).set("jwt:user_refresh:user@test.com", tokenHash, Duration.ofDays(1));
     }
 
     @Test
     void getEmailByRefreshToken_whenExists_returnsEmail() {
-        when(valueOperations.get("jwt:refresh:token-123")).thenReturn("user@test.com");
+        when(valueOperations.get("jwt:refresh:" + hash("token-123"))).thenReturn("user@test.com");
 
         assertThat(service.getEmailByRefreshToken("token-123")).contains("user@test.com");
     }
 
     @Test
     void getEmailByRefreshToken_whenNotExists_returnsEmpty() {
-        when(valueOperations.get("jwt:refresh:token-123")).thenReturn(null);
+        when(valueOperations.get("jwt:refresh:" + hash("token-123"))).thenReturn(null);
 
         assertThat(service.getEmailByRefreshToken("token-123")).isEmpty();
     }
 
     @Test
     void deleteRefreshToken_whenRefreshTokenExists_deletesBothKeys() {
-        when(valueOperations.get("jwt:user_refresh:user@test.com")).thenReturn("refresh-uuid");
+        var tokenHash = hash("refresh-uuid");
+        when(valueOperations.get("jwt:user_refresh:user@test.com")).thenReturn(tokenHash);
 
         service.deleteRefreshToken("user@test.com");
 
-        verify(redisTemplate).delete("jwt:refresh:refresh-uuid");
+        verify(redisTemplate).delete("jwt:refresh:" + tokenHash);
         verify(redisTemplate).delete("jwt:user_refresh:user@test.com");
     }
 
@@ -118,5 +124,15 @@ class TokenBlacklistServiceTest {
 
         verify(redisTemplate, times(1)).delete(any(String.class));
         verify(redisTemplate).delete("jwt:user_refresh:user@test.com");
+    }
+
+    private static String hash(String token) {
+        try {
+            var digest = MessageDigest.getInstance("SHA-256");
+            var hashBytes = digest.digest(token.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hashBytes);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

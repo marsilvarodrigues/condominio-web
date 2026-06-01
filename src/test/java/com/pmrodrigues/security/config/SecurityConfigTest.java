@@ -1,5 +1,6 @@
 package com.pmrodrigues.security.config;
 
+import com.pmrodrigues.security.service.RateLimitService;
 import com.pmrodrigues.security.service.TokenBlacklistService;
 import com.pmrodrigues.security.service.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,9 @@ class SecurityConfigTest {
 
     @MockitoBean
     TokenBlacklistService tokenBlacklistService;
+
+    @MockitoBean
+    RateLimitService rateLimitService;
 
     @MockitoBean
     UserDetailsServiceImpl userDetailsService;

@@ -24,6 +24,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -58,7 +59,7 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        userService = new UserService(userRepository, mailService, mapper, passwordHistoryRepository, condominioService);
+        userService = new UserService(userRepository, mailService, mapper, passwordHistoryRepository, condominioService, ENCODER);
         ReflectionTestUtils.setField(userService, "passwordHistoryCount", 3);
 
         lenient().when(userRepository.findByEmail(any())).thenReturn(Optional.empty());

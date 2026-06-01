@@ -6,7 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
+import java.util.HexFormat;
 import java.util.Optional;
 
 /**
@@ -53,27 +57,29 @@ public class TokenBlacklistService {
     }
 
     /**
-     * Persists bidirectional Redis mappings: {@code refreshToken → email} and {@code email → refreshToken}, both expiring after {@code ttl}.
+     * Persists bidirectional Redis mappings: {@code SHA-256(refreshToken) → email} and {@code email → SHA-256(refreshToken)},
+     * both expiring after {@code ttl}. Storing only the hash prevents raw token exposure in Redis.
      *
      * @param ttl lifetime of the stored entries
      */
     @Timed(value = "token.blacklist.storeRefreshToken", description = "Store a refresh token")
     public void storeRefreshToken(String email, String refreshToken, Duration ttl) {
         log.info("Storing refresh token for user: {}", email);
-        redisTemplate.opsForValue().set(REFRESH_PREFIX + refreshToken, email, ttl);
-        redisTemplate.opsForValue().set(USER_REFRESH_PREFIX + email, refreshToken, ttl);
+        var hash = hashToken(refreshToken);
+        redisTemplate.opsForValue().set(REFRESH_PREFIX + hash, email, ttl);
+        redisTemplate.opsForValue().set(USER_REFRESH_PREFIX + email, hash, ttl);
         log.info("Refresh token stored successfully for user: {}", email);
     }
 
     /**
-     * Looks up the email address associated with a refresh token.
+     * Looks up the email address associated with a refresh token by its SHA-256 hash.
      *
      * @return the email, or empty if the token is unknown or expired
      */
     @Timed(value = "token.blacklist.getEmailByRefreshToken", description = "Get email by refresh token")
     public Optional<String> getEmailByRefreshToken(String refreshToken) {
         log.info("Looking up email by refresh token");
-        var email = Optional.ofNullable(redisTemplate.opsForValue().get(REFRESH_PREFIX + refreshToken));
+        var email = Optional.ofNullable(redisTemplate.opsForValue().get(REFRESH_PREFIX + hashToken(refreshToken)));
         log.info("Email lookup result: {}", email.isPresent() ? "found" : "not found");
         return email;
     }
@@ -84,11 +90,21 @@ public class TokenBlacklistService {
     @Timed(value = "token.blacklist.deleteRefreshToken", description = "Delete a refresh token")
     public void deleteRefreshToken(String email) {
         log.info("Deleting refresh token for user: {}", email);
-        var refreshToken = redisTemplate.opsForValue().get(USER_REFRESH_PREFIX + email);
-        if (refreshToken != null) {
-            redisTemplate.delete(REFRESH_PREFIX + refreshToken);
+        var storedHash = redisTemplate.opsForValue().get(USER_REFRESH_PREFIX + email);
+        if (storedHash != null) {
+            redisTemplate.delete(REFRESH_PREFIX + storedHash);
         }
         redisTemplate.delete(USER_REFRESH_PREFIX + email);
         log.info("Refresh token deleted for user: {}", email);
+    }
+
+    private String hashToken(String token) {
+        try {
+            var digest = MessageDigest.getInstance("SHA-256");
+            var hash = digest.digest(token.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 unavailable", e);
+        }
     }
 }

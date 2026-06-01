@@ -12,7 +12,9 @@ import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.Set;
 import java.util.UUID;
 
@@ -88,7 +90,10 @@ public class User {
     @PrePersist
     public void prePersist() {
         if (this.password == null || this.password.isBlank()) {
-            String tempPassword = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+            var random = new SecureRandom();
+            var bytes = new byte[18]; // 18 random bytes → 24 Base64 URL-safe chars (144 bits of entropy)
+            random.nextBytes(bytes);
+            String tempPassword = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
             this.rawPassword = tempPassword;
             this.password = new BCryptPasswordEncoder().encode(tempPassword);
             this.activationToken = UUID.randomUUID().toString();

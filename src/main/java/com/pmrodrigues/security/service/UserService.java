@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -51,6 +51,7 @@ public class UserService {
     private final UserMapper mapper;
     private final PasswordHistoryRepository passwordHistoryRepository;
     private final CondominioService condominioService;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${app.security.password-history-count:3}")
     private int passwordHistoryCount;
@@ -70,7 +71,7 @@ public class UserService {
         log.info("Creating new user with email: {}", dto.email());
         userRepository.findByEmail(dto.email()).ifPresent(existing -> {
             log.error("Email already in use: {}", dto.email());
-            throw new ResponseStatusException(BAD_REQUEST, "Usuário já existe com o email: " + dto.email());
+            throw new ResponseStatusException(BAD_REQUEST, "Não foi possível criar o usuário com os dados informados");
         });
         condominioService.findById(dto.condominioId()).orElseThrow(() -> {
             log.error("Invalid condominioId: {}", dto.condominioId());
@@ -216,9 +217,7 @@ public class UserService {
             throw new ResponseStatusException(FORBIDDEN, "Acesso negado");
         }
 
-        var encoder = new BCryptPasswordEncoder();
-
-        if (!encoder.matches(dto.currentPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(dto.currentPassword(), user.getPassword())) {
             log.error("Invalid current password attempt for user id: {}", userId);
             throw new ResponseStatusException(BAD_REQUEST, "Senha atual inválida");
         }
@@ -230,7 +229,7 @@ public class UserService {
 
         var history = passwordHistoryRepository.findByUserIdOrderByCreatedAtDesc(
                 userId, PageRequest.of(0, passwordHistoryCount));
-        boolean reused = history.stream().anyMatch(h -> encoder.matches(dto.newPassword(), h.getPassword()));
+        boolean reused = history.stream().anyMatch(h -> passwordEncoder.matches(dto.newPassword(), h.getPassword()));
         if (reused) {
             log.error("Password reuse attempt for user id: {}", userId);
             throw new ResponseStatusException(BAD_REQUEST, "Senha já utilizada anteriormente");
@@ -241,7 +240,7 @@ public class UserService {
                 .password(user.getPassword())
                 .build());
 
-        user.setPassword(encoder.encode(dto.newPassword()));
+        user.setPassword(passwordEncoder.encode(dto.newPassword()));
         userRepository.save(user);
 
         log.info("Password changed successfully for user id: {}", userId);

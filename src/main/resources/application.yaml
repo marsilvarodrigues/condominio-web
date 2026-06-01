@@ -124,12 +124,11 @@ server:
     buffer-size: 16384
     direct-buffers: true
 
-# JWT
-# IMPORTANT: replace the secret with a Base64-encoded key of at least 32 bytes before deploying.
-# Generate with: openssl rand -base64 32
+# JWT — signing uses RSA 2048-bit key generated at startup (AuthorizationServerConfig.generateRsaKey).
+# No symmetric secret is needed; the key pair is ephemeral per instance.
+# To persist tokens across restarts, externalize the RSA key to an env-var or secrets store.
 security:
   jwt:
-    secret: ${JWT_SECRET:dGhpcy1pcy1hLXNhbXBsZS1zZWNyZXQta2V5LWZvci1kZXZlbG9wbWVudC1vbmx5}
     access-token-expiration: ${JWT_ACCESS_EXPIRATION:3600}
     refresh-token-expiration: ${JWT_REFRESH_EXPIRATION:86400}
     issuer: ${JWT_ISSUER:http://localhost:8080}
@@ -142,6 +141,13 @@ app:
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
   security:
     password-history-count: ${PASSWORD_HISTORY_COUNT:3}
+    rate-limit:
+      login:
+        max-requests: ${RATE_LIMIT_LOGIN_MAX:5}
+        window-seconds: ${RATE_LIMIT_LOGIN_WINDOW:60}
+      refresh:
+        max-requests: ${RATE_LIMIT_REFRESH_MAX:10}
+        window-seconds: ${RATE_LIMIT_REFRESH_WINDOW:60}
   # Cache — L1 (Caffeine) + L2 (Redis)
   cache:
     l1-default-ttl: 10m

@@ -7,11 +7,13 @@ import com.pmrodrigues.security.dto.AuthRequestDTO;
 import com.pmrodrigues.security.dto.AuthResponseDTO;
 import com.pmrodrigues.security.dto.RefreshRequestDTO;
 import com.pmrodrigues.security.service.JwtService;
+import com.pmrodrigues.security.service.RateLimitService;
 import com.pmrodrigues.security.service.TokenBlacklistService;
 import com.pmrodrigues.security.service.UserDetailsServiceImpl;
 import com.pmrodrigues.security.service.UserService;
 import com.pmrodrigues.commons.versioning.ApiVersion;
 import io.micrometer.core.annotation.Timed;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +50,7 @@ public class AuthController {
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtProperties jwtProperties;
     private final UserService userService;
+    private final RateLimitService rateLimitService;
 
     /**
      * Authenticates the user and returns a new access token and refresh token.
@@ -57,7 +60,8 @@ public class AuthController {
      */
     @PostMapping("/login")
     @Timed(value = "auth.controller.login", description = "Login")
-    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody AuthRequestDTO request) {
+    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody AuthRequestDTO request, HttpServletRequest httpRequest) {
+        rateLimitService.checkLoginRateLimit(extractClientIp(httpRequest));
         log.info("Login request received for user: {}", request.email());
 
         var authentication = authenticationManager.authenticate(
@@ -149,7 +153,8 @@ public class AuthController {
      */
     @PostMapping("/refresh")
     @Timed(value = "auth.controller.refresh", description = "Refresh token")
-    public ResponseEntity<AuthResponseDTO> refresh(@Valid @RequestBody RefreshRequestDTO request) {
+    public ResponseEntity<AuthResponseDTO> refresh(@Valid @RequestBody RefreshRequestDTO request, HttpServletRequest httpRequest) {
+        rateLimitService.checkRefreshRateLimit(extractClientIp(httpRequest));
         log.info("Token refresh request received");
 
         var email = tokenBlacklistService.getEmailByRefreshToken(request.refreshToken())
@@ -175,5 +180,13 @@ public class AuthController {
                 .tokenType("Bearer")
                 .expiresIn(jwtProperties.getAccessTokenExpiration())
                 .build());
+    }
+
+    private String extractClientIp(HttpServletRequest request) {
+        String forwarded = request.getHeader("X-Forwarded-For");
+        if (forwarded != null && !forwarded.isBlank()) {
+            return forwarded.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
     }
 }
