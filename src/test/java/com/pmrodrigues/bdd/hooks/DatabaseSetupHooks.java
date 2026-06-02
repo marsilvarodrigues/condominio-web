@@ -107,6 +107,12 @@ public class DatabaseSetupHooks {
         jdbc.update("DELETE FROM lancamentos_bancarios");
         jdbc.update("DELETE FROM contas_bancarias");
         jdbc.update("DELETE FROM bancos");
+        // rateio: cotas → execucoes → despesas → coeficientes → grupos
+        jdbc.update("DELETE FROM cotas_rateio");
+        jdbc.update("DELETE FROM rateio_execucoes");
+        jdbc.update("DELETE FROM despesas");
+        jdbc.update("DELETE FROM coeficientes_rateio");
+        jdbc.update("DELETE FROM grupos_despesa");
         jdbc.update("DELETE FROM apartamentos");
         jdbc.update("DELETE FROM blocos");
         jdbc.update("DELETE FROM user_condominios");

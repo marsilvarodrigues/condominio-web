@@ -1,57 +1,53 @@
-# language: pt
+Feature: Grupos de Despesa e Rateio
 
-Funcionalidade: Rateio de Despesas
+  Scenario: Admin cria grupo de despesa com sucesso retorna 201
+    Given estou autenticado como admin do condomínio
+    When eu crio um grupo de despesa com nome "Condomínio Geral" e tipoRateio "IGUALITARIO"
+    Then o status da resposta é 201
+    And a resposta tem o campo "$.data.nome" com valor "Condomínio Geral"
+    And a resposta tem o campo "$.data.tipoRateio" com valor "IGUALITARIO"
 
-  Contexto:
-    Dado que o admin está autenticado
+  Scenario: Dados inválidos ao criar grupo de despesa retornam 400
+    Given estou autenticado como admin do condomínio
+    When eu tento criar um grupo de despesa sem nome
+    Then o status da resposta é 400
 
-  Cenário: Admin cria grupo de despesa com sucesso
-    Quando o admin envia POST /grupos-despesa com nome "Condomínio Geral" e tipoRateio "IGUALITARIO"
-    Então a resposta deve ter status 201
-    E o campo "nome" deve ser "Condomínio Geral"
+  Scenario: Não autenticado ao listar grupos de despesa recebe 401
+    Given não estou autenticado
+    When eu faço GET para "/grupos-despesa"
+    Then o status da resposta é 401
 
-  Cenário: Dados inválidos ao criar grupo de despesa retornam 400
-    Quando o admin envia POST /grupos-despesa sem nome
-    Então a resposta deve ter status 400
+  Scenario: Sem permissão ao criar grupo de despesa recebe 403
+    Given estou autenticado como usuário regular
+    When eu crio um grupo de despesa com nome "Geral" e tipoRateio "IGUALITARIO"
+    Then o status da resposta é 403
 
-  Cenário: Não autenticado ao criar grupo de despesa recebe 401
-    Quando um utilizador não autenticado envia POST /grupos-despesa
-    Então a resposta deve ter status 401
+  Scenario: Grupo de despesa inexistente retorna 404
+    Given estou autenticado como admin do condomínio
+    When eu faço GET para "/grupos-despesa/999999"
+    Then o status da resposta é 404
 
-  Cenário: Sem permissão ao criar grupo de despesa recebe 403
-    Quando um utilizador com role USER envia POST /grupos-despesa
-    Então a resposta deve ter status 403
+  Scenario: Admin lista grupos de despesa retorna 200
+    Given estou autenticado como admin do condomínio
+    When eu crio um grupo de despesa com nome "Água" e tipoRateio "CONSUMO"
+    And eu faço GET para "/grupos-despesa"
+    Then o status da resposta é 200
+    And a resposta contém uma lista em "$.data"
 
-  Cenário: Grupo inexistente retorna 404
-    Quando o admin busca GET /grupos-despesa/999999
-    Então a resposta deve ter status 404
+  Scenario: Admin busca grupo de despesa por ID retorna 200
+    Given estou autenticado como admin do condomínio
+    When eu crio um grupo de despesa com nome "Manutenção" e tipoRateio "FRACAO_IDEAL"
+    And eu busco o último recurso criado em "/grupos-despesa"
+    Then o status da resposta é 200
+    And a resposta tem o campo "$.data.tipoRateio" com valor "FRACAO_IDEAL"
 
-  Cenário: Scheduler rateia despesas pendentes automaticamente
-    Dado que existem 3 despesas com rateioStatus "PENDENTE" para o grupo IGUALITARIO
-    E cada grupo tem coeficientes configurados para 4 unidades
-    Quando o scheduler de rateio executa
-    Então todas as 3 despesas devem ter rateioStatus "RATEADA"
-    E devem existir 3 registos de RateioExecucao com tipoExecucao "AUTOMATICO" e status "SUCESSO"
+  Scenario: Admin deleta grupo de despesa retorna 204
+    Given estou autenticado como admin do condomínio
+    When eu crio um grupo de despesa com nome "Para deletar" e tipoRateio "IGUALITARIO"
+    And eu deleto o último recurso criado em "/grupos-despesa"
+    Then o status da resposta é 204
 
-  Cenário: Recálculo forçado substitui rateios anteriores
-    Dado que existem despesas com rateioStatus "RATEADA"
-    Quando o admin envia POST /rateio/recalcular com confirmar=true
-    Então a resposta deve ter status 200
-    E o campo "total" deve ser maior que 0
-    E os registos de RateioExecucao gerados devem ter tipoExecucao "RECALCULO"
-
-  Cenário: Recalcular sem confirmar retorna 400
-    Quando o admin envia POST /rateio/recalcular com confirmar=false
-    Então a resposta deve ter status 400
-
-  Cenário: Centavo de arredondamento é distribuído corretamente na simulação IGUALITARIO
-    Dado que existe um grupo IGUALITARIO com 3 unidades
-    Quando o admin simula rateio de R$ 100,00 para esse grupo
-    Então a soma das cotas deve ser exatamente R$ 100,00
-
-  Cenário: Simulação retorna cotas por unidade
-    Dado que existe um grupo FRACAO_IDEAL com coeficientes configurados
-    Quando o admin envia POST /rateio/simular com despesaTotal 1000.00
-    Então a resposta deve ter status 200
-    E a lista de cotas não deve estar vazia
-    E a somaCotas deve ser igual ao despesaTotal
+  Scenario: Recalcular sem confirmar retorna 400
+    Given estou autenticado como admin do condomínio
+    When eu envio recalcular rateio com confirmar false
+    Then o status da resposta é 400

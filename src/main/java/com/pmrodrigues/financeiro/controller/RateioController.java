@@ -9,7 +9,6 @@ import com.pmrodrigues.financeiro.dto.RateioLoteResultado;
 import com.pmrodrigues.financeiro.dto.RecalcularRateioRequest;
 import com.pmrodrigues.financeiro.dto.SimularRateioRequest;
 import com.pmrodrigues.financeiro.dto.SimularRateioResponse;
-import com.pmrodrigues.financeiro.model.TipoExecucaoRateio;
 import com.pmrodrigues.financeiro.service.RateioService;
 import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletRequest;
@@ -67,9 +66,7 @@ public class RateioController {
             @PathVariable Long despesaId,
             HttpServletRequest request) {
         log.info("POST /rateio/despesa/{}", despesaId);
-        var execucao = service.ratear(despesaId, TipoExecucaoRateio.MANUAL);
-        return ResponseEntity.ok(ApiResponse.of(requestId(request),
-                mapToDto(execucao)));
+        return ResponseEntity.ok(ApiResponse.of(requestId(request), service.ratearManual(despesaId)));
     }
 
     /**
@@ -111,18 +108,4 @@ public class RateioController {
                 service.findExecucoes(filter, pageable)));
     }
 
-    private RateioExecucaoDTO mapToDto(com.pmrodrigues.financeiro.model.RateioExecucao execucao) {
-        return new RateioExecucaoDTO(
-                execucao.getId(),
-                execucao.getDespesa().getId(),
-                execucao.getDespesa().getDescricao(),
-                execucao.getGrupoDespesaId(),
-                execucao.getTipoExecucao(),
-                execucao.getDataExecucao(),
-                execucao.getDespesaTotal(),
-                execucao.getTotalUnidades(),
-                execucao.getTotalCotas(),
-                execucao.getStatus(),
-                execucao.getErroMensagem());
-    }
 }

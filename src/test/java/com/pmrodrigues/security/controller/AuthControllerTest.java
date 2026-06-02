@@ -253,7 +253,7 @@ class AuthControllerTest {
 
     @Test
     void activate_withValidToken_returns200WithTokensAndRedirect() throws Exception {
-        var dto = new UserDTO(42L, "user@test.com", "Maria Santos", true, Set.of("ROLE_USER"), 1L, null, null);
+        var dto = new UserDTO(42L, "user@test.com", "Maria Santos", true, Set.of("ROLE_USER"), Set.of(1L), null, null);
         var userDetails = User.withUsername("user@test.com").password("pass").authorities("ROLE_USER").build();
 
         when(userService.activateAccount("valid-token")).thenReturn(dto);
@@ -306,7 +306,7 @@ class AuthControllerTest {
 
     @Test
     void activate_storesRefreshToken() throws Exception {
-        var dto = new UserDTO(1L, "user@test.com", "Test User", true, Set.of("ROLE_USER"), 1L, null, null);
+        var dto = new UserDTO(1L, "user@test.com", "Test User", true, Set.of("ROLE_USER"), Set.of(1L), null, null);
         var userDetails = User.withUsername("user@test.com").password("pass").authorities("ROLE_USER").build();
 
         when(userService.activateAccount("valid-token")).thenReturn(dto);

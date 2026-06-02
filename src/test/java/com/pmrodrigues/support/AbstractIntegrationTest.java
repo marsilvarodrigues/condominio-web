@@ -50,8 +50,14 @@ public abstract class AbstractIntegrationTest {
     void cleanDatabase() {
         // Delete leaf-to-root in FK order so subclass @BeforeEach always starts clean,
         // regardless of which other test class ran previously on the shared database.
+        jdbcTemplate.update("DELETE FROM cotas_rateio");
+        jdbcTemplate.update("DELETE FROM rateio_execucoes");
+        jdbcTemplate.update("DELETE FROM despesas");
+        jdbcTemplate.update("DELETE FROM coeficientes_rateio");
+        jdbcTemplate.update("DELETE FROM grupos_despesa");
         jdbcTemplate.update("DELETE FROM apartamentos");
         jdbcTemplate.update("DELETE FROM blocos");
+        jdbcTemplate.update("DELETE FROM user_condominios");
         jdbcTemplate.update("DELETE FROM user_roles");
         jdbcTemplate.update("DELETE FROM users");
         jdbcTemplate.update("DELETE FROM condominios");

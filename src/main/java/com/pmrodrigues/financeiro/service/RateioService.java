@@ -141,6 +141,18 @@ public class RateioService {
     }
 
     /**
+     * Triggers a manual rateio for a single expense and returns the mapped DTO.
+     * Convenience wrapper used by the controller to avoid exposing the entity type.
+     *
+     * @param despesaId the expense to rate
+     * @return the audit record as DTO
+     */
+    @Timed(value = "rateio.service.ratearManual", description = "Rate a single despesa manually and return DTO")
+    public RateioExecucaoDTO ratearManual(Long despesaId) {
+        return execucaoMapper.toDTO(ratear(despesaId, TipoExecucaoRateio.MANUAL));
+    }
+
+    /**
      * Rates all PENDENTE or ERRO expenses for the current tenant, each in its own transaction.
      *
      * <p>A failure in one expense does not cancel the remaining ones.

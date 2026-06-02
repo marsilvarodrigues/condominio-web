@@ -103,8 +103,8 @@ public class CustomBearerTokenFilter extends OncePerRequestFilter {
             TenantContext.setAllowedCondominioIds(allowedIds);
 
             Long activeCondominioId = resolveActiveCondominio(allowedIds, request.getHeader(CONDOMINIO_ID_HEADER), response);
-            if (activeCondominioId == null && response.isCommitted()) {
-                return; // invalid header value, response already set
+            if (activeCondominioId == null && response.getStatus() != HttpStatus.OK.value()) {
+                return; // invalid header value, error status already set
             }
             TenantContext.setCondominioId(activeCondominioId);
             log.info("Bearer token validated for user: {} allowedIds: {} activeCondominioId: {}",
