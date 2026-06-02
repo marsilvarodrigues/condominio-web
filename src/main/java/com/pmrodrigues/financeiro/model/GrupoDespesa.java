@@ -8,9 +8,11 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -67,6 +69,7 @@ public class GrupoDespesa {
     private Long planoContasId;
 
     /** JSONB column for strategy-specific parameters. */
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "parametros_json", columnDefinition = "jsonb")
     private String parametrosJson;
 
