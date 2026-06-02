@@ -89,10 +89,13 @@ services:
       timeout: 5s
       retries: 5
 
-  app:
-    build: .
-    ports:
-      - "${SERVER_PORT:-8080}:8080"
+  # Backend — Spring Boot API (não exposto diretamente; o nginx faz o proxy)
+  backend:
+    build:
+      context: .
+      target: runtime
+    expose:
+      - "8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/condominio
       DB_USERNAME: ${DB_USERNAME:-postgres}
@@ -117,6 +120,25 @@ services:
       redis:
         condition: service_healthy
       loki:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/api/actuator/health | grep -q '\"status\":\"UP\"'"]
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 3
+
+  # Frontend — Nginx servindo o React e fazendo proxy para o backend
+  frontend:
+    build:
+      context: .
+      target: frontend
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    environment:
+      BACKEND_HOST: backend
+    depends_on:
+      backend:
         condition: service_healthy
 
 volumes:

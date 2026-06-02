@@ -1,0 +1,48 @@
+{
+  "plan_file": "refactor-plan.md",
+  "assessment_source": "inline — avaliação arquitetural 2026-05-29 (módulo bancário: Banco, ContaBancaria, LancamentoBancario)",
+  "created": "2026-05-29",
+  "total_chunks": 3,
+  "current_chunk": 3,
+  "status": "completed",
+  "preflight_passed": true,
+  "verification": {
+    "test": "mvn test -q",
+    "typecheck": "mvn compile -q",
+    "lint": null,
+    "note": "Maven compile covers type-checking; no standalone linter configured",
+    "detected_at": "2026-05-27"
+  },
+  "chunks": [
+    {
+      "id": 1,
+      "name": "FundoReservaService — trocar ContaBancariaRepository por ContaBancariaService",
+      "status": "completed",
+      "depends_on": [],
+      "verification": "16 tests, 0 failures, BUILD SUCCESS",
+      "commit_sha": null,
+      "started_at": "2026-05-29",
+      "completed_at": "2026-05-29"
+    },
+    {
+      "id": 2,
+      "name": "BancoService.findById — lançar 404 em vez de retornar Optional",
+      "status": "completed",
+      "depends_on": [],
+      "verification": "22 tests (BancoServiceTest=9, ContaBancariaServiceTest=13), 0 failures, BUILD SUCCESS",
+      "commit_sha": null,
+      "started_at": "2026-05-29",
+      "completed_at": "2026-05-29"
+    },
+    {
+      "id": 3,
+      "name": "Criar BancoServiceCacheTest e ContaBancariaServiceCacheTest",
+      "status": "completed",
+      "depends_on": [2],
+      "verification": "8 tests (BancoServiceCacheTest=5, ContaBancariaServiceCacheTest=3), 0 failures, BUILD SUCCESS",
+      "commit_sha": null,
+      "started_at": "2026-05-29",
+      "completed_at": "2026-05-29"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "architectural-refactor",
+  "owner": "petekp",
+  "repo": "agent-skills",
+  "path": "skills/architectural-refactor",
+  "branch": "main",
+  "sha": "b2e27267d009da371bacd99ddf59aca630a78867",
+  "source": "manual"
+}
