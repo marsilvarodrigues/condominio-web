@@ -31,6 +31,10 @@
   <rect x="260" y="0" width="1020" height="64" fill="white" filter="url(#shadow)"/>
   <text x="292" y="38" font-size="20" font-weight="600" fill="#1A2332">Usuários</text>
   <text x="292" y="55" font-size="11" fill="#90A4AE">Início  ›  Usuários</text>
+  <!-- Condominio selector -->
+  <rect x="870" y="16" width="220" height="32" rx="6" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="886" y="37" font-size="13" fill="#1A2332">Solar das Flores</text>
+  <text x="1082" y="37" text-anchor="end" font-size="12" fill="#546E7A">▾</text>
   <circle cx="1230" cy="32" r="20" fill="#1976D2"/>
   <text x="1230" y="37" text-anchor="middle" font-size="13" font-weight="700" fill="white">JS</text>
 
@@ -77,8 +81,10 @@
   <text x="920" y="225" font-size="13" fill="#546E7A">Solar das Flores</text>
   <rect x="1140" y="214" width="56" height="20" rx="10" fill="#E8F5E9"/>
   <text x="1168" y="228" text-anchor="middle" font-size="11" fill="#2E7D32">Ativo</text>
-  <rect x="1196" y="212" width="28" height="28" rx="6" fill="#E3F2FD"/>
-  <text x="1210" y="230" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+  <rect x="1162" y="212" width="28" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="1176" y="230" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+  <rect x="1196" y="212" width="28" height="28" rx="6" fill="#FFF8E1"/>
+  <text x="1210" y="230" text-anchor="middle" font-size="13" fill="#F57F17">🔑</text>
   <rect x="1230" y="212" width="28" height="28" rx="6" fill="#FCE4EC"/>
   <text x="1244" y="230" text-anchor="middle" font-size="12" fill="#C62828">🗑</text>
 
@@ -95,8 +101,10 @@
   <text x="920" y="271" font-size="13" fill="#546E7A">Monte Verde</text>
   <rect x="1140" y="260" width="56" height="20" rx="10" fill="#E8F5E9"/>
   <text x="1168" y="274" text-anchor="middle" font-size="11" fill="#2E7D32">Ativo</text>
-  <rect x="1196" y="258" width="28" height="28" rx="6" fill="#E3F2FD"/>
-  <text x="1210" y="276" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+  <rect x="1162" y="258" width="28" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="1176" y="276" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+  <rect x="1196" y="258" width="28" height="28" rx="6" fill="#FFF8E1"/>
+  <text x="1210" y="276" text-anchor="middle" font-size="13" fill="#F57F17">🔑</text>
   <rect x="1230" y="258" width="28" height="28" rx="6" fill="#FCE4EC"/>
   <text x="1244" y="276" text-anchor="middle" font-size="12" fill="#C62828">🗑</text>
 
@@ -113,8 +121,10 @@
   <text x="920" y="317" font-size="13" fill="#546E7A">Parque Árvores</text>
   <rect x="1140" y="306" width="56" height="20" rx="10" fill="#E8F5E9"/>
   <text x="1168" y="320" text-anchor="middle" font-size="11" fill="#2E7D32">Ativo</text>
-  <rect x="1196" y="304" width="28" height="28" rx="6" fill="#E3F2FD"/>
-  <text x="1210" y="322" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+  <rect x="1162" y="304" width="28" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="1176" y="322" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+  <rect x="1196" y="304" width="28" height="28" rx="6" fill="#FFF8E1"/>
+  <text x="1210" y="322" text-anchor="middle" font-size="13" fill="#F57F17">🔑</text>
   <rect x="1230" y="304" width="28" height="28" rx="6" fill="#FCE4EC"/>
   <text x="1244" y="322" text-anchor="middle" font-size="12" fill="#C62828">🗑</text>
 
@@ -132,14 +142,16 @@
   <text x="920" y="363" font-size="13" fill="#B0BEC5">Bela Vista</text>
   <rect x="1140" y="352" width="64" height="20" rx="10" fill="#EEEEEE"/>
   <text x="1172" y="366" text-anchor="middle" font-size="11" fill="#757575">Inativo</text>
+  <rect x="1162" y="350" width="28" height="28" rx="6" fill="#F5F5F5"/>
+  <text x="1176" y="368" text-anchor="middle" font-size="13" fill="#9E9E9E">✎</text>
   <rect x="1196" y="350" width="28" height="28" rx="6" fill="#F5F5F5"/>
-  <text x="1210" y="368" text-anchor="middle" font-size="13" fill="#9E9E9E">✎</text>
+  <text x="1210" y="368" text-anchor="middle" font-size="13" fill="#9E9E9E">🔑</text>
   <rect x="1230" y="350" width="28" height="28" rx="6" fill="#FCE4EC"/>
   <text x="1244" y="368" text-anchor="middle" font-size="12" fill="#C62828">🗑</text>
 
-  <!-- Change password quick action (tooltip hint) -->
+  <!-- Action legend -->
   <rect x="280" y="400" width="980" height="40" rx="0" fill="#E8F0FE" opacity="0.5"/>
-  <text x="640" y="425" text-anchor="middle" font-size="12" fill="#3949AB">Clique em um usuário para ver detalhes ou alterar senha</text>
+  <text x="380" y="424" font-size="12" fill="#3949AB">Ações:  ✎ Editar perfil  ·  🔑 Alterar senha (PATCH /users/{id}/password)  ·  🗑 Excluir usuário</text>
 
   <!-- Pagination -->
   <rect x="280" y="673" width="980" height="48" rx="12" fill="white" filter="url(#shadow)"/>

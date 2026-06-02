@@ -109,6 +109,7 @@ public class DatabaseSetupHooks {
         jdbc.update("DELETE FROM bancos");
         jdbc.update("DELETE FROM apartamentos");
         jdbc.update("DELETE FROM blocos");
+        jdbc.update("DELETE FROM user_condominios");
         jdbc.update("DELETE FROM user_roles");
         jdbc.update("DELETE FROM users");
         jdbc.update("DELETE FROM condominios");
@@ -152,21 +153,27 @@ public class DatabaseSetupHooks {
     private void criarAdminCondominio(Long condominioId) {
         String hash = passwordEncoder.encode(ADMIN_PASSWORD);
         jdbc.update(
-            "INSERT INTO users (email, password, name, enabled, deleted, condominio_id) VALUES (?,?,?,?,?,?)",
-            ADMIN_EMAIL, hash, "Admin BDD", true, false, condominioId);
+            "INSERT INTO users (email, password, name, enabled, deleted) VALUES (?,?,?,?,?)",
+            ADMIN_EMAIL, hash, "Admin BDD", true, false);
         jdbc.update(
             "INSERT INTO user_roles (user_id, role) SELECT id, 'ROLE_ADMIN' FROM users WHERE email = ?",
             ADMIN_EMAIL);
+        jdbc.update(
+            "INSERT INTO user_condominios (user_id, condominio_id) SELECT id, ? FROM users WHERE email = ?",
+            condominioId, ADMIN_EMAIL);
     }
 
     private void criarUsuarioRegular(Long condominioId) {
         String hash = passwordEncoder.encode(USER_PASSWORD);
         jdbc.update(
-            "INSERT INTO users (email, password, name, enabled, deleted, condominio_id) VALUES (?,?,?,?,?,?)",
-            USER_EMAIL, hash, "User BDD", true, false, condominioId);
+            "INSERT INTO users (email, password, name, enabled, deleted) VALUES (?,?,?,?,?)",
+            USER_EMAIL, hash, "User BDD", true, false);
         jdbc.update(
             "INSERT INTO user_roles (user_id, role) SELECT id, 'ROLE_USER' FROM users WHERE email = ?",
             USER_EMAIL);
+        jdbc.update(
+            "INSERT INTO user_condominios (user_id, condominio_id) SELECT id, ? FROM users WHERE email = ?",
+            condominioId, USER_EMAIL);
         Long regularId = jdbc.queryForObject(
             "SELECT id FROM users WHERE email = ?", Long.class, USER_EMAIL);
         ctx.setRegularUserId(regularId);

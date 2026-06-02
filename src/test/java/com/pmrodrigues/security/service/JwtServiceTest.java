@@ -19,9 +19,11 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 
+import com.pmrodrigues.condominio.model.Condominio;
+
 import java.time.Instant;
 import java.util.List;
-
+import java.util.Set;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,8 +56,10 @@ class JwtServiceTest {
         when(mockJwt.getTokenValue()).thenReturn("signed-token");
         when(jwtEncoder.encode(any())).thenReturn(mockJwt);
 
+        var condominio = new Condominio();
+        condominio.setId(42L);
         var user = new User();
-        user.setCondominioId(42L);
+        user.setCondominios(Set.of(condominio));
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
     }
 
@@ -131,20 +135,19 @@ class JwtServiceTest {
     }
 
     @Test
-    void generateAccessToken_includesCondominioIdClaim() {
+    void generateAccessToken_includesCondominioIdsClaim() {
         var auth = authWith("user@test.com", "ROLE_USER");
 
         service.generateAccessToken(auth);
 
         var captor = ArgumentCaptor.forClass(JwtEncoderParameters.class);
         verify(jwtEncoder).encode(captor.capture());
-        Number claim = captor.getValue().getClaims().getClaim("condominio_id");
-        assertThat(claim).isNotNull();
-        assertThat(claim.longValue()).isEqualTo(42L);
+        List<Long> claim = captor.getValue().getClaims().getClaim("condominio_ids");
+        assertThat(claim).isNotNull().containsExactly(42L);
     }
 
     @Test
-    void generateAccessToken_whenUserHasNoCondominio_condominioIdClaimIsNull() {
+    void generateAccessToken_whenUserHasNoCondominio_condominioIdsClaimIsEmpty() {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         var auth = authWith("user@test.com", "ROLE_USER");
 
@@ -152,8 +155,25 @@ class JwtServiceTest {
 
         var captor = ArgumentCaptor.forClass(JwtEncoderParameters.class);
         verify(jwtEncoder).encode(captor.capture());
-        Object condominioIdClaim = captor.getValue().getClaims().getClaim("condominio_id");
-        assertThat(condominioIdClaim).isNull();
+        List<Long> claim = captor.getValue().getClaims().getClaim("condominio_ids");
+        assertThat(claim).isNotNull().isEmpty();
+    }
+
+    @Test
+    void generateAccessToken_whenUserHasMultipleCondominios_allIdsIncluded() {
+        var cond1 = new Condominio(); cond1.setId(10L);
+        var cond2 = new Condominio(); cond2.setId(20L);
+        var user = new User();
+        user.setCondominios(Set.of(cond1, cond2));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+
+        var auth = authWith("user@test.com", "ROLE_USER");
+        service.generateAccessToken(auth);
+
+        var captor = ArgumentCaptor.forClass(JwtEncoderParameters.class);
+        verify(jwtEncoder).encode(captor.capture());
+        List<Long> claim = captor.getValue().getClaims().getClaim("condominio_ids");
+        assertThat(claim).containsExactlyInAnyOrder(10L, 20L);
     }
 
     @Test

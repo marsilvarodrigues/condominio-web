@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.pmrodrigues.condominio.model.Condominio;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -59,11 +61,12 @@ public class UserService {
     /**
      * Persists a new user and dispatches an activation email containing the generated temporary password and token.
      *
-     * <p>Validates that the email is not already in use (400 if duplicate) and that the referenced
-     * condominium exists (400 if not found).
+     * <p>Validates that the email is not already in use (400 if duplicate) and that all referenced
+     * condominiums exist (400 if any is not found). An empty or null {@code condominioIds} creates a
+     * user with global access.
      *
      * @return the saved user as a DTO (includes the generated activation state)
-     * @throws org.springframework.web.server.ResponseStatusException 400 if the email is already in use or the condominium does not exist
+     * @throws org.springframework.web.server.ResponseStatusException 400 if the email is already in use or any condominium does not exist
      */
     @Transactional
     @Timed(value = "user.service.create", description = "Create user")
@@ -73,14 +76,12 @@ public class UserService {
             log.error("Email already in use: {}", dto.email());
             throw new ResponseStatusException(BAD_REQUEST, "Não foi possível criar o usuário com os dados informados");
         });
-        condominioService.findById(dto.condominioId()).orElseThrow(() -> {
-            log.error("Invalid condominioId: {}", dto.condominioId());
-            return new ResponseStatusException(BAD_REQUEST, "Condomínio inválido");
-        });
+        var condominios = loadCondominioEntities(dto.condominioIds());
         var user = mapper.toEntity(dto);
         if (user.getRoles() == null) {
             user.setRoles(new HashSet<>(Set.of("ROLE_USER")));
         }
+        user.setCondominios(condominios);
         var saved = userRepository.save(user);
         mailService.sendActivationEmail(saved.getEmail(), saved.getName(), saved.getRawPassword(), saved.getActivationToken());
         log.info("User created successfully with id: {}", saved.getId());
@@ -143,6 +144,9 @@ public class UserService {
         }
 
         mapper.updateEntity(user, dto);
+        if (dto.condominioIds() != null) {
+            user.setCondominios(loadCondominioEntities(dto.condominioIds()));
+        }
         var saved = userRepository.save(user);
         log.info("User updated successfully: {}", dto.id());
         return mapper.toDTO(saved);
@@ -244,5 +248,18 @@ public class UserService {
         userRepository.save(user);
 
         log.info("Password changed successfully for user id: {}", userId);
+    }
+
+    private Set<Condominio> loadCondominioEntities(Set<Long> condominioIds) {
+        if (condominioIds == null || condominioIds.isEmpty()) return new HashSet<>();
+        var result = new HashSet<Condominio>();
+        for (Long condId : condominioIds) {
+            var entity = condominioService.findEntityById(condId).orElseThrow(() -> {
+                log.error("Invalid condominioId: {}", condId);
+                return new ResponseStatusException(BAD_REQUEST, "Condomínio inválido: " + condId);
+            });
+            result.add(entity);
+        }
+        return result;
     }
 }

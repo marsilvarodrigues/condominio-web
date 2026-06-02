@@ -70,7 +70,7 @@ class BlocoIntegrationTest extends AbstractIntegrationTest {
                 Bloco.builder().condominio(savedCondominio).numero(2).bloco("B").build());
 
         var admin = new User().setEmail(ADMIN_EMAIL).setPassword(passwordEncoder.encode(ADMIN_PASSWORD))
-                .setName("Admin").setEnabled(true).setCondominioId(savedCondominio.getId())
+                .setName("Admin").setEnabled(true).setCondominios(new HashSet<>(Set.of(savedCondominio)))
                 .setRoles(new HashSet<>(Set.of("ROLE_ADMIN")));
         userRepository.save(admin);
 

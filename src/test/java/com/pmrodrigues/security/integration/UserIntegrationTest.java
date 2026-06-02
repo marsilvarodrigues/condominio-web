@@ -49,6 +49,7 @@ class UserIntegrationTest extends AbstractIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        jdbcTemplate.update("DELETE FROM user_condominios");
         jdbcTemplate.update("DELETE FROM user_roles");
         jdbcTemplate.update("DELETE FROM users");
         jdbcTemplate.update("DELETE FROM condominios");
@@ -67,7 +68,7 @@ class UserIntegrationTest extends AbstractIntegrationTest {
                 .setPassword(passwordEncoder.encode(ADMIN_PASSWORD))
                 .setName("Admin User")
                 .setEnabled(true)
-                .setCondominioId(savedCondominioId)
+                .setCondominios(new HashSet<>(Set.of(condominio)))
                 .setRoles(new HashSet<>(Set.of("ROLE_ADMIN")));
         userRepository.save(admin);
 
@@ -84,7 +85,7 @@ class UserIntegrationTest extends AbstractIntegrationTest {
                 .setPassword(passwordEncoder.encode("target-password"))
                 .setName("Target User")
                 .setEnabled(true)
-                .setCondominioId(savedCondominioId)
+                .setCondominios(new HashSet<>(Set.of(condominio)))
                 .setRoles(new HashSet<>(Set.of("ROLE_USER")));
         targetUserId = userRepository.save(target).getId();
     }
@@ -149,7 +150,7 @@ class UserIntegrationTest extends AbstractIntegrationTest {
     @Test
     void create_asAdmin_returns201AndNewUser() throws Exception {
         var token = loginAndGetToken(ADMIN_EMAIL, ADMIN_PASSWORD);
-        var dto = new CreateUserDTO("brand-new@test.com", "Brand New", Set.of("ROLE_USER"), savedCondominioId);
+        var dto = new CreateUserDTO("brand-new@test.com", "Brand New", Set.of("ROLE_USER"), Set.of(savedCondominioId));
 
         mockMvc.perform(post("/users")
                         .header("Authorization", "Bearer " + token)
@@ -163,19 +164,17 @@ class UserIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void create_withoutCondominioId_returns400() throws Exception {
+    void create_withEmptyCondominioIds_creates_globalAccessUser() throws Exception {
         var token = loginAndGetToken(ADMIN_EMAIL, ADMIN_PASSWORD);
-        var dto = new UserDTO(null, "sem-cond@test.com", "Sem Condominio", false, null,
-                null, null, null);
+        var dto = new CreateUserDTO("global@test.com", "Global Admin", Set.of("ROLE_ADMIN"), null);
 
         mockMvc.perform(post("/users")
                         .header("Authorization", "Bearer " + token)
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.data.error").value("validation_error"))
-                .andExpect(jsonPath("$.data.fields.condominioId").exists());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.email").value("global@test.com"));
     }
 
     @Test
@@ -196,7 +195,7 @@ class UserIntegrationTest extends AbstractIntegrationTest {
     @Test
     void create_asUser_returns403() throws Exception {
         var token = loginAndGetToken(USER_EMAIL, USER_PASSWORD);
-        var dto = new CreateUserDTO("another@test.com", "Another", Set.of("ROLE_USER"), savedCondominioId);
+        var dto = new CreateUserDTO("another@test.com", "Another", Set.of("ROLE_USER"), Set.of(savedCondominioId));
 
         mockMvc.perform(post("/users")
                         .header("Authorization", "Bearer " + token)
@@ -209,7 +208,7 @@ class UserIntegrationTest extends AbstractIntegrationTest {
     @Test
     void create_withoutToken_returns401() throws Exception {
         var dto = new UserDTO(null, "another@test.com", "Another", false, null,
-                savedCondominioId, null, null);
+                Set.of(savedCondominioId), null, null);
 
         mockMvc.perform(post("/users")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, UUID.randomUUID().toString())
@@ -224,7 +223,7 @@ class UserIntegrationTest extends AbstractIntegrationTest {
     void update_asAdmin_returns200WithUpdatedUser() throws Exception {
         var token = loginAndGetToken(ADMIN_EMAIL, ADMIN_PASSWORD);
         var dto = new UserDTO(null, "updated@test.com", "Updated Name", true,
-                Set.of("ROLE_USER"), savedCondominioId, null, null);
+                Set.of("ROLE_USER"), Set.of(savedCondominioId), null, null);
 
         mockMvc.perform(put("/users/" + targetUserId)
                         .header("Authorization", "Bearer " + token)
@@ -254,7 +253,7 @@ class UserIntegrationTest extends AbstractIntegrationTest {
     @Test
     void update_asUser_returns403() throws Exception {
         var token = loginAndGetToken(USER_EMAIL, USER_PASSWORD);
-        var dto = new UserDTO(null, "x@test.com", "X", true, null, savedCondominioId, null, null);
+        var dto = new UserDTO(null, "x@test.com", "X", true, null, Set.of(savedCondominioId), null, null);
 
         mockMvc.perform(put("/users/" + targetUserId)
                         .header("Authorization", "Bearer " + token)
@@ -266,7 +265,7 @@ class UserIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void update_withoutToken_returns401() throws Exception {
-        var dto = new UserDTO(null, "x@test.com", "X", true, null, savedCondominioId, null, null);
+        var dto = new UserDTO(null, "x@test.com", "X", true, null, Set.of(savedCondominioId), null, null);
 
         mockMvc.perform(put("/users/" + targetUserId)
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, UUID.randomUUID().toString())

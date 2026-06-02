@@ -98,7 +98,7 @@ public class UserController {
                                                        HttpServletRequest request) {
         log.info("PUT /users/{} - updating user", id);
         var updated = userService.update(new UserDTO(id, dto.email(), dto.name(), dto.enabled(),
-                dto.roles(), dto.condominioId(), dto.createdAt(), dto.updatedAt()));
+                dto.roles(), dto.condominioIds(), dto.createdAt(), dto.updatedAt()));
         log.info("PUT /users/{} - user updated", id);
         return ResponseEntity.ok(ApiResponse.of(requestId(request), updated));
     }

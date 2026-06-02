@@ -8,16 +8,10 @@ Feature: Gerenciamento de Usuários
     Then o status da resposta é 200
     And a resposta contém uma lista em "$.data"
 
-  Scenario: Admin cria usuário com condominioId retorna 201
+  Scenario: Admin cria usuário com condominioIds retorna 201
     When eu crio um usuário com email "novo@bdd.com" no condomínio de teste
     Then o status da resposta é 201
     And a resposta tem o campo "$.data.email" com valor "novo@bdd.com"
-
-  Scenario: Criar usuário sem condominioId retorna 400 com erro de validação
-    When eu tento criar um usuário sem condominioId com email "semcond@bdd.com"
-    Then o status da resposta é 400
-    And a resposta tem o campo "$.data.error" com valor "validation_error"
-    And a resposta contém erro de validação em "condominioId"
 
   Scenario: Buscar usuário por ID retorna 200
     Given eu crio um usuário com email "busca@bdd.com" no condomínio de teste

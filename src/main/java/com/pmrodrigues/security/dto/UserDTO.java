@@ -10,19 +10,9 @@ import java.util.Set;
 /**
  * DTO de usuário para operações via API REST.
  *
- * <p><b>Regra de negócio</b>: {@code condominioId} é obrigatório em todas as operações
- * de criação e atualização via API. O usuário "master" (sem condomínio associado) só
- * pode ser criado diretamente via SQL — a validação {@code @NotNull} neste campo
- * garante que a API não permita criar usuários sem vínculo a um condomínio.
- *
- * <p>Para criar o usuário master em produção, execute via SQL:
- * <pre>
- *   INSERT INTO users (email, password, name, enabled, deleted)
- *   VALUES ('master@exemplo.com', '{bcrypt}[hash]', 'Master Admin', true, false);
- *   INSERT INTO user_roles (user_id, role)
- *   SELECT id, 'ROLE_ADMIN' FROM users WHERE email = 'master@exemplo.com';
- * </pre>
- * Gere o hash BCrypt com: {@code new BCryptPasswordEncoder().encode("senha-forte")}
+ * <p>{@code condominioIds} é opcional. Usuários sem nenhum condomínio associado têm
+ * acesso global a todos os dados (perfil master). Usuários com um ou mais condominios
+ * têm acesso restrito aos respectivos dados.
  */
 public record UserDTO(
         Long id,
@@ -34,8 +24,7 @@ public record UserDTO(
         String name,
         boolean enabled,
         Set<String> roles,
-        @NotNull
-        Long condominioId,
+        Set<Long> condominioIds,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {

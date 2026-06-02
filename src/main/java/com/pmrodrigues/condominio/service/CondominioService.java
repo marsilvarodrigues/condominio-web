@@ -4,6 +4,7 @@ import com.pmrodrigues.condominio.dto.CondominioDTO;
 import com.pmrodrigues.condominio.dto.CondominioFilterDTO;
 import com.pmrodrigues.condominio.dto.CreateCondominioDTO;
 import com.pmrodrigues.condominio.mapper.CondominioMapper;
+import com.pmrodrigues.condominio.model.Condominio;
 import com.pmrodrigues.condominio.repository.ApartamentoRepository;
 import com.pmrodrigues.condominio.repository.BlocoRepository;
 import com.pmrodrigues.condominio.repository.CondominioRepository;
@@ -77,6 +78,22 @@ public class CondominioService {
         log.info("Looking up condominio by id: {}", id);
         var result = repository.findById(id).map(mapper::toDTO);
         log.info("Condominio lookup by id {}: {}", id, result.isPresent() ? "found" : "not found");
+        return result;
+    }
+
+    /**
+     * Looks up a single condominio entity (not DTO) by its primary key.
+     * Use this when you need a JPA entity reference for association management.
+     *
+     * @param id condominio primary key
+     * @return the entity wrapped in an Optional, or empty if not found
+     */
+    @Transactional(readOnly = true)
+    @Timed(value = "condominio.service.findEntityById", description = "Find condominio entity by id")
+    public Optional<Condominio> findEntityById(Long id) {
+        log.info("Looking up condominio entity by id: {}", id);
+        var result = repository.findById(id);
+        log.info("Condominio entity lookup by id {}: {}", id, result.isPresent() ? "found" : "not found");
         return result;
     }
 

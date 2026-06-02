@@ -16,15 +16,27 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
- * Validates Bearer JWTs on every request, checks the token blacklist, and populates {@link TenantContext} with the {@code condominio_id} claim; skips {@code /auth/login} and {@code /auth/refresh}.
+ * Validates Bearer JWTs on every request, checks the token blacklist, and populates {@link TenantContext}
+ * with the active condominio ID resolved from {@code condominio_ids} claim and the {@code X-Condominio-Id} header.
+ * Skips {@code /auth/login} and {@code /auth/refresh}.
+ *
+ * <p>Tenant resolution rules:
+ * <ul>
+ *   <li>Empty {@code condominio_ids} → global access (null active ID)</li>
+ *   <li>Single entry → auto-selected as active ID</li>
+ *   <li>Multiple entries → active ID taken from {@code X-Condominio-Id} header; null if header absent</li>
+ *   <li>Header value not in allowed list → 403 Forbidden</li>
+ * </ul>
  */
 @Slf4j
 @Component
 public class CustomBearerTokenFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
+    private static final String CONDOMINIO_ID_HEADER = "X-Condominio-Id";
 
     private final JwtDecoder jwtDecoder;
     private final TokenBlacklistService tokenBlacklistService;
@@ -46,7 +58,8 @@ public class CustomBearerTokenFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Decodes the Bearer token, rejects blacklisted or jti-less tokens with 401, and sets the tenant context before delegating to the filter chain.
+     * Decodes the Bearer token, rejects blacklisted or jti-less tokens with 401, resolves the active tenant,
+     * and delegates to the filter chain.
      *
      * @throws ServletException propagated from the downstream filter chain
      * @throws IOException      propagated from the downstream filter chain
@@ -86,10 +99,16 @@ public class CustomBearerTokenFilter extends OncePerRequestFilter {
                 return;
             }
 
-            Number condominioIdClaim = decodedJwt.getClaim("condominio_id");
-            Long condominioId = condominioIdClaim != null ? condominioIdClaim.longValue() : null;
-            TenantContext.setCondominioId(condominioId);
-            log.info("Bearer token validated for user: {} condominioId: {}", decodedJwt.getSubject(), condominioId);
+            List<Long> allowedIds = extractAllowedIds(decodedJwt);
+            TenantContext.setAllowedCondominioIds(allowedIds);
+
+            Long activeCondominioId = resolveActiveCondominio(allowedIds, request.getHeader(CONDOMINIO_ID_HEADER), response);
+            if (activeCondominioId == null && response.isCommitted()) {
+                return; // invalid header value, response already set
+            }
+            TenantContext.setCondominioId(activeCondominioId);
+            log.info("Bearer token validated for user: {} allowedIds: {} activeCondominioId: {}",
+                    decodedJwt.getSubject(), allowedIds, activeCondominioId);
 
             try {
                 filterChain.doFilter(request, response);
@@ -101,5 +120,38 @@ public class CustomBearerTokenFilter extends OncePerRequestFilter {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer error=\"invalid_token\"");
         }
+    }
+
+    private List<Long> extractAllowedIds(Jwt jwt) {
+        List<?> rawIds = jwt.getClaim("condominio_ids");
+        if (rawIds == null) return List.of();
+        return rawIds.stream().map(id -> ((Number) id).longValue()).toList();
+    }
+
+    /**
+     * Resolves the active condominio ID from the allowed list and request header.
+     * Returns {@code null} both when global access applies (empty list, no header) and on validation errors
+     * — callers must check {@link HttpServletResponse#isCommitted()} to distinguish the two cases.
+     */
+    private Long resolveActiveCondominio(List<Long> allowedIds, String condominioHeader, HttpServletResponse response) throws IOException {
+        if (condominioHeader != null && !condominioHeader.isBlank()) {
+            try {
+                Long requestedId = Long.parseLong(condominioHeader.trim());
+                if (!allowedIds.isEmpty() && !allowedIds.contains(requestedId)) {
+                    log.warn("X-Condominio-Id {} not in user's allowed list {}", requestedId, allowedIds);
+                    response.setStatus(HttpStatus.FORBIDDEN.value());
+                    return null;
+                }
+                return requestedId;
+            } catch (NumberFormatException e) {
+                log.warn("Invalid X-Condominio-Id header value: {}", condominioHeader);
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return null;
+            }
+        }
+        if (allowedIds.size() == 1) {
+            return allowedIds.get(0);
+        }
+        return null; // global access (0 IDs) or multi-condominio without header
     }
 }

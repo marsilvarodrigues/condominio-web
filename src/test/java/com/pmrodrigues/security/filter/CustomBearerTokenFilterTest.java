@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 
 import java.time.Instant;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -148,6 +149,65 @@ class CustomBearerTokenFilterTest {
         verify(filterChain, never()).doFilter(any(), any());
     }
 
+    @Test
+    void doFilterInternal_withSingleCondominioInJwt_autoSelectsActiveCondominio() throws Exception {
+        when(jwtDecoder.decode("single-cond-token")).thenReturn(buildJwtWithCondominioIds("jti-single", List.of(7L)));
+        when(tokenBlacklistService.isBlacklisted("jti-single")).thenReturn(false);
+
+        var request  = requestWithBearer("single-cond-token");
+        var response = new MockHttpServletResponse();
+
+        filter.doFilterInternal(request, response, filterChain);
+
+        verify(filterChain).doFilter(request, response);
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    void doFilterInternal_withMultipleCondominiosAndValidHeader_accepts() throws Exception {
+        when(jwtDecoder.decode("multi-cond-token")).thenReturn(buildJwtWithCondominioIds("jti-multi", List.of(1L, 2L, 3L)));
+        when(tokenBlacklistService.isBlacklisted("jti-multi")).thenReturn(false);
+
+        var request  = requestWithBearer("multi-cond-token");
+        request.addHeader("X-Condominio-Id", "2");
+        var response = new MockHttpServletResponse();
+
+        filter.doFilterInternal(request, response, filterChain);
+
+        verify(filterChain).doFilter(request, response);
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    void doFilterInternal_withMultipleCondominiosAndInvalidHeader_returns403() throws Exception {
+        when(jwtDecoder.decode("multi-cond-token")).thenReturn(buildJwtWithCondominioIds("jti-multi2", List.of(1L, 2L)));
+        when(tokenBlacklistService.isBlacklisted("jti-multi2")).thenReturn(false);
+
+        var request  = requestWithBearer("multi-cond-token");
+        request.addHeader("X-Condominio-Id", "99");
+        var response = new MockHttpServletResponse();
+
+        filter.doFilterInternal(request, response, filterChain);
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+        verify(filterChain, never()).doFilter(any(), any());
+    }
+
+    @Test
+    void doFilterInternal_withMalformedCondominioHeader_returns400() throws Exception {
+        when(jwtDecoder.decode("any-token")).thenReturn(buildJwtWithCondominioIds("jti-bad-hdr", List.of(1L)));
+        when(tokenBlacklistService.isBlacklisted("jti-bad-hdr")).thenReturn(false);
+
+        var request  = requestWithBearer("any-token");
+        request.addHeader("X-Condominio-Id", "not-a-number");
+        var response = new MockHttpServletResponse();
+
+        filter.doFilterInternal(request, response, filterChain);
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        verify(filterChain, never()).doFilter(any(), any());
+    }
+
     // ── helpers ───────────────────────────────────────────────────────────
 
     private MockHttpServletRequest requestWithBearer(String token) {
@@ -157,10 +217,15 @@ class CustomBearerTokenFilterTest {
     }
 
     private Jwt buildJwt(String jti) {
+        return buildJwtWithCondominioIds(jti, List.of());
+    }
+
+    private Jwt buildJwtWithCondominioIds(String jti, List<Long> condominioIds) {
         return Jwt.withTokenValue("token")
                 .header("alg", "RS256")
                 .subject("user@test.com")
                 .claim("jti", jti)
+                .claim("condominio_ids", condominioIds)
                 .issuedAt(Instant.now())
                 .expiresAt(Instant.now().plusSeconds(3600))
                 .build();

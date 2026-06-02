@@ -1,0 +1,97 @@
+<svg width="1280" height="800" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1565C0"/>
+      <stop offset="100%" stop-color="#0D47A1"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000" flood-opacity="0.18"/>
+    </filter>
+    <filter id="card-shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="800" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="200" fill="white" opacity="0.04"/>
+  <circle cx="1200" cy="680" r="280" fill="white" opacity="0.04"/>
+  <circle cx="1100" cy="80" r="120" fill="white" opacity="0.04"/>
+
+  <!-- Card -->
+  <rect x="390" y="46" width="500" height="702" rx="16" fill="white" filter="url(#shadow)"/>
+  <!-- Top accent bar -->
+  <rect x="390" y="46" width="500" height="6" rx="16" fill="#1976D2"/>
+  <rect x="390" y="52" width="500" height="4" fill="#1976D2"/>
+
+  <!-- Lock icon -->
+  <rect x="600" y="84" width="80" height="80" rx="12" fill="#1565C0"/>
+  <!-- Lock body -->
+  <rect x="617" y="106" width="46" height="36" rx="4" fill="white" opacity="0.9"/>
+  <!-- Lock shackle -->
+  <path d="M623 106 Q622 92 640 92 Q658 92 657 106" fill="none" stroke="white" stroke-width="4" opacity="0.9"/>
+  <!-- Keyhole -->
+  <circle cx="640" cy="121" r="4" fill="#1565C0"/>
+  <rect x="638" y="122" width="4" height="9" rx="2" fill="#1565C0"/>
+
+  <!-- Title -->
+  <text x="640" y="196" text-anchor="middle" font-size="24" font-weight="700" fill="#1A237E">Alterar Senha</text>
+  <text x="640" y="216" text-anchor="middle" font-size="13" fill="#78909C">Configure sua nova senha de acesso</text>
+
+  <!-- Divider -->
+  <line x1="440" y1="232" x2="840" y2="232" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Info banner — first access redirect -->
+  <rect x="440" y="244" width="400" height="44" rx="8" fill="#E3F2FD"/>
+  <circle cx="458" cy="266" r="9" fill="#1976D2"/>
+  <text x="458" y="271" text-anchor="middle" font-size="12" font-weight="700" fill="white">i</text>
+  <text x="474" y="262" font-size="12" font-weight="600" fill="#1565C0">Primeiro acesso</text>
+  <text x="474" y="279" font-size="12" fill="#37474F">Configure sua senha para continuar usando o sistema.</text>
+
+  <!-- Senha atual -->
+  <text x="440" y="312" font-size="12" font-weight="600" fill="#546E7A">SENHA ATUAL</text>
+  <rect x="440" y="320" width="400" height="48" rx="8" fill="#F8FAFC" stroke="#CFD8DC" stroke-width="1.5"/>
+  <rect x="457" y="337" width="16" height="12" rx="2" fill="none" stroke="#90A4AE" stroke-width="1.5"/>
+  <rect x="460" y="331" width="10" height="8" rx="5" fill="none" stroke="#90A4AE" stroke-width="1.5"/>
+  <text x="484" y="349" font-size="14" fill="#90A4AE">••••••••</text>
+
+  <!-- Nova senha -->
+  <text x="440" y="384" font-size="12" font-weight="600" fill="#546E7A">NOVA SENHA</text>
+  <rect x="440" y="392" width="400" height="48" rx="8" fill="#F8FAFC" stroke="#1976D2" stroke-width="2"/>
+  <rect x="457" y="409" width="16" height="12" rx="2" fill="none" stroke="#90A4AE" stroke-width="1.5"/>
+  <rect x="460" y="403" width="10" height="8" rx="5" fill="none" stroke="#90A4AE" stroke-width="1.5"/>
+  <text x="484" y="420" font-size="14" fill="#37474F">••••••••••••</text>
+  <text x="816" y="420" text-anchor="end" font-size="12" fill="#90A4AE">Ocultar</text>
+
+  <!-- Password strength bar -->
+  <text x="440" y="454" font-size="11" fill="#78909C">Força:</text>
+  <rect x="476" y="444" width="62" height="6" rx="3" fill="#43A047"/>
+  <rect x="544" y="444" width="62" height="6" rx="3" fill="#43A047"/>
+  <rect x="612" y="444" width="62" height="6" rx="3" fill="#43A047"/>
+  <rect x="680" y="444" width="62" height="6" rx="3" fill="#E0E0E0"/>
+  <text x="750" y="454" font-size="11" font-weight="600" fill="#43A047">Forte</text>
+
+  <!-- Confirmar nova senha -->
+  <text x="440" y="476" font-size="12" font-weight="600" fill="#546E7A">CONFIRMAR NOVA SENHA</text>
+  <rect x="440" y="484" width="400" height="48" rx="8" fill="#F8FAFC" stroke="#CFD8DC" stroke-width="1.5"/>
+  <rect x="457" y="501" width="16" height="12" rx="2" fill="none" stroke="#90A4AE" stroke-width="1.5"/>
+  <rect x="460" y="495" width="10" height="8" rx="5" fill="none" stroke="#90A4AE" stroke-width="1.5"/>
+  <text x="484" y="512" font-size="14" fill="#90A4AE">••••••••••••</text>
+
+  <!-- Password rules -->
+  <text x="440" y="550" font-size="12" fill="#43A047">✓  Mínimo 8 caracteres</text>
+  <text x="440" y="568" font-size="12" fill="#43A047">✓  Letras maiúsculas, minúsculas e números</text>
+  <text x="440" y="586" font-size="12" fill="#E65100">○  Não pode ser igual à senha anterior</text>
+
+  <!-- Submit button -->
+  <rect x="440" y="608" width="400" height="52" rx="8" fill="#1565C0"/>
+  <text x="640" y="639" text-anchor="middle" font-size="15" font-weight="700" fill="white" letter-spacing="1">SALVAR NOVA SENHA</text>
+
+  <!-- Cancel link -->
+  <text x="640" y="678" text-anchor="middle" font-size="13" fill="#1976D2" text-decoration="underline">Cancelar e voltar ao login</text>
+
+  <!-- Footer -->
+  <text x="640" y="706" text-anchor="middle" font-size="12" fill="#B0BEC5">© 2026 CondoGest · Todos os direitos reservados</text>
+  <rect x="440" y="716" width="400" height="26" rx="6" fill="#E8F0FE"/>
+  <text x="640" y="733" text-anchor="middle" font-size="12" fill="#3949AB">API v1  ·  Acesso seguro com JWT</text>
+</svg>

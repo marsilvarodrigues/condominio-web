@@ -78,7 +78,7 @@ class ApartamentoIntegrationTest extends AbstractIntegrationTest {
                 Apartamento.builder().condominio(savedCondominio).bloco(savedBloco).numero("102").areaConstruida(BigDecimal.TEN).build());
 
         var admin = new User().setEmail(ADMIN_EMAIL).setPassword(passwordEncoder.encode(ADMIN_PASSWORD))
-                .setName("Admin").setEnabled(true).setCondominioId(savedCondominio.getId())
+                .setName("Admin").setEnabled(true).setCondominios(new HashSet<>(Set.of(savedCondominio)))
                 .setRoles(new HashSet<>(Set.of("ROLE_ADMIN")));
         userRepository.save(admin);
 

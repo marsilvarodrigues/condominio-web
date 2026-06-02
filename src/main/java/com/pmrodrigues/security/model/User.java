@@ -1,5 +1,6 @@
 package com.pmrodrigues.security.model;
 
+import com.pmrodrigues.condominio.model.Condominio;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -64,8 +66,14 @@ public class User {
     @Builder.Default
     private Set<String> roles = Set.of("ROLE_USER");
 
-    @Column(name = "condominio_id")
-    private Long condominioId;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_condominios",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "condominio_id")
+    )
+    @Builder.Default
+    private Set<Condominio> condominios = new HashSet<>();
 
     @Column(name = "activation_token")
     private String activationToken;

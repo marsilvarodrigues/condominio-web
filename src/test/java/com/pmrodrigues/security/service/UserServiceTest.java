@@ -2,6 +2,7 @@ package com.pmrodrigues.security.service;
 
 import com.pmrodrigues.commons.service.MailService;
 import com.pmrodrigues.condominio.dto.CondominioDTO;
+import com.pmrodrigues.condominio.model.Condominio;
 import com.pmrodrigues.condominio.service.CondominioService;
 import com.pmrodrigues.security.dto.ChangePasswordDTO;
 import com.pmrodrigues.security.dto.CreateUserDTO;
@@ -57,6 +58,12 @@ class UserServiceTest {
     private static final CondominioDTO TEST_CONDOMINIO =
             new CondominioDTO(1L, "Test Cond", "12.345.678/0001-90", "cond@test.com", null, null, null);
 
+    private static final Condominio TEST_CONDOMINIO_ENTITY;
+    static {
+        TEST_CONDOMINIO_ENTITY = new Condominio();
+        TEST_CONDOMINIO_ENTITY.setId(1L);
+    }
+
     @BeforeEach
     void setUp() {
         userService = new UserService(userRepository, mailService, mapper, passwordHistoryRepository, condominioService, ENCODER);
@@ -64,6 +71,7 @@ class UserServiceTest {
 
         lenient().when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
         lenient().when(condominioService.findById(any())).thenReturn(Optional.of(TEST_CONDOMINIO));
+        lenient().when(condominioService.findEntityById(any())).thenReturn(Optional.of(TEST_CONDOMINIO_ENTITY));
 
         lenient().when(mapper.toEntity(any(CreateUserDTO.class))).thenAnswer(inv -> {
             CreateUserDTO d = inv.getArgument(0);
@@ -71,7 +79,6 @@ class UserServiceTest {
             u.setEmail(d.email());
             u.setName(d.name());
             if (d.roles() != null) u.setRoles(new HashSet<>(d.roles()));
-            u.setCondominioId(d.condominioId());
             return u;
         });
         lenient().when(mapper.toEntity(any(UserDTO.class))).thenAnswer(inv -> {
@@ -86,8 +93,11 @@ class UserServiceTest {
         });
         lenient().when(mapper.toDTO(any(User.class))).thenAnswer(inv -> {
             User u = inv.getArgument(0);
+            Set<Long> condIds = u.getCondominios() != null
+                    ? u.getCondominios().stream().map(Condominio::getId).collect(java.util.stream.Collectors.toSet())
+                    : Set.of();
             return new UserDTO(u.getId(), u.getEmail(), u.getName(), u.isEnabled(),
-                    u.getRoles(), u.getCondominioId(), u.getCreatedAt(), u.getUpdatedAt());
+                    u.getRoles(), condIds, u.getCreatedAt(), u.getUpdatedAt());
         });
         lenient().doAnswer(inv -> {
             User u = inv.getArgument(0);
@@ -104,7 +114,7 @@ class UserServiceTest {
 
     @Test
     void create_savesUserAndSendsActivationEmail() {
-        var dto = new CreateUserDTO("new@test.com", "New User", Set.of("ROLE_USER"), 1L);
+        var dto = new CreateUserDTO("new@test.com", "New User", Set.of("ROLE_USER"), Set.of(1L));
 
         when(userRepository.save(any(User.class))).thenAnswer(inv -> {
             User u = inv.getArgument(0);
@@ -126,7 +136,7 @@ class UserServiceTest {
 
     @Test
     void create_returnsPersistedUserDTO() {
-        var dto = new CreateUserDTO("new@test.com", "New User", Set.of("ROLE_USER"), 1L);
+        var dto = new CreateUserDTO("new@test.com", "New User", Set.of("ROLE_USER"), Set.of(1L));
 
         when(userRepository.save(any(User.class))).thenAnswer(inv -> {
             User u = inv.getArgument(0);
@@ -143,7 +153,7 @@ class UserServiceTest {
 
     @Test
     void create_withExistingEmail_throwsBadRequest() {
-        var dto = new CreateUserDTO("dup@test.com", "Dup User", Set.of("ROLE_USER"), 1L);
+        var dto = new CreateUserDTO("dup@test.com", "Dup User", Set.of("ROLE_USER"), Set.of(1L));
         when(userRepository.findByEmail("dup@test.com")).thenReturn(Optional.of(userWithId(10L, "dup@test.com")));
 
         assertThatThrownBy(() -> userService.create(dto))
@@ -156,8 +166,8 @@ class UserServiceTest {
 
     @Test
     void create_withInvalidCondominioId_throwsBadRequest() {
-        var dto = new CreateUserDTO("user@test.com", "New User", Set.of("ROLE_USER"), 99L);
-        when(condominioService.findById(99L)).thenReturn(Optional.empty());
+        var dto = new CreateUserDTO("user@test.com", "New User", Set.of("ROLE_USER"), Set.of(99L));
+        when(condominioService.findEntityById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> userService.create(dto))
                 .isInstanceOf(ResponseStatusException.class)

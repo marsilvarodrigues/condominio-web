@@ -447,10 +447,10 @@ class UserControllerTest {
     // ── helpers ───────────────────────────────────────────────────────────
 
     private UserDTO dto(Long id, String email) {
-        return new UserDTO(id, email, "Test User", true, Set.of("ROLE_USER"), 1L, null, null);
+        return new UserDTO(id, email, "Test User", true, Set.of("ROLE_USER"), Set.of(1L), null, null);
     }
 
     private CreateUserDTO createDto(String email) {
-        return new CreateUserDTO(email, "Test User", Set.of("ROLE_USER"), 1L);
+        return new CreateUserDTO(email, "Test User", Set.of("ROLE_USER"), Set.of(1L));
     }
 }

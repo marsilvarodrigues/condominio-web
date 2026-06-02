@@ -25,7 +25,7 @@ public class UserSteps {
         body.put("name", "Test User BDD");
         body.put("enabled", true);
         body.put("roles", Set.of("ROLE_USER"));
-        body.put("condominioId", ctx.getTestCondominioId());
+        body.put("condominioIds", Set.of(ctx.getTestCondominioId()));
         http.post("/users", objectMapper.writeValueAsString(body));
     }
 
@@ -45,7 +45,7 @@ public class UserSteps {
         body.put("email", email);
         body.put("name", "Cond Invalido BDD");
         body.put("roles", Set.of("ROLE_USER"));
-        body.put("condominioId", 999999L);
+        body.put("condominioIds", Set.of(999999L));
         http.post("/users", objectMapper.writeValueAsString(body));
     }
 
@@ -57,7 +57,7 @@ public class UserSteps {
         body.put("name", novoNome);
         body.put("enabled", true);
         body.put("roles", Set.of("ROLE_USER"));
-        body.put("condominioId", ctx.getTestCondominioId());
+        body.put("condominioIds", Set.of(ctx.getTestCondominioId()));
         http.put("/users/" + ctx.getLastCreatedId(), objectMapper.writeValueAsString(body));
     }
 
@@ -69,7 +69,7 @@ public class UserSteps {
         body.put("name", novoNome);
         body.put("enabled", true);
         body.put("roles", Set.of("ROLE_USER"));
-        body.put("condominioId", ctx.getTestCondominioId());
+        body.put("condominioIds", Set.of(ctx.getTestCondominioId()));
         http.put("/users/" + ctx.getRegularUserId(), objectMapper.writeValueAsString(body));
     }
 
@@ -83,7 +83,7 @@ public class UserSteps {
         body.put("roles", Set.of("ROLE_ADMIN"));
         // condominioId required by UserDTO @NotNull; pass testCondominioId so validation passes
         // before the service's ownership check throws 403.
-        body.put("condominioId", ctx.getTestCondominioId());
+        body.put("condominioIds", Set.of(ctx.getTestCondominioId()));
         http.put("/users/" + ctx.getMasterUserId(), objectMapper.writeValueAsString(body));
     }
 
