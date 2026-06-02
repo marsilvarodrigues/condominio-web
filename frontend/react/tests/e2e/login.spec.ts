@@ -1,28 +1,41 @@
 import { test, expect } from '@playwright/test'
+import { ADMIN_TOKEN } from './helpers'
 
-test.describe('Login Page', () => {
+test.describe('Login', () => {
   test.beforeEach(async ({ page }) => {
+    // Garante que não há sessão ativa
     await page.goto('/login')
+    await page.evaluate(() => localStorage.removeItem('condogest-auth'))
   })
 
-  test('displays login form', async ({ page }) => {
+  test('exibe formulário com campos e-mail, senha e botão', async ({ page }) => {
     await expect(page.getByLabel(/e-mail/i)).toBeVisible()
     await expect(page.getByLabel(/senha/i)).toBeVisible()
     await expect(page.getByRole('button', { name: /entrar/i })).toBeVisible()
   })
 
-  test('shows validation errors on empty submit', async ({ page }) => {
+  test('exibe erro de validação para e-mail inválido', async ({ page }) => {
+    await page.getByLabel(/e-mail/i).fill('nao-e-email')
     await page.getByRole('button', { name: /entrar/i }).click()
     await expect(page.getByText(/e-mail inválido/i)).toBeVisible()
   })
 
-  test('shows error for invalid email format', async ({ page }) => {
-    await page.getByLabel(/e-mail/i).fill('notanemail')
+  test('exibe erro quando senha está vazia', async ({ page }) => {
+    await page.getByLabel(/e-mail/i).fill('admin@test.com')
     await page.getByRole('button', { name: /entrar/i }).click()
-    await expect(page.getByText(/e-mail inválido/i)).toBeVisible()
+    await expect(page.getByText(/senha obrigatória/i)).toBeVisible()
   })
 
-  test('redirects to dashboard on successful login', async ({ page }) => {
+  test('botão mostra/oculta senha funciona', async ({ page }) => {
+    const senhaInput = page.getByLabel(/senha/i)
+    await expect(senhaInput).toHaveAttribute('type', 'password')
+    await page.getByRole('button', { name: /mostrar|ocultar/i }).click()
+    await expect(senhaInput).toHaveAttribute('type', 'text')
+    await page.getByRole('button', { name: /mostrar|ocultar/i }).click()
+    await expect(senhaInput).toHaveAttribute('type', 'password')
+  })
+
+  test('redireciona para o dashboard após login bem-sucedido', async ({ page }) => {
     await page.route('**/api/auth/login', (route) =>
       route.fulfill({
         status: 200,
@@ -30,20 +43,38 @@ test.describe('Login Page', () => {
         body: JSON.stringify({
           requestId: 'test',
           timestamp: new Date().toISOString(),
-          data: {
-            accessToken: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkB0ZXN0LmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiY29uZG9taW5pb19pZHMiOltdLCJleHAiOjk5OTk5OTk5OTl9.placeholder',
-            refreshToken: 'refresh-token',
-            tokenType: 'Bearer',
-            expiresIn: 3600,
-          },
+          data: { accessToken: ADMIN_TOKEN, refreshToken: 'refresh', tokenType: 'Bearer', expiresIn: 3600 },
         }),
       }),
     )
-
     await page.getByLabel(/e-mail/i).fill('admin@test.com')
-    await page.getByLabel(/senha/i).fill('password123')
+    await page.getByLabel(/senha/i).fill('Senha@1234')
     await page.getByRole('button', { name: /entrar/i }).click()
+    await expect(page).toHaveURL(/\/$|\/dashboard/)
+  })
 
+  test('exibe mensagem de erro em credenciais inválidas', async ({ page }) => {
+    await page.route('**/api/auth/login', (route) =>
+      route.fulfill({
+        status: 401,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'Unauthorized' }),
+      }),
+    )
+    await page.getByLabel(/e-mail/i).fill('admin@test.com')
+    await page.getByLabel(/senha/i).fill('senhaErrada')
+    await page.getByRole('button', { name: /entrar/i }).click()
+    await expect(page.getByRole('alert')).toBeVisible()
+  })
+
+  test('usuário já autenticado é redirecionado para o dashboard', async ({ page }) => {
+    await page.evaluate((token) => {
+      localStorage.setItem('condogest-auth', JSON.stringify({
+        state: { accessToken: token, refreshToken: 'r', user: { email: 'a@a.com', roles: [], condominioIds: [] }, activeCondominioId: null },
+        version: 0,
+      }))
+    }, ADMIN_TOKEN)
+    await page.goto('/login')
     await expect(page).toHaveURL(/\/$|\/dashboard/)
   })
 })

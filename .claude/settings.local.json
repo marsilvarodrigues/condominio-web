@@ -63,7 +63,10 @@
       "PowerShell(Head *)",
       "Bash(awk -F: '{print $NF}')",
       "Bash(Select-Object Name, PSIsContainer)",
-      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\" -Recurse -Directory | Select-Object -First 20 | ForEach-Object { $_.FullName })"
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\" -Recurse -Directory | Select-Object -First 20 | ForEach-Object { $_.FullName })",
+      "Bash(sort -t: -k2 -rn)",
+      "Bash(npm run *)",
+      "Bash(mvn -version)"
     ]
   }
 }

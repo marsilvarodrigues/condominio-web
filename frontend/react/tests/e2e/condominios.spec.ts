@@ -1,71 +1,72 @@
 import { test, expect } from '@playwright/test'
+import { setAdminAuth, mockGet, mockMutation, apiOk } from './helpers'
 
-test.describe('Condomínios Page', () => {
+const CONDOMINIOS = [
+  {
+    id: 1,
+    nome: 'Residencial Primavera',
+    cnpj: '12345678000195',
+    email: 'admin@primavera.com',
+    endereco: { logradouro: 'Rua das Flores, 100', cep: '01310100', cidade: 'São Paulo', estadoId: 35, estadoUf: 'SP' },
+  },
+]
+
+test.describe('Condomínios', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/login')
-    await page.evaluate(() => {
-      const authState = {
-        state: {
-          accessToken: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkB0ZXN0LmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiY29uZG9taW5pb19pZHMiOltdLCJleHAiOjk5OTk5OTk5OTl9.placeholder',
-          refreshToken: 'refresh',
-          user: { email: 'admin@test.com', roles: ['ROLE_ADMIN'], condominioIds: [] },
-          activeCondominioId: null,
-        },
-        version: 0,
-      }
-      localStorage.setItem('condogest-auth', JSON.stringify(authState))
-    })
-
-    await page.route('**/api/condominios', (route) => {
-      if (route.request().method() === 'GET') {
-        route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            requestId: 'test',
-            timestamp: new Date().toISOString(),
-            data: [
-              {
-                id: 1,
-                nome: 'Residencial Primavera',
-                cnpj: '12345678000195',
-                email: 'admin@primavera.com',
-                endereco: {
-                  logradouro: 'Rua das Flores, 100',
-                  cep: '01310100',
-                  cidade: 'São Paulo',
-                  estadoId: 35,
-                  estadoUf: 'SP',
-                },
-              },
-            ],
-          }),
-        })
-      } else {
-        route.continue()
-      }
-    })
-
+    await setAdminAuth(page)
+    mockGet(page, '**/api/condominios', CONDOMINIOS)
     await page.goto('/condominios')
   })
 
-  test('shows page title', async ({ page }) => {
+  test('exibe título da página', async ({ page }) => {
     await expect(page.getByRole('heading', { name: /condomínios/i })).toBeVisible()
   })
 
-  test('lists condominios from API', async ({ page }) => {
+  test('lista condomínios retornados pela API', async ({ page }) => {
     await expect(page.getByText('Residencial Primavera')).toBeVisible()
+    await expect(page.getByText('São Paulo')).toBeVisible()
   })
 
-  test('opens create dialog on button click', async ({ page }) => {
+  test('exibe quantidade de condomínios no subtítulo', async ({ page }) => {
+    await expect(page.getByText(/1 condomínio/i)).toBeVisible()
+  })
+
+  test('abre dialog de criação ao clicar no botão Novo', async ({ page }) => {
     await page.getByRole('button', { name: /novo condomínio/i }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
     await expect(page.getByLabelText(/nome/i)).toBeVisible()
+    await expect(page.getByLabelText(/cnpj/i)).toBeVisible()
+    await expect(page.getByLabelText(/e-mail/i)).toBeVisible()
   })
 
-  test('closes dialog on cancel', async ({ page }) => {
+  test('fecha dialog ao cancelar', async ({ page }) => {
     await page.getByRole('button', { name: /novo condomínio/i }).click()
     await page.getByRole('button', { name: /cancelar/i }).click()
     await expect(page.getByRole('dialog')).not.toBeVisible()
+  })
+
+  test('salva novo condomínio e fecha dialog', async ({ page }) => {
+    mockMutation(page, '**/api/condominios', { ...CONDOMINIOS[0], id: 2, nome: 'Novo Condo' }, 201)
+    await page.getByRole('button', { name: /novo condomínio/i }).click()
+    await page.getByLabelText(/^nome/i).fill('Novo Condo')
+    await page.getByLabelText(/cnpj/i).fill('12345678000195')
+    await page.getByLabelText(/e-mail/i).fill('novo@condo.com')
+    await page.getByLabelText(/logradouro/i).fill('Rua Teste, 1')
+    await page.getByLabelText(/cep/i).fill('01310100')
+    await page.getByLabelText(/cidade/i).fill('São Paulo')
+    await page.getByRole('button', { name: /salvar/i }).click()
+    await expect(page.getByRole('dialog')).not.toBeVisible()
+  })
+
+  test('abre dialog de confirmação ao excluir', async ({ page }) => {
+    await page.getByRole('button', { name: /excluir/i }).first().click()
+    await expect(page.getByRole('dialog')).toBeVisible()
+    await expect(page.getByText(/excluir o condomínio/i)).toBeVisible()
+  })
+
+  test('cancela exclusão e mantém o registro', async ({ page }) => {
+    await page.getByRole('button', { name: /excluir/i }).first().click()
+    await page.getByRole('button', { name: /cancelar/i }).click()
+    await expect(page.getByText('Residencial Primavera')).toBeVisible()
   })
 })
