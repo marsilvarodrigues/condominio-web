@@ -16,6 +16,7 @@ Infraestrutura transversal compartilhada por todos os módulos de negócio.
 - **MDC estruturado** — `MdcContextFilter` injeta `correlationId` e `requestId` em cada requisição; `RequestIdInterceptor` propaga o ID entre camadas.
 - **API Versioning** — `@ApiVersion`, `ApiVersionHandlerMapping` e `ApiVersionRequestCondition` para versionamento de endpoints via URL.
 - **Estados brasileiros** — entidade `Estado` (27 UFs) com seed SQL; `EstadoService` com `filterBy(EstadoFilterDTO)` + `JpaSpecificationExecutor`.
+- **Bancos** — entidade `Banco` (lista de bancos brasileiros); CRUD completo via `BancoService`/`BancoController`.
 - **MeterService** — abstração sobre `MeterRegistry` para incrementar contadores de erro sem expor Micrometer diretamente.
 - **MailService** — envio de e-mail via SMTP configurável.
 
@@ -39,6 +40,7 @@ Autenticação e autorização com JWT + OAuth2.
 - **Refresh** — `POST /api/auth/refresh` rotaciona o refresh token; o token anterior é invalidado.
 - **Logout** — `POST /api/auth/logout` blacklista o JTI do access token atual no Redis.
 - **Blacklist** — `CustomBearerTokenFilter` verifica o Redis antes que o Spring Security processe o token; tokens revogados recebem 401.
+- **Multi-condomínio** — usuários podem ter acesso a 0 ou N condomínios (relação `@ManyToMany` via `user_condominios`). O JWT carrega a lista `condominio_ids`. Usuários com 0 condominios têm acesso global; com 1, o tenant é auto-selecionado; com N, o header `X-Condominio-Id` é obrigatório (403 se inválido, 400 se não numérico).
 - **CRUD de usuários** — `UserController`/`UserService` com filtros dinâmicos (`UserFilterDTO` + `UserSpecification`).
 - **Ativação de conta** — fluxo de activation code via e-mail.
 - **Troca de senha** — `PATCH /api/users/{id}/password` com histórico; senhas recentes são rejeitadas (`PasswordHistory`).
@@ -52,10 +54,13 @@ Gestão financeira completa do condomínio.
 - **Plano de Contas** — estrutura hierárquica (`pai_id`) com tipos `RECEITA`/`DESPESA`, `TipoRateio` (`IGUALITARIO`/`FRACAO_IDEAL`) e `EscopoRateio` (`TODOS`/`POR_BLOCO`). Endpoints: CRUD + tree (`GET /api/plano-contas/arvore`).
 - **Fundo de Reserva** — entidade única por condomínio. Operações: criar, atualizar percentual/conta, creditar, debitar, listar movimentações paginadas. Saldo calculado e validado no service (rejeita débito se saldo insuficiente).
 - **Orçamento Anual** — ciclo de vida: `RASCUNHO → APROVADO → ENCERRADO`. Operações: criar, atualizar exercício, aprovar (calcula taxa estimada por unidade = total previsto / 12 / nUnidades), encerrar, deletar. Itens: adicionar, atualizar valor previsto, remover.
+- **Contas Bancárias** — CRUD completo (`/api/contas-bancarias`). Associação com `Banco` (referência global) e integração com `FundoReserva`. Filtros por banco, tipo e status.
+- **Lançamentos Bancários** — CRUD completo (`/api/lancamentos-bancarios`). Tipos: `CREDITO`/`DEBITO`. Origens: `MANUAL`/`EXTRATO`. Status de conciliação: `PENDENTE`/`CONCILIADO`/`DIVERGENTE`.
+- **Extrato Importação** — importação de extratos bancários (`ExtratoImportacao` + `ItemExtrato`). Formatos suportados via `FormatoExtrato`.
+- **Conciliação Bancária** — associação de itens de extrato a itens de orçamento via `AssociacaoOrcamentoController` (`/api/conciliacao/associacao`). Sugestão automática por score (`SugestaoScoreCalculator`); cálculo de contribuição por item de orçamento.
 - **Soft delete em cascata** — ao deletar um condomínio, todas as entidades financeiras são cascateadas: itens de orçamento → orçamentos → movimentações de fundo → fundo de reserva → plano de contas (nessa ordem para respeitar FKs).
-- **Tabelas particionadas** — `plano_contas`, `fundo_reserva`, `fundo_reserva_movimentacao`, `orcamento_anual` e `item_orcamento` com HASH por `condominio_id` (4 buckets). PKs compostas incluem `condominio_id`; FKs entre tabelas particionadas incluem a chave de partição.
+- **Tabelas particionadas** — `plano_contas`, `fundo_reserva`, `fundo_reserva_movimentacao`, `orcamento_anual`, `item_orcamento`, `contas_bancarias`, `lancamentos_bancarios` com HASH por `condominio_id` (4 buckets). PKs compostas incluem `condominio_id`; FKs entre tabelas particionadas carregam a chave de partição.
 - `OrcamentoAnualMapper` usa `EntityManager.getReference()` via `planoContasFromId()` para criar proxies de `PlanoContas` sem carregar entidades.
-- `FundoReservaMapper` tem `updateEntity(@MappingTarget, UpdateFundoReservaDTO)` seguindo CLAUDE.md regra 3.
 
 ---
 
@@ -87,7 +92,7 @@ Gestão financeira completa do condomínio.
 | Containerização | Docker (multi-stage, Ubuntu Jammy + ZGC) | — |
 | Monitoramento | Prometheus + Grafana | v2.52.0 / 11.0.0 |
 | Log aggregation | Grafana Loki | 3.0.0 |
-| GC | ZGC Generational (Java 21) | — |
+| GC | ZGC Generacional (Java 21) | — |
 
 ---
 
@@ -99,16 +104,17 @@ src/main/java/com/pmrodrigues/
 ├── commons/
 │   ├── cache/          # TwoLevelCache, TwoLevelCacheManager
 │   ├── config/         # CacheConfig, JpaAuditingConfig, MetricsConfig, WebConfig, TenantFilterAspect, ApiVersioningConfig
-│   ├── controller/     # EstadoController
-│   ├── dto/            # ApiResponse, EnderecoDTO, ErrorResponse, EstadoDTO, EstadoFilterDTO
+│   ├── controller/     # BancoController, EstadoController
+│   ├── dto/            # ApiResponse, BancoDTO, BancoFilterDTO, CreateBancoDTO, UpdateBancoDTO,
+│   │                   # EnderecoDTO, ErrorResponse, EstadoDTO, EstadoFilterDTO
 │   ├── embeddable/     # Endereco (JPA @Embeddable)
 │   ├── filter/         # MdcContextFilter
 │   ├── interceptor/    # RequestIdInterceptor
-│   ├── mapper/         # EnderecoMapper, EstadoMapper
-│   ├── model/          # Estado
-│   ├── repository/     # EstadoRepository
-│   ├── service/        # EstadoService, MailService, MeterService
-│   ├── specification/  # EstadoSpecification
+│   ├── mapper/         # BancoMapper, EnderecoMapper, EstadoMapper
+│   ├── model/          # Banco, Estado
+│   ├── repository/     # BancoRepository, EstadoRepository
+│   ├── service/        # BancoService, EstadoService, MailService, MeterService
+│   ├── specification/  # BancoSpecification, EstadoSpecification
 │   ├── tenant/         # TenantContext
 │   ├── util/           # Exceptions
 │   ├── validation/     # @CNPJ, CnpjValidator
@@ -122,15 +128,29 @@ src/main/java/com/pmrodrigues/
 │   ├── service/        # ApartamentoService, BlocoService, CondominioService
 │   └── specification/  # ApartamentoSpecification, BlocoSpecification, CondominioSpecification
 ├── financeiro/
-│   ├── controller/     # FundoReservaController, OrcamentoAnualController, PlanoContasController
-│   ├── dto/            # Create*, Update*, Filter*, Aprovar*, Creditar*, Debitar* DTOs
-│   ├── mapper/         # FundoReservaMapper, OrcamentoAnualMapper, PlanoContasMapper
-│   ├── model/          # FundoReserva, FundoReservaMovimentacao, OrcamentoAnual, ItemOrcamento, PlanoContas
-│   │                   # EscopoRateio, StatusOrcamento, TipoConta, TipoMovimentacao, TipoRateio
-│   ├── repository/     # FundoReservaRepository, FundoReservaMovimentacaoRepository,
-│   │                   # ItemOrcamentoRepository, OrcamentoAnualRepository, PlanoContasRepository
-│   ├── service/        # FundoReservaService, OrcamentoAnualService, PlanoContasService
-│   └── specification/  # OrcamentoAnualSpecification, PlanoContasSpecification
+│   ├── controller/     # AssociacaoOrcamentoController, ContaBancariaController,
+│   │                   # FundoReservaController, LancamentoBancarioController,
+│   │                   # OrcamentoAnualController, PlanoContasController
+│   ├── dto/            # Create*, Update*, Filter* DTOs para todas as entidades;
+│   │                   # Aprovar*, Creditar*, Debitar*, Associar*, Desassociar* DTOs;
+│   │                   # ItemExtratoComOrcamentoResponse, SugestaoItemOrcamentoResponse,
+│   │                   # ContribuicaoResponse, ItemOrcamentoResumoResponse
+│   ├── mapper/         # ContaBancariaMapper, FundoReservaMapper, ItemExtratoMapper,
+│   │                   # LancamentoBancarioMapper, OrcamentoAnualMapper, PlanoContasMapper
+│   ├── model/          # ContaBancaria, ExtratoImportacao, FundoReserva, FundoReservaMovimentacao,
+│   │                   # ItemExtrato, ItemOrcamento, LancamentoBancario, OrcamentoAnual, PlanoContas
+│   │                   # Enums: EscopoRateio, FormatoExtrato, OrigemLancamento, StatusExtrato,
+│   │                   # StatusItemExtrato, StatusLancamento, StatusOrcamento, TipoContaBancaria,
+│   │                   # TipoConta, TipoLancamento, TipoMovimentacao, TipoRateio
+│   ├── repository/     # ContaBancariaRepository, FundoReservaRepository,
+│   │                   # FundoReservaMovimentacaoRepository, ItemExtratoRepository,
+│   │                   # ItemOrcamentoRepository, LancamentoBancarioRepository,
+│   │                   # OrcamentoAnualRepository, PlanoContasRepository
+│   ├── service/        # AssociacaoOrcamentoService, ContaBancariaService, FundoReservaService,
+│   │                   # LancamentoBancarioService, OrcamentoAnualService, PlanoContasService
+│   ├── specification/  # ContaBancariaSpecification, LancamentoBancarioSpecification,
+│   │                   # OrcamentoAnualSpecification, PlanoContasSpecification
+│   └── util/           # SugestaoScoreCalculator
 └── security/
     ├── config/         # AuthorizationServerConfig, JwtConfig, JwtProperties, SecurityConfig
     ├── controller/     # AuthController, AuthExceptionHandler, UserController
@@ -148,7 +168,7 @@ src/main/java/com/pmrodrigues/
 
 ## Banco de Dados
 
-16 migrações Liquibase em `src/main/resources/db/changelog/changes/` (SQL, `dbms:postgresql`):
+23 migrações Liquibase em `src/main/resources/db/changelog/changes/` (SQL, `dbms:postgresql`):
 
 | # | Arquivo | Conteúdo |
 |---|---|---|
@@ -160,7 +180,7 @@ src/main/java/com/pmrodrigues/
 | 0006 | insert-estados | Seed com 27 estados brasileiros |
 | 0007 | add-condominio-to-apartamentos | FK `condominio_id` em `apartamentos` |
 | 0008 | partition-blocos-apartamentos | HASH partition por `condominio_id` (4 buckets) em `blocos` e `apartamentos` |
-| 0009 | add-condominio-id-to-users | FK `condominio_id` em `users` |
+| 0009 | add-condominio-id-to-users | *(removido pela 0023; mantido para histórico de migração)* |
 | 0010 | insert-admin-user | Seed do usuário master admin |
 | 0011 | create-password-history | Histórico de senhas para prevenção de reutilização |
 | 0012 | create-financeiro-tables | `plano_contas`, `fundo_reserva`, `fundo_reserva_movimentacao`, `orcamento_anual`, `item_orcamento` |
@@ -168,8 +188,15 @@ src/main/java/com/pmrodrigues/
 | 0014 | add-escopo-rateio-to-plano-contas | Coluna `escopo_rateio` |
 | 0015 | partition-financeiro-tables | HASH partition das 5 tabelas financeiras; PKs compostas; FKs inter-particionadas |
 | 0016 | alter-apartamento-add-areaConstruida | Coluna `area_construida` em `apartamentos` |
+| 0017 | create-bancos | Tabela `bancos` (código COMPE, nome, ISPB) |
+| 0018 | create-contas-bancarias | Tabela `contas_bancarias` particionada por `condominio_id` |
+| 0019 | create-lancamentos-bancarios | Tabela `lancamentos_bancarios` particionada por `condominio_id` |
+| 0020 | create-extrato-importacao | Tabelas `extrato_importacao` e `itens_extrato` |
+| 0021 | refactor-fundo-reserva-conta-bancaria | Associa `fundo_reserva` a `conta_bancaria` |
+| 0022 | add-item-orcamento-to-itens-extrato | FK de `itens_extrato` para `item_orcamento` (conciliação) |
+| 0023 | user-condominios-many-to-many | Cria `user_condominios`; migra dados; remove `condominio_id` de `users` |
 
-Para adicionar uma migração: criar `NNNN-descricao.sql` e registrar no `db.changelog-master.yaml`.
+Para adicionar uma migração: criar `NNNN-descricao.sql` (próximo: `0024`) e registrar no `db.changelog-master.yaml`.
 
 ---
 
@@ -296,7 +323,7 @@ mvn test -Pperformance -Dapp.host=localhost -Dapp.port=8080 \
 | `condominios.feature` | CRUD, filtros, 401/403/404 |
 | `blocos.feature` | CRUD, filtros, multi-tenant |
 | `apartamentos.feature` | CRUD, filtros, área construída |
-| `usuarios.feature` | CRUD, filtros, ativação, troca de senha |
+| `usuarios.feature` | CRUD, filtros, ativação, troca de senha, multi-condomínio |
 | `estados.feature` | Listagem, filtros |
 | `plano-contas.feature` | CRUD, hierarquia, arvore |
 | `fundo-reserva.feature` | Criar, creditar, debitar, movimentações |
@@ -307,6 +334,8 @@ mvn test -Pperformance -Dapp.host=localhost -Dapp.port=8080 \
 ## Endpoints da API
 
 Todos os endpoints exigem `Authorization: Bearer <access_token>`. `POST`, `PUT` e `DELETE` exigem `ROLE_ADMIN`.
+
+Usuários com acesso a múltiplos condomínios devem enviar o header `X-Condominio-Id: <id>` para selecionar o tenant ativo. Retorna 403 se o ID não constar na lista do token.
 
 ### Autenticação
 
@@ -321,7 +350,7 @@ Todos os endpoints exigem `Authorization: Bearer <access_token>`. `POST`, `PUT` 
 | Método | Endpoint | Descrição |
 |---|---|---|
 | `GET` | `/api/users` | Listar (filtros: `nome`, `email`, `enabled`, `role`) |
-| `POST` | `/api/users` | Criar usuário |
+| `POST` | `/api/users` | Criar usuário (`condominioIds`: lista de IDs ou vazio para acesso global) |
 | `GET` | `/api/users/{id}` | Buscar por ID |
 | `PUT` | `/api/users/{id}` | Atualizar (admin ou dono) |
 | `DELETE` | `/api/users/{id}` | Soft-delete |
@@ -334,6 +363,16 @@ Todos os endpoints exigem `Authorization: Bearer <access_token>`. `POST`, `PUT` 
 |---|---|---|
 | `GET` | `/api/estados` | Listar (filtros: `uf`, `nome`) |
 | `GET` | `/api/estados/{id}` | Buscar por ID |
+
+### Bancos
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| `GET` | `/api/bancos` | Listar (filtros: `codigo`, `nome`) |
+| `POST` | `/api/bancos` | Criar |
+| `GET` | `/api/bancos/{id}` | Buscar por ID |
+| `PUT` | `/api/bancos/{id}` | Atualizar |
+| `DELETE` | `/api/bancos/{id}` | Soft-delete |
 
 ### Condomínios
 
@@ -402,6 +441,35 @@ Todos os endpoints exigem `Authorization: Bearer <access_token>`. `POST`, `PUT` 
 | `PUT` | `/api/orcamentos/{id}/itens/{itemId}` | Atualizar valor previsto |
 | `DELETE` | `/api/orcamentos/{id}/itens/{itemId}` | Remover item |
 
+### Contas Bancárias
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| `GET` | `/api/contas-bancarias` | Listar (filtros: `bancoId`, `tipo`, `status`) |
+| `POST` | `/api/contas-bancarias` | Criar |
+| `GET` | `/api/contas-bancarias/{id}` | Buscar por ID |
+| `PUT` | `/api/contas-bancarias/{id}` | Atualizar |
+| `DELETE` | `/api/contas-bancarias/{id}` | Soft-delete |
+
+### Lançamentos Bancários
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| `GET` | `/api/lancamentos-bancarios` | Listar (filtros: `contaId`, `tipo`, `status`, `dataInicio`, `dataFim`) |
+| `POST` | `/api/lancamentos-bancarios` | Criar lançamento manual |
+| `GET` | `/api/lancamentos-bancarios/{id}` | Buscar por ID |
+| `PUT` | `/api/lancamentos-bancarios/{id}` | Atualizar |
+| `DELETE` | `/api/lancamentos-bancarios/{id}` | Soft-delete |
+
+### Conciliação Bancária
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| `POST` | `/api/conciliacao/associacao/{itemExtratoId}` | Associar item de extrato a item de orçamento |
+| `DELETE` | `/api/conciliacao/associacao/{itemExtratoId}` | Desassociar (com justificativa) |
+| `GET` | `/api/conciliacao/associacao/sugestoes/{itemExtratoId}` | Sugestões por score (até 5 candidatos) |
+| `GET` | `/api/conciliacao/associacao/contribuicao/{itemOrcamentoId}` | Contribuição realizada por item de orçamento |
+
 ### Formato de resposta
 
 ```json
@@ -418,9 +486,17 @@ Todos os endpoints exigem `Authorization: Bearer <access_token>`. `POST`, `PUT` 
 
 ### Multi-tenancy
 
-Todas as tabelas de domínio têm `condominio_id`. Sete tabelas são HASH-particionadas por `condominio_id` em 4 buckets (PostgreSQL table partitioning): `blocos`, `apartamentos`, `plano_contas`, `fundo_reserva`, `fundo_reserva_movimentacao`, `orcamento_anual`, `item_orcamento`. PKs compostas incluem `condominio_id`; FKs entre tabelas particionadas carregam a chave de partição para respeitar a restrição do PostgreSQL.
+Todas as tabelas de domínio têm `condominio_id`. Nove tabelas são HASH-particionadas por `condominio_id` em 4 buckets (PostgreSQL table partitioning): `blocos`, `apartamentos`, `plano_contas`, `fundo_reserva`, `fundo_reserva_movimentacao`, `orcamento_anual`, `item_orcamento`, `contas_bancarias`, `lancamentos_bancarios`. PKs compostas incluem `condominio_id`; FKs entre tabelas particionadas carregam a chave de partição para respeitar a restrição do PostgreSQL.
 
-O `TenantContext` (ThreadLocal) é populado pelo `CustomBearerTokenFilter` a partir do claim `condominioId` do JWT. O `TenantFilterAspect` ativa o filtro Hibernate (`condominioFilter`) em toda query via `@Filter`. Entidades têm `@PrePersist` que seta `condominio_id` automaticamente — o caller nunca precisa setar manualmente.
+O `TenantContext` (ThreadLocal) é populado pelo `CustomBearerTokenFilter` a partir da claim `condominio_ids` do JWT e do header `X-Condominio-Id`:
+
+- **0 condominios no token** → acesso global (sem filtro Hibernate; comportamento de master admin).
+- **1 condominio no token** → tenant auto-selecionado, header não obrigatório.
+- **N condominios no token** → `X-Condominio-Id` obrigatório; 403 se o valor não constar na lista; 400 se não numérico.
+
+O `TenantFilterAspect` ativa o filtro Hibernate (`condominioFilter`) em toda query. Entidades têm `@PrePersist` que seta `condominio_id` automaticamente — o caller nunca precisa setar manualmente.
+
+A tabela `user_condominios` (join table `@ManyToMany`) é global (sem particionamento por tenant), pois representa direitos de acesso, não dados de negócio.
 
 ### Cache em dois níveis
 
@@ -435,7 +511,7 @@ Request → L1 (Caffeine, in-process, sub-ms) → L2 (Redis, compartilhado, ms) 
 
 ### JWT + OAuth2
 
-- Tokens RS256 (assimétrico). O access token (1 h) carrega claims `roles` e `condominioId`.
+- Tokens RS256 (assimétrico). O access token (1 h) carrega claims `roles` e `condominio_ids` (lista de IDs dos condomínios acessíveis ao usuário).
 - Refresh token: UUID opaco, armazenado no Redis. Rotacionado a cada refresh; o anterior é imediatamente invalidado.
 - Blacklist: o JTI do access token é armazenado no Redis no logout. `CustomBearerTokenFilter` rejeita JTIs na blacklist com 401 antes que o Spring Security processe.
 
@@ -448,7 +524,8 @@ Cascata de delete ao remover um Condomínio:
 2. Itens de orçamento → Orçamentos anuais (módulo financeiro)
 3. Movimentações de fundo → Fundo de reserva (módulo financeiro)
 4. Plano de contas (módulo financeiro)
-5. Condomínio
+5. Lançamentos bancários → Contas bancárias (módulo financeiro)
+6. Condomínio
 
 ### Observabilidade
 
@@ -461,6 +538,6 @@ Cascata de delete ao remover um Condomínio:
 
 - **Undertow** no lugar do Tomcat — 1,5× melhor throughput para workloads REST.
 - **Virtual Threads** (Java 21 / Project Loom) — habilitados via `spring.threads.virtual.enabled=true`.
-- **ZGC Generational** — configurado no Dockerfile para latência de GC sub-1 ms em produção (requer Ubuntu/glibc; Alpine/musl não suporta ZGC).
+- **ZGC Generacional** — configurado no Dockerfile para latência de GC sub-1 ms em produção (requer Ubuntu/glibc; Alpine/musl não suporta ZGC).
 - **Dockerfile multi-stage** — build (Maven + Alpine), extração de layers (Spring Boot layertools), runtime (Ubuntu Jammy). Camadas de dependências separadas da aplicação para rebuild incremental.
 - **Perfil `prod`** — `spring.datasource.hikari.auto-commit=false` + `hibernate.connection.provider_disables_autocommit=true` elimina 2 round-trips JDBC por transação.

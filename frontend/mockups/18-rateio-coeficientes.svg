@@ -1,0 +1,173 @@
+<svg width="1280" height="800" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="800" fill="#F0F2F5"/>
+
+  <!-- Sidebar -->
+  <rect width="260" height="800" fill="#1A2332"/>
+  <rect x="0" y="0" width="260" height="64" fill="#151D2B"/>
+  <rect x="20" y="17" width="30" height="30" rx="6" fill="#1976D2"/>
+  <text x="58" y="34" font-size="18" font-weight="700" fill="white">CondoGest</text>
+  <text x="58" y="50" font-size="11" fill="#78909C">v1.0</text>
+  <text x="58" y="109" font-size="14" fill="#90A4AE">Dashboard</text>
+  <text x="58" y="157" font-size="14" fill="#90A4AE">Condomínios</text>
+  <text x="58" y="205" font-size="14" fill="#90A4AE">Apartamentos</text>
+  <text x="58" y="253" font-size="14" fill="#90A4AE">Financeiro</text>
+  <!-- Grupos de Despesa (active parent) -->
+  <rect x="0" y="272" width="260" height="48" fill="#243447"/>
+  <text x="58" y="301" font-size="14" fill="#90A4AE">Grupos de Despesa</text>
+  <!-- Coeficientes (active) -->
+  <rect x="0" y="320" width="260" height="48" fill="#1976D2"/>
+  <rect x="0" y="320" width="4" height="48" fill="#42A5F5"/>
+  <text x="72" y="349" font-size="14" font-weight="500" fill="white">↳ Coeficientes</text>
+  <text x="58" y="397" font-size="14" fill="#90A4AE">Rateio</text>
+  <text x="58" y="445" font-size="14" fill="#90A4AE">Usuários</text>
+  <rect x="0" y="736" width="260" height="64" fill="#151D2B"/>
+  <circle cx="36" cy="768" r="18" fill="#1976D2"/>
+  <text x="36" y="773" text-anchor="middle" font-size="14" font-weight="700" fill="white">JS</text>
+  <text x="62" y="763" font-size="13" font-weight="600" fill="white">João Silva</text>
+  <text x="62" y="779" font-size="11" fill="#78909C">Administrador</text>
+
+  <!-- AppBar -->
+  <rect x="260" y="0" width="1020" height="64" fill="white" filter="url(#shadow)"/>
+  <text x="292" y="38" font-size="20" font-weight="600" fill="#1A2332">Coeficientes de Rateio</text>
+  <text x="292" y="55" font-size="11" fill="#90A4AE">Início  ›  Grupos de Despesa  ›  Coeficientes</text>
+  <rect x="870" y="16" width="220" height="32" rx="6" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="886" y="37" font-size="13" fill="#1A2332">Solar das Flores</text>
+  <text x="1082" y="37" text-anchor="end" font-size="12" fill="#546E7A">▾</text>
+  <circle cx="1230" cy="32" r="20" fill="#1976D2"/>
+  <text x="1230" y="37" text-anchor="middle" font-size="13" font-weight="700" fill="white">JS</text>
+
+  <!-- Group Selector Card -->
+  <rect x="280" y="80" width="980" height="68" rx="10" fill="white" filter="url(#shadow)"/>
+  <text x="300" y="104" font-size="12" font-weight="600" fill="#546E7A">GRUPO DE DESPESA</text>
+  <rect x="300" y="112" width="380" height="24" rx="6" fill="#F4F6F9" stroke="#CFD8DC" stroke-width="1"/>
+  <text x="316" y="129" font-size="13" fill="#1A2332">Água – Bloco A</text>
+  <text x="672" y="129" text-anchor="end" font-size="12" fill="#546E7A">▾</text>
+  <!-- Tipo Rateio badge -->
+  <rect x="700" y="112" width="76" height="24" rx="12" fill="#EDE7F6"/>
+  <text x="738" y="129" text-anchor="middle" font-size="11" font-weight="600" fill="#6A1B9A">CONSUMO</text>
+  <!-- Escopo badge -->
+  <rect x="790" y="112" width="80" height="24" rx="12" fill="#E3F2FD"/>
+  <text x="830" y="129" text-anchor="middle" font-size="11" font-weight="600" fill="#1565C0">POR BLOCO</text>
+
+  <!-- Toolbar -->
+  <rect x="280" y="162" width="980" height="52" rx="10" fill="white" filter="url(#shadow)"/>
+  <text x="300" y="195" font-size="13" fill="#78909C">Vigência de referência:</text>
+  <rect x="440" y="175" width="130" height="28" rx="6" fill="#F4F6F9" stroke="#CFD8DC" stroke-width="1"/>
+  <text x="500" y="194" text-anchor="middle" font-size="13" fill="#1A2332">Jun 2026</text>
+  <text x="563" y="194" text-anchor="end" font-size="12" fill="#546E7A">▾</text>
+  <!-- Actualizar Leituras button (CONSUMO mode) -->
+  <rect x="940" y="168" width="180" height="36" rx="8" fill="#7B1FA2"/>
+  <text x="1030" y="191" text-anchor="middle" font-size="13" font-weight="600" fill="white">⊞ Actualizar Leituras</text>
+  <!-- Add Coeficiente button -->
+  <rect x="1130" y="168" width="120" height="36" rx="8" fill="#1565C0"/>
+  <text x="1190" y="191" text-anchor="middle" font-size="13" font-weight="600" fill="white">+ Adicionar</text>
+
+  <!-- Table -->
+  <rect x="280" y="228" width="980" height="420" rx="12" fill="white" filter="url(#shadow)"/>
+  <rect x="280" y="228" width="980" height="44" rx="12" fill="#F8FAFC"/>
+  <rect x="280" y="250" width="980" height="22" fill="#F8FAFC"/>
+  <text x="300" y="257" font-size="12" font-weight="600" fill="#546E7A">UNIDADE</text>
+  <text x="450" y="257" font-size="12" font-weight="600" fill="#546E7A">BLOCO</text>
+  <text x="560" y="257" font-size="12" font-weight="600" fill="#546E7A">COEFICIENTE</text>
+  <text x="700" y="257" font-size="12" font-weight="600" fill="#546E7A">ÁREA M²</text>
+  <!-- CONSUMO M³ highlighted (active for CONSUMO tipo) -->
+  <text x="820" y="257" font-size="12" font-weight="700" fill="#6A1B9A">CONSUMO M³</text>
+  <text x="980" y="257" font-size="12" font-weight="600" fill="#546E7A">VIGÊNCIA</text>
+  <text x="1160" y="257" font-size="12" font-weight="600" fill="#546E7A">AÇÕES</text>
+
+  <!-- Row 1 -->
+  <line x1="280" y1="272" x2="1260" y2="272" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="299" font-size="14" font-weight="500" fill="#1A2332">101</text>
+  <text x="450" y="299" font-size="13" fill="#546E7A">Bloco A</text>
+  <text x="560" y="299" font-size="13" fill="#B0BEC5">—</text>
+  <text x="700" y="299" font-size="13" fill="#B0BEC5">—</text>
+  <text x="820" y="299" font-size="14" font-weight="500" fill="#4A148C">15,000 m³</text>
+  <!-- vigência badge -->
+  <rect x="965" y="285" width="80" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="1005" y="300" text-anchor="middle" font-size="11" font-weight="600" fill="#2E7D32">Jun 2026</text>
+  <rect x="1140" y="285" width="28" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="1154" y="303" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+
+  <!-- Row 2 -->
+  <line x1="280" y1="320" x2="1260" y2="320" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="347" font-size="14" font-weight="500" fill="#1A2332">102</text>
+  <text x="450" y="347" font-size="13" fill="#546E7A">Bloco A</text>
+  <text x="560" y="347" font-size="13" fill="#B0BEC5">—</text>
+  <text x="700" y="347" font-size="13" fill="#B0BEC5">—</text>
+  <text x="820" y="347" font-size="14" font-weight="500" fill="#4A148C">8,500 m³</text>
+  <rect x="965" y="333" width="80" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="1005" y="348" text-anchor="middle" font-size="11" font-weight="600" fill="#2E7D32">Jun 2026</text>
+  <rect x="1140" y="333" width="28" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="1154" y="351" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+
+  <!-- Row 3 -->
+  <line x1="280" y1="368" x2="1260" y2="368" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="395" font-size="14" font-weight="500" fill="#1A2332">201</text>
+  <text x="450" y="395" font-size="13" fill="#546E7A">Bloco A</text>
+  <text x="560" y="395" font-size="13" fill="#B0BEC5">—</text>
+  <text x="700" y="395" font-size="13" fill="#B0BEC5">—</text>
+  <text x="820" y="395" font-size="14" font-weight="500" fill="#4A148C">12,200 m³</text>
+  <rect x="965" y="381" width="80" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="1005" y="396" text-anchor="middle" font-size="11" font-weight="600" fill="#2E7D32">Jun 2026</text>
+  <rect x="1140" y="381" width="28" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="1154" y="399" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+
+  <!-- Row 4 — missing reading (warning) -->
+  <line x1="280" y1="416" x2="1260" y2="416" stroke="#F0F2F5" stroke-width="1"/>
+  <rect x="280" y="417" width="980" height="47" fill="#FFFDE7"/>
+  <text x="300" y="443" font-size="14" font-weight="500" fill="#1A2332">202</text>
+  <text x="450" y="443" font-size="13" fill="#546E7A">Bloco A</text>
+  <text x="560" y="443" font-size="13" fill="#B0BEC5">—</text>
+  <text x="700" y="443" font-size="13" fill="#B0BEC5">—</text>
+  <!-- missing indicator -->
+  <rect x="810" y="429" width="110" height="22" rx="11" fill="#FFF9C4" stroke="#F9A825" stroke-width="1"/>
+  <text x="865" y="444" text-anchor="middle" font-size="11" font-weight="600" fill="#E65100">⚠ Sem leitura</text>
+  <rect x="965" y="429" width="80" height="22" rx="11" fill="#ECEFF1"/>
+  <text x="1005" y="444" text-anchor="middle" font-size="11" font-weight="600" fill="#78909C">Mai 2026</text>
+  <rect x="1140" y="429" width="28" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="1154" y="447" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+
+  <!-- Row 5 -->
+  <line x1="280" y1="464" x2="1260" y2="464" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="491" font-size="14" font-weight="500" fill="#1A2332">301</text>
+  <text x="450" y="491" font-size="13" fill="#546E7A">Bloco A</text>
+  <text x="560" y="491" font-size="13" fill="#B0BEC5">—</text>
+  <text x="700" y="491" font-size="13" fill="#B0BEC5">—</text>
+  <text x="820" y="491" font-size="14" font-weight="500" fill="#4A148C">9,800 m³</text>
+  <rect x="965" y="477" width="80" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="1005" y="492" text-anchor="middle" font-size="11" font-weight="600" fill="#2E7D32">Jun 2026</text>
+  <rect x="1140" y="477" width="28" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="1154" y="495" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+
+  <!-- Row 6 -->
+  <line x1="280" y1="512" x2="1260" y2="512" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="539" font-size="14" font-weight="500" fill="#1A2332">302</text>
+  <text x="450" y="539" font-size="13" fill="#546E7A">Bloco A</text>
+  <text x="560" y="539" font-size="13" fill="#B0BEC5">—</text>
+  <text x="700" y="539" font-size="13" fill="#B0BEC5">—</text>
+  <text x="820" y="539" font-size="14" font-weight="500" fill="#4A148C">6,700 m³</text>
+  <rect x="965" y="525" width="80" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="1005" y="540" text-anchor="middle" font-size="11" font-weight="600" fill="#2E7D32">Jun 2026</text>
+  <rect x="1140" y="525" width="28" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="1154" y="543" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+
+  <line x1="280" y1="560" x2="1260" y2="560" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="770" y="590" text-anchor="middle" font-size="13" fill="#B0BEC5">Não há mais registros para exibir</text>
+
+  <!-- Summary bar -->
+  <rect x="280" y="640" width="980" height="52" rx="10" fill="white" filter="url(#shadow)"/>
+  <text x="300" y="671" font-size="12" fill="#78909C">Total unidades: <tspan font-weight="600" fill="#1A2332">6</tspan></text>
+  <text x="460" y="671" font-size="12" fill="#78909C">Leituras registadas: <tspan font-weight="600" fill="#2E7D32">5</tspan></text>
+  <text x="660" y="671" font-size="12" fill="#78909C">Sem leitura: <tspan font-weight="600" fill="#E65100">1</tspan></text>
+  <text x="820" y="671" font-size="12" fill="#78909C">Consumo total: <tspan font-weight="600" fill="#4A148C">52,200 m³</tspan></text>
+
+  <!-- Modal overlay hint (dashed) -->
+  <rect x="380" y="695" width="520" height="40" rx="8" fill="#F3E5F5" stroke="#CE93D8" stroke-width="1" stroke-dasharray="6,3"/>
+  <text x="640" y="720" text-anchor="middle" font-size="12" fill="#6A1B9A">Modal "Actualizar Leituras em Massa" — abre ao clicar no botão roxo ↑</text>
+</svg>

@@ -122,4 +122,18 @@ public class ApartamentoService {
         repository.delete(entity);
         log.info("Apartamento soft-deleted successfully: {}", id);
     }
+
+    /**
+     * Returns the raw {@link com.pmrodrigues.condominio.model.Apartamento} entity by id.
+     * Intended for use by other services that need to associate the entity (e.g. rateio module).
+     *
+     * @param id the apartamento primary key
+     * @return an Optional containing the entity, or empty if not found
+     */
+    @Transactional(readOnly = true)
+    @Timed(value = "apartamento.service.findEntityById", description = "Find apartamento entity by id")
+    public Optional<com.pmrodrigues.condominio.model.Apartamento> findEntityById(Long id) {
+        log.info("Finding apartamento entity by id: {}", id);
+        return repository.findById(id);
+    }
 }

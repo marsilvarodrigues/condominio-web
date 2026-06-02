@@ -1,0 +1,169 @@
+<svg width="1280" height="900" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="900" fill="#F0F2F5"/>
+
+  <!-- Sidebar -->
+  <rect width="260" height="900" fill="#1A2332"/>
+  <rect x="0" y="0" width="260" height="64" fill="#151D2B"/>
+  <rect x="20" y="17" width="30" height="30" rx="6" fill="#1976D2"/>
+  <text x="58" y="34" font-size="18" font-weight="700" fill="white">CondoGest</text>
+  <text x="58" y="50" font-size="11" fill="#78909C">v1.0</text>
+  <text x="58" y="109" font-size="14" fill="#90A4AE">Dashboard</text>
+  <text x="58" y="157" font-size="14" fill="#90A4AE">Condomínios</text>
+  <text x="58" y="205" font-size="14" fill="#90A4AE">Apartamentos</text>
+  <text x="58" y="253" font-size="14" fill="#90A4AE">Financeiro</text>
+  <text x="58" y="301" font-size="14" fill="#90A4AE">Grupos de Despesa</text>
+  <!-- Rateio (active) -->
+  <rect x="0" y="320" width="260" height="48" fill="#1976D2"/>
+  <rect x="0" y="320" width="4" height="48" fill="#42A5F5"/>
+  <text x="58" y="349" font-size="14" font-weight="500" fill="white">Rateio</text>
+  <text x="58" y="397" font-size="14" fill="#90A4AE">Usuários</text>
+  <rect x="0" y="836" width="260" height="64" fill="#151D2B"/>
+  <circle cx="36" cy="868" r="18" fill="#1976D2"/>
+  <text x="36" y="873" text-anchor="middle" font-size="14" font-weight="700" fill="white">JS</text>
+  <text x="62" y="863" font-size="13" font-weight="600" fill="white">João Silva</text>
+  <text x="62" y="879" font-size="11" fill="#78909C">Administrador</text>
+
+  <!-- AppBar -->
+  <rect x="260" y="0" width="1020" height="64" fill="white" filter="url(#shadow)"/>
+  <text x="292" y="38" font-size="20" font-weight="600" fill="#1A2332">Simulação de Rateio</text>
+  <text x="292" y="55" font-size="11" fill="#90A4AE">Início  ›  Rateio  ›  Simulação</text>
+  <rect x="870" y="16" width="220" height="32" rx="6" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="886" y="37" font-size="13" fill="#1A2332">Solar das Flores</text>
+  <text x="1082" y="37" text-anchor="end" font-size="12" fill="#546E7A">▾</text>
+  <circle cx="1230" cy="32" r="20" fill="#1976D2"/>
+  <text x="1230" y="37" text-anchor="middle" font-size="13" font-weight="700" fill="white">JS</text>
+
+  <!-- Input form card -->
+  <rect x="280" y="80" width="980" height="110" rx="10" fill="white" filter="url(#shadow)"/>
+
+  <!-- Group selector -->
+  <text x="300" y="105" font-size="12" font-weight="600" fill="#546E7A">GRUPO DE DESPESA</text>
+  <rect x="300" y="112" width="280" height="32" rx="8" fill="#F4F6F9" stroke="#CFD8DC" stroke-width="1"/>
+  <text x="316" y="132" font-size="13" fill="#1A2332">Manutenção Predial</text>
+  <text x="572" y="132" text-anchor="end" font-size="12" fill="#546E7A">▾</text>
+  <!-- Tipo badge -->
+  <rect x="598" y="112" width="96" height="32" rx="8" fill="#E3F2FD"/>
+  <text x="646" y="132" text-anchor="middle" font-size="11" font-weight="600" fill="#1565C0">FRAÇÃO IDEAL</text>
+
+  <!-- Total despesa -->
+  <text x="720" y="105" font-size="12" font-weight="600" fill="#546E7A">VALOR TOTAL DA DESPESA (R$)</text>
+  <rect x="720" y="112" width="200" height="32" rx="8" fill="#F4F6F9" stroke="#1976D2" stroke-width="2"/>
+  <text x="736" y="132" font-size="13" font-weight="500" fill="#1A2332">2.500,00</text>
+
+  <!-- Simulate button -->
+  <rect x="940" y="112" width="180" height="32" rx="8" fill="#1565C0"/>
+  <text x="1030" y="132" text-anchor="middle" font-size="13" font-weight="600" fill="white">▶ Simular Rateio</text>
+
+  <!-- Subtitle: resultado -->
+  <text x="300" y="160" font-size="11" fill="#90A4AE">Resultado estimado para o grupo</text>
+  <rect x="708" y="150" width="108" height="20" rx="10" fill="#E3F2FD"/>
+  <text x="762" y="164" text-anchor="middle" font-size="10" font-weight="600" fill="#1565C0">FRAÇÃO IDEAL</text>
+  <text x="824" y="160" font-size="11" fill="#90A4AE">com 4 unidades</text>
+
+  <!-- Summary cards row -->
+  <!-- Card 1: Total -->
+  <rect x="280" y="204" width="230" height="80" rx="10" fill="white" filter="url(#shadow)"/>
+  <text x="300" y="228" font-size="12" fill="#78909C">Valor Simulado</text>
+  <text x="300" y="256" font-size="22" font-weight="700" fill="#1A2332">R$ 2.500,00</text>
+  <text x="300" y="272" font-size="11" fill="#2E7D32">100,00% distribuído</text>
+
+  <!-- Card 2: Unidades -->
+  <rect x="524" y="204" width="230" height="80" rx="10" fill="white" filter="url(#shadow)"/>
+  <text x="544" y="228" font-size="12" fill="#78909C">Unidades</text>
+  <text x="544" y="256" font-size="22" font-weight="700" fill="#1A2332">4</text>
+  <text x="544" y="272" font-size="11" fill="#78909C">coeficientes vigentes</text>
+
+  <!-- Card 3: Maior cota -->
+  <rect x="768" y="204" width="230" height="80" rx="10" fill="white" filter="url(#shadow)"/>
+  <text x="788" y="228" font-size="12" fill="#78909C">Maior Cota</text>
+  <text x="788" y="256" font-size="22" font-weight="700" fill="#1565C0">R$ 875,00</text>
+  <text x="788" y="272" font-size="11" fill="#78909C">Unidade 101 — 35,0%</text>
+
+  <!-- Card 4: Menor cota -->
+  <rect x="1012" y="204" width="248" height="80" rx="10" fill="white" filter="url(#shadow)"/>
+  <text x="1032" y="228" font-size="12" fill="#78909C">Menor Cota</text>
+  <text x="1032" y="256" font-size="22" font-weight="700" fill="#546E7A">R$ 375,00</text>
+  <text x="1032" y="272" font-size="11" fill="#78909C">Unidade 103 — 15,0%</text>
+
+  <!-- Results table -->
+  <rect x="280" y="298" width="980" height="320" rx="12" fill="white" filter="url(#shadow)"/>
+  <rect x="280" y="298" width="980" height="44" rx="12" fill="#F8FAFC"/>
+  <rect x="280" y="320" width="980" height="22" fill="#F8FAFC"/>
+  <text x="300" y="327" font-size="12" font-weight="600" fill="#546E7A">UNIDADE</text>
+  <text x="460" y="327" font-size="12" font-weight="600" fill="#546E7A">BLOCO</text>
+  <text x="560" y="327" font-size="12" font-weight="600" fill="#546E7A">COEFICIENTE</text>
+  <text x="700" y="327" font-size="12" font-weight="600" fill="#546E7A">% PESO</text>
+  <text x="820" y="327" font-size="12" font-weight="600" fill="#546E7A">COTA (R$)</text>
+  <text x="960" y="327" font-size="12" font-weight="600" fill="#546E7A">% COTA</text>
+  <text x="1060" y="327" font-size="12" font-weight="600" fill="#546E7A">BARRA</text>
+
+  <!-- Row 1 — Unidade 101 (biggest) -->
+  <line x1="280" y1="342" x2="1260" y2="342" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="370" font-size="14" font-weight="500" fill="#1A2332">101</text>
+  <text x="460" y="370" font-size="13" fill="#546E7A">Bloco A</text>
+  <text x="560" y="370" font-size="13" fill="#1A2332">0,350000</text>
+  <text x="700" y="370" font-size="13" fill="#1A2332">35,0%</text>
+  <text x="820" y="370" font-size="14" font-weight="600" fill="#1565C0">R$ 875,00</text>
+  <text x="960" y="370" font-size="13" fill="#1A2332">35,00%</text>
+  <!-- Progress bar -->
+  <rect x="1060" y="358" width="160" height="14" rx="7" fill="#E3F2FD"/>
+  <rect x="1060" y="358" width="56" height="14" rx="7" fill="#1565C0"/>
+
+  <!-- Row 2 -->
+  <line x1="280" y1="390" x2="1260" y2="390" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="418" font-size="14" font-weight="500" fill="#1A2332">102</text>
+  <text x="460" y="418" font-size="13" fill="#546E7A">Bloco A</text>
+  <text x="560" y="418" font-size="13" fill="#1A2332">0,300000</text>
+  <text x="700" y="418" font-size="13" fill="#1A2332">30,0%</text>
+  <text x="820" y="418" font-size="14" font-weight="600" fill="#1565C0">R$ 750,00</text>
+  <text x="960" y="418" font-size="13" fill="#1A2332">30,00%</text>
+  <rect x="1060" y="406" width="160" height="14" rx="7" fill="#E3F2FD"/>
+  <rect x="1060" y="406" width="48" height="14" rx="7" fill="#1565C0"/>
+
+  <!-- Row 3 -->
+  <line x1="280" y1="438" x2="1260" y2="438" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="466" font-size="14" font-weight="500" fill="#1A2332">201</text>
+  <text x="460" y="466" font-size="13" fill="#546E7A">Bloco B</text>
+  <text x="560" y="466" font-size="13" fill="#1A2332">0,200000</text>
+  <text x="700" y="466" font-size="13" fill="#1A2332">20,0%</text>
+  <text x="820" y="466" font-size="14" font-weight="600" fill="#1565C0">R$ 500,00</text>
+  <text x="960" y="466" font-size="13" fill="#1A2332">20,00%</text>
+  <rect x="1060" y="454" width="160" height="14" rx="7" fill="#E3F2FD"/>
+  <rect x="1060" y="454" width="32" height="14" rx="7" fill="#1565C0"/>
+
+  <!-- Row 4 — smallest -->
+  <line x1="280" y1="486" x2="1260" y2="486" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="514" font-size="14" font-weight="500" fill="#1A2332">103</text>
+  <text x="460" y="514" font-size="13" fill="#546E7A">Bloco A</text>
+  <text x="560" y="514" font-size="13" fill="#1A2332">0,150000</text>
+  <text x="700" y="514" font-size="13" fill="#1A2332">15,0%</text>
+  <text x="820" y="514" font-size="14" font-weight="600" fill="#1565C0">R$ 375,00</text>
+  <text x="960" y="514" font-size="13" fill="#1A2332">15,00%</text>
+  <rect x="1060" y="502" width="160" height="14" rx="7" fill="#E3F2FD"/>
+  <rect x="1060" y="502" width="24" height="14" rx="7" fill="#1565C0"/>
+
+  <!-- Total row -->
+  <line x1="280" y1="534" x2="1260" y2="534" stroke="#E0E0E0" stroke-width="2"/>
+  <rect x="280" y="535" width="980" height="48" fill="#F8FAFC"/>
+  <text x="300" y="564" font-size="13" font-weight="700" fill="#1A2332">TOTAL</text>
+  <text x="560" y="564" font-size="13" font-weight="600" fill="#546E7A">1,000000</text>
+  <text x="700" y="564" font-size="13" font-weight="600" fill="#546E7A">100,0%</text>
+  <text x="820" y="564" font-size="15" font-weight="700" fill="#1A2332">R$ 2.500,00</text>
+  <text x="960" y="564" font-size="13" font-weight="600" fill="#2E7D32">100,00% ✓</text>
+
+  <!-- Info note -->
+  <rect x="280" y="636" width="980" height="44" rx="10" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="300" y="662" font-size="12" fill="#1565C0">ℹ  Esta é uma simulação. Nenhum valor foi gravado. Para aplicar o rateio, use o botão "Ratear Despesa" em cada despesa ou aguarde o scheduler automático (02h00 BRT).</text>
+
+  <!-- Action bar -->
+  <rect x="280" y="694" width="980" height="52" rx="10" fill="white" filter="url(#shadow)"/>
+  <rect x="300" y="710" width="180" height="28" rx="6" fill="#E8F5E9"/>
+  <text x="390" y="729" text-anchor="middle" font-size="12" font-weight="600" fill="#2E7D32">✓ Soma bate exatamente</text>
+  <text x="1150" y="726" text-anchor="end" font-size="12" fill="#78909C">Simulado em 12ms</text>
+</svg>

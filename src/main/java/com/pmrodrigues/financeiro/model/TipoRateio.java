@@ -6,5 +6,6 @@ package com.pmrodrigues.financeiro.model;
 public enum TipoRateio {
     IGUALITARIO,
     FRACAO_IDEAL,
-    METRAGEM
+    METRAGEM,
+    CONSUMO
 }

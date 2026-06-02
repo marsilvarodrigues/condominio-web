@@ -1,0 +1,128 @@
+<svg width="1280" height="800" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="800" fill="#F0F2F5"/>
+
+  <!-- Sidebar -->
+  <rect width="260" height="800" fill="#1A2332"/>
+  <rect x="0" y="0" width="260" height="64" fill="#151D2B"/>
+  <rect x="20" y="17" width="30" height="30" rx="6" fill="#1976D2"/>
+  <text x="58" y="34" font-size="18" font-weight="700" fill="white">CondoGest</text>
+  <text x="58" y="50" font-size="11" fill="#78909C">v1.0</text>
+  <text x="58" y="109" font-size="14" fill="#90A4AE">Dashboard</text>
+  <text x="58" y="157" font-size="14" fill="#90A4AE">Condomínios</text>
+  <text x="58" y="205" font-size="14" fill="#90A4AE">Apartamentos</text>
+  <text x="58" y="253" font-size="14" fill="#90A4AE">Financeiro</text>
+  <!-- Grupos de Despesa (active) -->
+  <rect x="0" y="272" width="260" height="48" fill="#1976D2"/>
+  <rect x="0" y="272" width="4" height="48" fill="#42A5F5"/>
+  <text x="58" y="301" font-size="14" font-weight="500" fill="white">Grupos de Despesa</text>
+  <text x="58" y="349" font-size="14" fill="#90A4AE">Rateio</text>
+  <text x="58" y="397" font-size="14" fill="#90A4AE">Usuários</text>
+  <rect x="0" y="736" width="260" height="64" fill="#151D2B"/>
+  <circle cx="36" cy="768" r="18" fill="#1976D2"/>
+  <text x="36" y="773" text-anchor="middle" font-size="14" font-weight="700" fill="white">JS</text>
+  <text x="62" y="763" font-size="13" font-weight="600" fill="white">João Silva</text>
+  <text x="62" y="779" font-size="11" fill="#78909C">Administrador</text>
+
+  <!-- AppBar -->
+  <rect x="260" y="0" width="1020" height="64" fill="white" filter="url(#shadow)"/>
+  <text x="292" y="38" font-size="20" font-weight="600" fill="#1A2332">Grupos de Despesa</text>
+  <text x="292" y="55" font-size="11" fill="#90A4AE">Início  ›  Grupos de Despesa</text>
+  <rect x="870" y="16" width="220" height="32" rx="6" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1"/>
+  <text x="886" y="37" font-size="13" fill="#1A2332">Solar das Flores</text>
+  <text x="1082" y="37" text-anchor="end" font-size="12" fill="#546E7A">▾</text>
+  <circle cx="1230" cy="32" r="20" fill="#1976D2"/>
+  <text x="1230" y="37" text-anchor="middle" font-size="13" font-weight="700" fill="white">JS</text>
+
+  <!-- Toolbar -->
+  <rect x="280" y="80" width="980" height="52" rx="10" fill="white" filter="url(#shadow)"/>
+  <rect x="296" y="92" width="240" height="32" rx="8" fill="#F4F6F9" stroke="#CFD8DC" stroke-width="1"/>
+  <text x="316" y="112" font-size="13" fill="#90A4AE">Buscar grupo...</text>
+  <!-- Filter: TipoRateio -->
+  <rect x="556" y="92" width="160" height="32" rx="8" fill="#F4F6F9" stroke="#CFD8DC" stroke-width="1"/>
+  <text x="572" y="112" font-size="13" fill="#90A4AE">Tipo de rateio</text>
+  <text x="706" y="112" text-anchor="end" font-size="12" fill="#90A4AE">▾</text>
+  <!-- Filter: Escopo -->
+  <rect x="726" y="92" width="140" height="32" rx="8" fill="#F4F6F9" stroke="#CFD8DC" stroke-width="1"/>
+  <text x="742" y="112" font-size="13" fill="#90A4AE">Escopo</text>
+  <text x="858" y="112" text-anchor="end" font-size="12" fill="#90A4AE">▾</text>
+  <rect x="1150" y="88" width="190" height="36" rx="8" fill="#1565C0"/>
+  <text x="1245" y="111" text-anchor="middle" font-size="14" font-weight="600" fill="white">+ Novo Grupo</text>
+
+  <!-- Table -->
+  <rect x="280" y="148" width="980" height="500" rx="12" fill="white" filter="url(#shadow)"/>
+  <rect x="280" y="148" width="980" height="44" rx="12" fill="#F8FAFC"/>
+  <rect x="280" y="170" width="980" height="22" fill="#F8FAFC"/>
+  <text x="300" y="177" font-size="12" font-weight="600" fill="#546E7A">NOME</text>
+  <text x="520" y="177" font-size="12" font-weight="600" fill="#546E7A">TIPO RATEIO</text>
+  <text x="700" y="177" font-size="12" font-weight="600" fill="#546E7A">ESCOPO</text>
+  <text x="830" y="177" font-size="12" font-weight="600" fill="#546E7A">PLANO DE CONTAS</text>
+  <text x="1100" y="177" font-size="12" font-weight="600" fill="#546E7A">AÇÕES</text>
+
+  <!-- Row 1 -->
+  <line x1="280" y1="192" x2="1260" y2="192" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="222" font-size="14" font-weight="500" fill="#1A2332">Condomínio Geral</text>
+  <rect x="520" y="208" width="100" height="22" rx="11" fill="#ECEFF1"/>
+  <text x="570" y="223" text-anchor="middle" font-size="11" font-weight="600" fill="#546E7A">IGUALITÁRIO</text>
+  <text x="700" y="222" font-size="13" fill="#546E7A">Todos</text>
+  <text x="830" y="222" font-size="13" fill="#546E7A">3.1 – Despesas Gerais</text>
+  <rect x="1080" y="208" width="28" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="1094" y="226" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+  <rect x="1114" y="208" width="28" height="28" rx="6" fill="#FCE4EC"/>
+  <text x="1128" y="226" text-anchor="middle" font-size="13" fill="#C62828">🗑</text>
+
+  <!-- Row 2 -->
+  <line x1="280" y1="244" x2="1260" y2="244" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="274" font-size="14" font-weight="500" fill="#1A2332">Água – Bloco A</text>
+  <rect x="520" y="260" width="76" height="22" rx="11" fill="#EDE7F6"/>
+  <text x="558" y="275" text-anchor="middle" font-size="11" font-weight="600" fill="#6A1B9A">CONSUMO</text>
+  <text x="700" y="274" font-size="13" fill="#546E7A">Por Bloco</text>
+  <text x="830" y="274" font-size="13" fill="#546E7A">3.3 – Água</text>
+  <rect x="1080" y="260" width="28" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="1094" y="278" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+  <rect x="1114" y="260" width="28" height="28" rx="6" fill="#FCE4EC"/>
+  <text x="1128" y="278" text-anchor="middle" font-size="13" fill="#C62828">🗑</text>
+
+  <!-- Row 3 -->
+  <line x1="280" y1="296" x2="1260" y2="296" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="326" font-size="14" font-weight="500" fill="#1A2332">Manutenção Predial</text>
+  <rect x="520" y="312" width="96" height="22" rx="11" fill="#E3F2FD"/>
+  <text x="568" y="327" text-anchor="middle" font-size="11" font-weight="600" fill="#1565C0">FRAÇÃO IDEAL</text>
+  <text x="700" y="326" font-size="13" fill="#546E7A">Todos</text>
+  <text x="830" y="326" font-size="13" fill="#546E7A">3.2 – Manutenção</text>
+  <rect x="1080" y="312" width="28" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="1094" y="330" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+  <rect x="1114" y="312" width="28" height="28" rx="6" fill="#FCE4EC"/>
+  <text x="1128" y="330" text-anchor="middle" font-size="13" fill="#C62828">🗑</text>
+
+  <!-- Row 4 -->
+  <line x1="280" y1="348" x2="1260" y2="348" stroke="#F0F2F5" stroke-width="1"/>
+  <text x="300" y="378" font-size="14" font-weight="500" fill="#1A2332">Garagens</text>
+  <rect x="520" y="364" width="82" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="561" y="379" text-anchor="middle" font-size="11" font-weight="600" fill="#2E7D32">METRAGEM</text>
+  <text x="700" y="378" font-size="13" fill="#546E7A">Todos</text>
+  <text x="830" y="378" font-size="13" fill="#546E7A">3.4 – Garagem</text>
+  <rect x="1080" y="364" width="28" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="1094" y="382" text-anchor="middle" font-size="13" fill="#1976D2">✎</text>
+  <rect x="1114" y="364" width="28" height="28" rx="6" fill="#FCE4EC"/>
+  <text x="1128" y="382" text-anchor="middle" font-size="13" fill="#C62828">🗑</text>
+
+  <!-- "No more records" hint -->
+  <text x="770" y="500" text-anchor="middle" font-size="13" fill="#B0BEC5">Não há mais registros para exibir</text>
+
+  <!-- Legend -->
+  <text x="300" y="610" font-size="12" fill="#78909C">Legenda de tipos de rateio:</text>
+  <rect x="300" y="620" width="100" height="22" rx="11" fill="#ECEFF1"/>
+  <text x="350" y="635" text-anchor="middle" font-size="11" font-weight="600" fill="#546E7A">IGUALITÁRIO</text>
+  <rect x="412" y="620" width="96" height="22" rx="11" fill="#E3F2FD"/>
+  <text x="460" y="635" text-anchor="middle" font-size="11" font-weight="600" fill="#1565C0">FRAÇÃO IDEAL</text>
+  <rect x="520" y="620" width="82" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="561" y="635" text-anchor="middle" font-size="11" font-weight="600" fill="#2E7D32">METRAGEM</text>
+  <rect x="614" y="620" width="76" height="22" rx="11" fill="#EDE7F6"/>
+  <text x="652" y="635" text-anchor="middle" font-size="11" font-weight="600" fill="#6A1B9A">CONSUMO</text>
+</svg>
