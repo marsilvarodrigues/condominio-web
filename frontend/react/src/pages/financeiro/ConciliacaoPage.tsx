@@ -1,94 +1,88 @@
 import {
   Box,
-  Button,
   Chip,
-  IconButton,
   MenuItem,
   TextField,
-  Tooltip,
   Typography,
   Paper,
-  Alert,
   Stack,
 } from '@mui/material'
-import UploadFileIcon from '@mui/icons-material/UploadFile'
-import LinkIcon from '@mui/icons-material/Link'
-import LinkOffIcon from '@mui/icons-material/LinkOff'
-import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'
-import { useRef, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { PageHeader, DataTable, type Column } from '@/components/common'
 import { conciliacaoApi } from '@/api/financeiro/conciliacao.api'
 import { contasBancariasApi } from '@/api/financeiro/bancos.api'
 import { formatCurrency, formatDate } from '@/utils/formatters'
-import { STATUS_CONCILIACAO_LABELS } from '@/utils/constants'
-import type { ConciliacaoItemDTO } from '@/types'
+import type { LancamentoBancarioDTO } from '@/types'
+
+const STATUS_LABELS: Record<string, string> = {
+  PENDENTE: 'Pendente',
+  CONCILIADO: 'Conciliado',
+}
+
+const ORIGEM_LABELS: Record<string, string> = {
+  COTA_CONDOMINIO: 'Cota',
+  RESERVA: 'Reserva',
+  DESPESA_ORDINARIA: 'Despesa Ordinária',
+  DESPESA_EXTRAORDINARIA: 'Despesa Extra',
+  TAXA_EXTRA: 'Taxa Extra',
+  MULTA: 'Multa',
+  JUROS: 'Juros',
+  MANUAL: 'Manual',
+  IMPORTACAO: 'Importação',
+}
 
 export default function ConciliacaoPage() {
-  const qc = useQueryClient()
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const [contaId, setContaId] = useState<number | ''>('')
-  const [importError, setImportError] = useState<string | null>(null)
-  const [importSuccess, setImportSuccess] = useState(false)
+  const [statusFiltro, setStatusFiltro] = useState<string>('TODOS')
 
   const { data: contas = [] } = useQuery({
     queryKey: ['contas-bancarias'],
     queryFn: () => contasBancariasApi.list(),
   })
 
-  const { data: itens = [], isLoading } = useQuery({
-    queryKey: ['conciliacao', contaId],
-    queryFn: () => conciliacaoApi.listarItens(contaId as number),
+  const { data: lancamentos = [], isLoading } = useQuery({
+    queryKey: ['conciliacao-lancamentos', contaId],
+    queryFn: () => conciliacaoApi.listarLancamentos(contaId as number),
     enabled: !!contaId,
   })
 
-  const importar = useMutation({
-    mutationFn: ({ id, file }: { id: number; file: File }) => conciliacaoApi.importarExtrato(id, file),
-    onSuccess: () => {
-      setImportSuccess(true)
-      setImportError(null)
-      qc.invalidateQueries({ queryKey: ['conciliacao', contaId] })
-    },
-    onError: () => setImportError('Erro ao importar o extrato. Verifique o formato do arquivo.'),
-  })
+  const itensFiltrados = statusFiltro === 'TODOS'
+    ? lancamentos
+    : lancamentos.filter((l) => l.status === statusFiltro)
 
-  const associar = useMutation({
-    mutationFn: ({ itemId, lancamentoId }: { itemId: number; lancamentoId: number }) =>
-      conciliacaoApi.associar(itemId, lancamentoId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['conciliacao', contaId] }),
-  })
+  const totalPendente = lancamentos.filter((l) => l.status === 'PENDENTE').length
+  const totalConciliado = lancamentos.filter((l) => l.status === 'CONCILIADO').length
 
-  const desassociar = useMutation({
-    mutationFn: (itemId: number) => conciliacaoApi.desassociar(itemId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['conciliacao', contaId] }),
-  })
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file || !contaId) return
-    setImportSuccess(false)
-    importar.mutate({ id: contaId as number, file })
-    e.target.value = ''
-  }
-
-  const statusColor = (status: string) => {
-    const map: Record<string, 'success' | 'warning' | 'error' | 'default'> = {
-      CONCILIADO: 'success',
-      PENDENTE: 'warning',
-      DIVERGENTE: 'error',
-    }
-    return map[status] ?? 'default'
-  }
-
-  const columns: Column<ConciliacaoItemDTO>[] = [
-    { key: 'data', header: 'Data', render: (r) => formatDate(r.data) },
+  const columns: Column<LancamentoBancarioDTO>[] = [
+    { key: 'dataLancamento', header: 'Data', render: (r) => formatDate(r.dataLancamento) },
     { key: 'descricao', header: 'Descrição', render: (r) => r.descricao },
+    {
+      key: 'origem',
+      header: 'Origem',
+      render: (r) => (
+        <Chip label={ORIGEM_LABELS[r.origem] ?? r.origem} size="small" variant="outlined" />
+      ),
+    },
+    {
+      key: 'tipo',
+      header: 'Tipo',
+      render: (r) => (
+        <Chip
+          label={r.tipo === 'CREDITO' ? 'Crédito' : 'Débito'}
+          size="small"
+          color={r.tipo === 'CREDITO' ? 'success' : 'error'}
+          variant="outlined"
+        />
+      ),
+    },
     {
       key: 'valor',
       header: 'Valor',
       align: 'right',
       render: (r) => (
-        <Typography variant="body2" fontWeight={600} color={r.valor >= 0 ? 'success.main' : 'error.main'}>
+        <Typography variant="body2" fontWeight={600} color={r.tipo === 'CREDITO' ? 'success.main' : 'error.main'}>
           {formatCurrency(r.valor)}
         </Typography>
       ),
@@ -98,39 +92,10 @@ export default function ConciliacaoPage() {
       header: 'Status',
       render: (r) => (
         <Chip
-          label={STATUS_CONCILIACAO_LABELS[r.status] ?? r.status}
+          label={STATUS_LABELS[r.status] ?? r.status}
           size="small"
-          color={statusColor(r.status)}
+          color={r.status === 'CONCILIADO' ? 'success' : 'warning'}
         />
-      ),
-    },
-    { key: 'lancamentoDescricao', header: 'Lançamento Associado', render: (r) => r.lancamentoDescricao ?? '—' },
-    {
-      key: 'actions',
-      header: '',
-      width: 80,
-      align: 'right',
-      render: (r) => (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-          {r.status !== 'CONCILIADO' ? (
-            <Tooltip title="Associar sugestão">
-              <IconButton
-                size="small"
-                color="primary"
-                onClick={() => associar.mutate({ itemId: r.id, lancamentoId: r.sugestaoLancamentoId! })}
-                disabled={!r.sugestaoLancamentoId}
-              >
-                <AutoFixHighIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          ) : (
-            <Tooltip title="Desassociar">
-              <IconButton size="small" color="warning" onClick={() => desassociar.mutate(r.id)}>
-                <LinkOffIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
-        </Box>
       ),
     },
   ]
@@ -139,12 +104,12 @@ export default function ConciliacaoPage() {
     <Box>
       <PageHeader
         title="Conciliação Bancária"
-        subtitle="Importe extratos e reconcilie com os lançamentos do sistema."
+        subtitle="Visualize os lançamentos bancários e seu status de conciliação."
         actions={
           <Stack direction="row" spacing={1} alignItems="center">
             <TextField
               select
-              label="Conta"
+              label="Conta Bancária"
               size="small"
               value={contaId}
               onChange={(e) => setContaId(Number(e.target.value))}
@@ -156,49 +121,62 @@ export default function ConciliacaoPage() {
                 </MenuItem>
               ))}
             </TextField>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".ofx,.csv"
-              hidden
-              onChange={handleFileChange}
-            />
-            <Button
-              variant="contained"
-              startIcon={<UploadFileIcon />}
-              disabled={!contaId || importar.isPending}
-              onClick={() => fileInputRef.current?.click()}
+            <TextField
+              select
+              label="Status"
+              size="small"
+              value={statusFiltro}
+              onChange={(e) => setStatusFiltro(e.target.value)}
+              sx={{ minWidth: 140 }}
+              disabled={!contaId}
             >
-              Importar Extrato
-            </Button>
+              <MenuItem value="TODOS">Todos</MenuItem>
+              <MenuItem value="PENDENTE">Pendente</MenuItem>
+              <MenuItem value="CONCILIADO">Conciliado</MenuItem>
+            </TextField>
           </Stack>
         }
       />
 
-      {importSuccess && (
-        <Alert severity="success" sx={{ mb: 2 }} onClose={() => setImportSuccess(false)}>
-          Extrato importado com sucesso.
-        </Alert>
-      )}
-      {importError && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setImportError(null)}>
-          {importError}
-        </Alert>
-      )}
-
       {!contaId ? (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <LinkIcon sx={{ fontSize: 48, opacity: 0.3, mb: 1 }} />
-          <Typography color="text.secondary">Selecione uma conta bancária para iniciar a conciliação.</Typography>
+          <AccountBalanceIcon sx={{ fontSize: 48, opacity: 0.3, mb: 1 }} />
+          <Typography color="text.secondary">
+            Selecione uma conta bancária para visualizar os lançamentos.
+          </Typography>
         </Paper>
       ) : (
-        <DataTable
-          columns={columns}
-          rows={itens}
-          keyField="id"
-          loading={isLoading}
-          emptyMessage="Nenhum item importado. Faça o upload de um extrato."
-        />
+        <>
+          {lancamentos.length > 0 && (
+            <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
+              <Paper sx={{ px: 3, py: 1.5, flex: 1, textAlign: 'center' }}>
+                <Typography variant="h5" fontWeight={700} color="warning.main">
+                  {totalPendente}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">Pendentes</Typography>
+              </Paper>
+              <Paper sx={{ px: 3, py: 1.5, flex: 1, textAlign: 'center' }}>
+                <Typography variant="h5" fontWeight={700} color="success.main">
+                  {totalConciliado}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">Conciliados</Typography>
+              </Paper>
+              <Paper sx={{ px: 3, py: 1.5, flex: 1, textAlign: 'center' }}>
+                <Typography variant="h5" fontWeight={700}>
+                  {lancamentos.length}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">Total</Typography>
+              </Paper>
+            </Stack>
+          )}
+          <DataTable
+            columns={columns}
+            rows={itensFiltrados}
+            keyField="id"
+            loading={isLoading}
+            emptyMessage="Nenhum lançamento encontrado para esta conta."
+          />
+        </>
       )}
     </Box>
   )

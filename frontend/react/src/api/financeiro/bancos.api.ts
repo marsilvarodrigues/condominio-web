@@ -18,7 +18,9 @@ export const bancosApi = {
 
 export const contasBancariasApi = {
   list: () =>
-    apiClient.get<{ data: ContaBancariaDTO[] }>('/contas-bancarias').then(extractData),
+    apiClient
+      .get<{ data: { content: ContaBancariaDTO[] } }>('/contas-bancarias')
+      .then((r) => r.data.data.content),
 
   getById: (id: number) =>
     apiClient.get<{ data: ContaBancariaDTO }>(`/contas-bancarias/${id}`).then(extractData),
@@ -31,8 +33,10 @@ export const contasBancariasApi = {
 
   lancamentos: (contaId: number) =>
     apiClient
-      .get<{ data: LancamentoBancarioDTO[] }>(`/contas-bancarias/${contaId}/lancamentos`)
-      .then(extractData),
+      .get<{ data: { content: LancamentoBancarioDTO[] } }>('/lancamentos-bancarios', {
+        params: { contaBancariaId: contaId, size: 200 },
+      })
+      .then((r) => r.data.data.content),
 
   remove: (id: number) => apiClient.delete(`/contas-bancarias/${id}`),
 }

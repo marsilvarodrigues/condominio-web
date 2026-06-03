@@ -17,6 +17,7 @@ export function AppLayout() {
         sx={{
           flexGrow: 1,
           width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
+          marginLeft: { md: `${DRAWER_WIDTH}px` },
           minHeight: '100vh',
           display: 'flex',
           flexDirection: 'column',

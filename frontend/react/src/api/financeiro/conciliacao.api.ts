@@ -1,28 +1,24 @@
-import { apiClient, extractData } from '../client'
-import type { ConciliacaoItemDTO } from '@/types'
+import { apiClient } from '../client'
+import type { LancamentoBancarioDTO } from '@/types'
 
 export const conciliacaoApi = {
-  importarExtrato: (contaId: number, arquivo: File) => {
-    const form = new FormData()
-    form.append('file', arquivo)
-    return apiClient.post(`/conciliacao/importar/${contaId}`, form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
-  },
-
-  listarItens: (contaId: number) =>
+  listarLancamentos: (contaId: number) =>
     apiClient
-      .get<{ data: ConciliacaoItemDTO[] }>(`/conciliacao/itens/${contaId}`)
-      .then(extractData),
+      .get<{ data: { content: LancamentoBancarioDTO[] } }>('/lancamentos-bancarios', {
+        params: { contaBancariaId: contaId, size: 200 },
+      })
+      .then((r) => r.data.data.content),
 
-  associar: (itemId: number, lancamentoId: number) =>
-    apiClient.post(`/conciliacao/associacao/${itemId}`, { lancamentoBancarioId: lancamentoId }),
+  associar: (itemExtratoId: number, itemOrcamentoId: number) =>
+    apiClient.post(`/conciliacao/associacao/${itemExtratoId}`, { itemOrcamentoId }),
 
-  sugestoes: (itemId: number) =>
+  desassociar: (itemExtratoId: number, justificativa: string) =>
+    apiClient.delete(`/conciliacao/associacao/${itemExtratoId}`, {
+      data: { justificativa },
+    }),
+
+  sugestoes: (itemExtratoId: number) =>
     apiClient
-      .get<{ data: unknown[] }>(`/conciliacao/associacao/sugestoes/${itemId}`)
-      .then(extractData),
-
-  desassociar: (itemId: number) =>
-    apiClient.delete(`/conciliacao/associacao/${itemId}`),
+      .get<{ data: unknown[] }>(`/conciliacao/associacao/sugestoes/${itemExtratoId}`)
+      .then((r) => r.data.data),
 }

@@ -94,14 +94,20 @@ export default function ContasBancariasPage() {
   }
 
   const lancamentoColumns: Column<LancamentoBancarioDTO>[] = [
-    { key: 'data', header: 'Data', render: (r) => formatDate(r.data) },
+    { key: 'dataLancamento', header: 'Data', render: (r) => formatDate(r.dataLancamento) },
     { key: 'descricao', header: 'Descrição', render: (r) => r.descricao },
     { key: 'valor', header: 'Valor', align: 'right', render: (r) => (
-      <Typography variant="body2" fontWeight={600} color={r.valor >= 0 ? 'success.main' : 'error.main'}>
+      <Typography variant="body2" fontWeight={600} color={r.tipo === 'CREDITO' ? 'success.main' : 'error.main'}>
         {formatCurrency(r.valor)}
       </Typography>
     )},
-    { key: 'saldo', header: 'Saldo', align: 'right', render: (r) => formatCurrency(r.saldo) },
+    { key: 'status', header: 'Status', render: (r) => (
+      <Chip
+        label={r.status === 'CONCILIADO' ? 'Conciliado' : 'Pendente'}
+        size="small"
+        color={r.status === 'CONCILIADO' ? 'success' : 'warning'}
+      />
+    )},
   ]
 
   const columns: Column<ContaBancariaDTO>[] = [

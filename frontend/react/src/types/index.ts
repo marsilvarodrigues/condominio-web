@@ -243,15 +243,24 @@ export interface CreateContaBancariaDTO {
   bancoId: number
 }
 
+export type StatusLancamento = 'PENDENTE' | 'CONCILIADO'
+export type OrigemLancamento =
+  | 'COTA_CONDOMINIO' | 'RESERVA' | 'DESPESA_ORDINARIA' | 'DESPESA_EXTRAORDINARIA'
+  | 'TAXA_EXTRA' | 'MULTA' | 'JUROS' | 'MANUAL' | 'IMPORTACAO'
+
 export interface LancamentoBancarioDTO {
   id: number
-  data: string
-  descricao: string
-  valor: number
-  saldo: number
-  tipo: 'CREDITO' | 'DEBITO'
-  conciliado: boolean
   contaBancariaId: number
+  contaBancariaDescricao: string
+  dataLancamento: string
+  valor: number
+  tipo: 'CREDITO' | 'DEBITO'
+  descricao: string
+  origem: OrigemLancamento
+  referenciaId: number | null
+  status: StatusLancamento
+  createdAt: string
+  updatedAt: string
 }
 
 // ── Conciliação ───────────────────────────────────────────────────────────────
