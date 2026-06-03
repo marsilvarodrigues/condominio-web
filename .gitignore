@@ -39,3 +39,8 @@ build/
 .DS_Store
 /frontend/react/node_modules/
 /frontend/react/coverage/
+/frontend/react/dist/
+/frontend/react/coverage/
+/frontend/react/node_modules/
+/frontend/react/playwright-report/
+/frontend/react/test-results/

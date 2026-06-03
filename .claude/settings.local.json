@@ -72,7 +72,8 @@
       "Bash(xargs grep -l -i \"concilia\")",
       "Bash(xargs grep -l \"conciliacao/itens\\\\|conciliacao/importar\\\\|ItemExtratoController\\\\|ExtratoController\")",
       "Bash(xargs ls)",
-      "Bash(xargs cat)"
+      "Bash(xargs cat)",
+      "Bash(xargs grep -l \"condominiosApi\\\\|condominios.api\")"
     ]
   }
 }

@@ -34,9 +34,9 @@ test.describe('Condomínios', () => {
   test('abre dialog de criação ao clicar no botão Novo', async ({ page }) => {
     await page.getByRole('button', { name: /novo condomínio/i }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByLabelText(/nome/i)).toBeVisible()
-    await expect(page.getByLabelText(/cnpj/i)).toBeVisible()
-    await expect(page.getByLabelText(/e-mail/i)).toBeVisible()
+    await expect(page.getByLabel(/nome/i)).toBeVisible()
+    await expect(page.getByLabel(/cnpj/i)).toBeVisible()
+    await expect(page.getByLabel(/e-mail/i)).toBeVisible()
   })
 
   test('fecha dialog ao cancelar', async ({ page }) => {
@@ -48,12 +48,12 @@ test.describe('Condomínios', () => {
   test('salva novo condomínio e fecha dialog', async ({ page }) => {
     mockMutation(page, '**/api/condominios', { ...CONDOMINIOS[0], id: 2, nome: 'Novo Condo' }, 201)
     await page.getByRole('button', { name: /novo condomínio/i }).click()
-    await page.getByLabelText(/^nome/i).fill('Novo Condo')
-    await page.getByLabelText(/cnpj/i).fill('12345678000195')
-    await page.getByLabelText(/e-mail/i).fill('novo@condo.com')
-    await page.getByLabelText(/logradouro/i).fill('Rua Teste, 1')
-    await page.getByLabelText(/cep/i).fill('01310100')
-    await page.getByLabelText(/cidade/i).fill('São Paulo')
+    await page.getByLabel(/^nome/i).fill('Novo Condo')
+    await page.getByLabel(/cnpj/i).fill('12345678000195')
+    await page.getByLabel(/e-mail/i).fill('novo@condo.com')
+    await page.getByLabel(/logradouro/i).fill('Rua Teste, 1')
+    await page.getByLabel(/cep/i).fill('01310100')
+    await page.getByLabel(/cidade/i).fill('São Paulo')
     await page.getByRole('button', { name: /salvar/i }).click()
     await expect(page.getByRole('dialog')).not.toBeVisible()
   })

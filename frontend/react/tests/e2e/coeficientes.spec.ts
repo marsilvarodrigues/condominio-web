@@ -66,8 +66,8 @@ test.describe('Coeficientes de Rateio', () => {
     await page.getByRole('option', { name: 'Manutenção Geral' }).click()
     await page.getByRole('button', { name: /novo coeficiente/i }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByLabelText(/apartamento/i)).toBeVisible()
-    await expect(page.getByLabelText(/coeficiente/i)).toBeVisible()
+    await expect(page.getByLabel(/apartamento/i)).toBeVisible()
+    await expect(page.getByLabel(/coeficiente/i)).toBeVisible()
   })
 
   test('fecha dialog ao cancelar', async ({ page }) => {

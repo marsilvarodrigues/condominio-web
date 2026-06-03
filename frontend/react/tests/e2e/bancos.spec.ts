@@ -32,8 +32,8 @@ test.describe('Bancos', () => {
   test('abre dialog de novo banco', async ({ page }) => {
     await page.getByRole('button', { name: /novo banco/i }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByLabelText(/código/i)).toBeVisible()
-    await expect(page.getByLabelText(/^nome/i)).toBeVisible()
+    await expect(page.getByLabel(/código/i)).toBeVisible()
+    await expect(page.getByLabel(/^nome/i)).toBeVisible()
   })
 
   test('fecha dialog ao cancelar', async ({ page }) => {
@@ -45,8 +45,8 @@ test.describe('Bancos', () => {
   test('salva novo banco e fecha dialog', async ({ page }) => {
     mockMutation(page, '**/api/bancos', { id: 4, codigo: '237', nome: 'Bradesco', ativo: true }, 201)
     await page.getByRole('button', { name: /novo banco/i }).click()
-    await page.getByLabelText(/código/i).fill('237')
-    await page.getByLabelText(/^nome/i).fill('Bradesco')
+    await page.getByLabel(/código/i).fill('237')
+    await page.getByLabel(/^nome/i).fill('Bradesco')
     await page.getByRole('button', { name: /salvar/i }).click()
     await expect(page.getByRole('dialog')).not.toBeVisible()
   })

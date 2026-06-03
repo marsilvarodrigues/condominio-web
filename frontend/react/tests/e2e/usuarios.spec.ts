@@ -57,8 +57,8 @@ test.describe('Usuários', () => {
   test('abre dialog de criação ao clicar em Novo Usuário', async ({ page }) => {
     await page.getByRole('button', { name: /novo usuário/i }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByLabelText(/^nome/i)).toBeVisible()
-    await expect(page.getByLabelText(/e-mail/i)).toBeVisible()
+    await expect(page.getByLabel(/^nome/i)).toBeVisible()
+    await expect(page.getByLabel(/e-mail/i)).toBeVisible()
   })
 
   test('fecha dialog ao cancelar', async ({ page }) => {

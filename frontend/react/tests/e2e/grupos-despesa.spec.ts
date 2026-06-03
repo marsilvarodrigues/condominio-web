@@ -38,9 +38,9 @@ test.describe('Grupos de Despesa', () => {
   test('abre dialog de novo grupo', async ({ page }) => {
     await page.getByRole('button', { name: /novo grupo/i }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByLabelText(/^nome/i)).toBeVisible()
-    await expect(page.getByLabelText(/tipo de rateio/i)).toBeVisible()
-    await expect(page.getByLabelText(/escopo/i)).toBeVisible()
+    await expect(page.getByLabel(/^nome/i)).toBeVisible()
+    await expect(page.getByLabel(/tipo de rateio/i)).toBeVisible()
+    await expect(page.getByLabel(/escopo/i)).toBeVisible()
   })
 
   test('fecha dialog ao cancelar', async ({ page }) => {
@@ -52,7 +52,7 @@ test.describe('Grupos de Despesa', () => {
   test('salva novo grupo e fecha dialog', async ({ page }) => {
     mockMutation(page, '**/api/grupos-despesa', { id: 4, nome: 'Seguro', tipoRateio: 'FRACAO_IDEAL', escopo: 'TODOS' }, 201)
     await page.getByRole('button', { name: /novo grupo/i }).click()
-    await page.getByLabelText(/^nome/i).fill('Seguro')
+    await page.getByLabel(/^nome/i).fill('Seguro')
     await page.getByRole('button', { name: /salvar/i }).click()
     await expect(page.getByRole('dialog')).not.toBeVisible()
   })
@@ -60,7 +60,7 @@ test.describe('Grupos de Despesa', () => {
   test('abre dialog de edição com dados preenchidos', async ({ page }) => {
     await page.getByRole('button', { name: /editar/i }).first().click()
     await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByLabelText(/^nome/i)).toHaveValue('Manutenção Geral')
+    await expect(page.getByLabel(/^nome/i)).toHaveValue('Manutenção Geral')
   })
 
   test('abre confirmação ao excluir grupo', async ({ page }) => {

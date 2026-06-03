@@ -48,8 +48,8 @@ test.describe('Hierarquia — Blocos e Apartamentos', () => {
   test('abre dialog de novo bloco', async ({ page }) => {
     await page.getByRole('button', { name: /novo$/i }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByLabelText(/número/i)).toBeVisible()
-    await expect(page.getByLabelText(/identificação/i)).toBeVisible()
+    await expect(page.getByLabel(/número/i)).toBeVisible()
+    await expect(page.getByLabel(/identificação/i)).toBeVisible()
   })
 
   test('fecha dialog de bloco ao cancelar', async ({ page }) => {
@@ -63,7 +63,7 @@ test.describe('Hierarquia — Blocos e Apartamentos', () => {
     await page.getByText('Bloco A').click()
     await page.getByRole('button', { name: /novo apartamento/i }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByLabelText(/número/i)).toBeVisible()
+    await expect(page.getByLabel(/número/i)).toBeVisible()
   })
 
   test('abre confirmação de exclusão de bloco', async ({ page }) => {

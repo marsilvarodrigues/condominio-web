@@ -47,7 +47,7 @@ test.describe('Orçamento Anual', () => {
   test('abre dialog para adicionar item', async ({ page }) => {
     await page.getByRole('button', { name: /adicionar item/i }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByLabelText(/id da conta/i)).toBeVisible()
+    await expect(page.getByLabel(/id da conta/i)).toBeVisible()
   })
 
   test('fecha dialog ao cancelar', async ({ page }) => {

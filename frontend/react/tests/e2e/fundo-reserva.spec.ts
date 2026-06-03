@@ -38,9 +38,9 @@ test.describe('Fundo de Reserva', () => {
   test('abre dialog de nova movimentação', async ({ page }) => {
     await page.getByRole('button', { name: /nova movimentação/i }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByLabelText(/tipo/i)).toBeVisible()
-    await expect(page.getByLabelText(/valor/i)).toBeVisible()
-    await expect(page.getByLabelText(/descrição/i)).toBeVisible()
+    await expect(page.getByLabel(/tipo/i)).toBeVisible()
+    await expect(page.getByLabel(/valor/i)).toBeVisible()
+    await expect(page.getByLabel(/descrição/i)).toBeVisible()
   })
 
   test('fecha dialog ao cancelar', async ({ page }) => {
@@ -52,9 +52,9 @@ test.describe('Fundo de Reserva', () => {
   test('salva nova movimentação e fecha dialog', async ({ page }) => {
     mockMutation(page, '**/api/fundo-reserva/movimentacoes', MOVIMENTACOES[0], 200)
     await page.getByRole('button', { name: /nova movimentação/i }).click()
-    await page.getByLabelText(/valor/i).fill('3000')
-    await page.getByLabelText(/descrição/i).fill('Aporte extra')
-    await page.getByLabelText(/data/i).fill('2026-06-02')
+    await page.getByLabel(/valor/i).fill('3000')
+    await page.getByLabel(/descrição/i).fill('Aporte extra')
+    await page.getByLabel(/data/i).fill('2026-06-02')
     await page.getByRole('button', { name: /salvar/i }).click()
     await expect(page.getByRole('dialog')).not.toBeVisible()
   })

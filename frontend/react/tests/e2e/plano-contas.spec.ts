@@ -36,8 +36,8 @@ test.describe('Plano de Contas', () => {
   test('abre dialog de nova conta', async ({ page }) => {
     await page.getByRole('button', { name: /nova conta/i }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByLabelText(/código/i)).toBeVisible()
-    await expect(page.getByLabelText(/^nome/i)).toBeVisible()
+    await expect(page.getByLabel(/código/i)).toBeVisible()
+    await expect(page.getByLabel(/^nome/i)).toBeVisible()
   })
 
   test('fecha dialog ao cancelar', async ({ page }) => {
@@ -49,8 +49,8 @@ test.describe('Plano de Contas', () => {
   test('salva nova conta e fecha dialog', async ({ page }) => {
     mockMutation(page, '**/api/plano-contas', { id: 4, codigo: '3', nome: 'Transferências', tipo: 'TRANSFERENCIA', contaParenteId: null, contaParenteNome: null, nivel: 0 }, 201)
     await page.getByRole('button', { name: /nova conta/i }).click()
-    await page.getByLabelText(/código/i).fill('3')
-    await page.getByLabelText(/^nome/i).fill('Transferências')
+    await page.getByLabel(/código/i).fill('3')
+    await page.getByLabel(/^nome/i).fill('Transferências')
     await page.getByRole('button', { name: /salvar/i }).click()
     await expect(page.getByRole('dialog')).not.toBeVisible()
   })
