@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Chip,
   IconButton,
   TextField,
   Tooltip,
@@ -10,7 +9,7 @@ import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import {
@@ -18,11 +17,14 @@ import {
   DataTable,
   ConfirmDialog,
   FormDialog,
+  EstadoAutocomplete,
   type Column,
 } from '@/components/common'
 import { useCondominios, useCondominioMutations } from '@/hooks/useCondominios'
-import type { CondominioDTO, CreateCondominioDTO } from '@/types'
+import type { CondominioDTO, CreateCondominioDTO, EstadoDTO } from '@/types'
 import { formatCnpj } from '@/utils/formatters'
+
+const estadoSchema = z.object({ id: z.number(), nome: z.string(), uf: z.string() })
 
 const schema = z.object({
   nome: z.string().min(3, 'Mínimo 3 caracteres'),
@@ -32,9 +34,10 @@ const schema = z.object({
     logradouro: z.string().min(3),
     cep: z.string().min(8),
     cidade: z.string().min(2),
-    estadoId: z.number({ coerce: true }).positive(),
+    estado: estadoSchema.nullable().refine((v) => v !== null, 'Selecione um estado'),
   }),
 })
+
 type FormValues = z.infer<typeof schema>
 
 export default function CondominiosPage() {
@@ -49,17 +52,22 @@ export default function CondominiosPage() {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
   const openCreate = () => {
     setEditTarget(null)
-    reset({})
+    reset({ endereco: { estado: null } })
     setDialogOpen(true)
   }
 
   const openEdit = (row: CondominioDTO) => {
     setEditTarget(row)
+    const estadoObj: EstadoDTO | null =
+      row.endereco.estadoId
+        ? { id: row.endereco.estadoId, nome: row.endereco.estadoNome ?? '', uf: row.endereco.estadoUf ?? '' }
+        : null
     reset({
       nome: row.nome,
       cnpj: row.cnpj,
@@ -68,14 +76,24 @@ export default function CondominiosPage() {
         logradouro: row.endereco.logradouro,
         cep: row.endereco.cep,
         cidade: row.endereco.cidade,
-        estadoId: row.endereco.estadoId,
+        estado: estadoObj,
       },
     })
     setDialogOpen(true)
   }
 
   const onSubmit = (values: FormValues) => {
-    const body = values as CreateCondominioDTO
+    const body: CreateCondominioDTO = {
+      nome: values.nome,
+      cnpj: values.cnpj,
+      email: values.email,
+      endereco: {
+        logradouro: values.endereco.logradouro,
+        cep: values.endereco.cep,
+        cidade: values.endereco.cidade,
+        estadoId: values.endereco.estado!.id,
+      },
+    }
     if (editTarget) {
       update.mutate({ id: editTarget.id, body }, { onSuccess: () => setDialogOpen(false) })
     } else {
@@ -136,7 +154,6 @@ export default function CondominiosPage() {
         emptyMessage="Nenhum condomínio cadastrado."
       />
 
-      {/* Dialog de criação/edição */}
       <FormDialog
         open={dialogOpen}
         title={editTarget ? 'Editar Condomínio' : 'Novo Condomínio'}
@@ -158,12 +175,23 @@ export default function CondominiosPage() {
           <Box sx={{ display: 'flex', gap: 2 }}>
             <TextField label="CEP" {...register('endereco.cep')} error={!!errors.endereco?.cep} helperText={errors.endereco?.cep?.message} sx={{ flex: 1 }} />
             <TextField label="Cidade" {...register('endereco.cidade')} error={!!errors.endereco?.cidade} helperText={errors.endereco?.cidade?.message} sx={{ flex: 2 }} />
-            <TextField label="Estado ID" type="number" {...register('endereco.estadoId')} error={!!errors.endereco?.estadoId} sx={{ flex: 1 }} />
+            <Controller
+              name="endereco.estado"
+              control={control}
+              render={({ field, fieldState }) => (
+                <EstadoAutocomplete
+                  value={field.value as EstadoDTO | null}
+                  onChange={field.onChange}
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                  sx={{ flex: 1 }}
+                />
+              )}
+            />
           </Box>
         </Box>
       </FormDialog>
 
-      {/* Dialog de confirmação de exclusão */}
       <ConfirmDialog
         open={!!deleteTarget}
         title="Excluir Condomínio"

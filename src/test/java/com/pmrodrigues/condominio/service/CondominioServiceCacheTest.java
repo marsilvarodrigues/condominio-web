@@ -14,6 +14,7 @@ import com.pmrodrigues.financeiro.service.FundoReservaService;
 import com.pmrodrigues.financeiro.service.LancamentoBancarioService;
 import com.pmrodrigues.financeiro.service.OrcamentoAnualService;
 import com.pmrodrigues.financeiro.service.PlanoContasService;
+import com.pmrodrigues.morador.service.PessoaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -92,15 +93,21 @@ class CondominioServiceCacheTest {
         }
 
         @Bean
+        PessoaService pessoaService() {
+            return mock(PessoaService.class);
+        }
+
+        @Bean
         CondominioService service(CondominioRepository repository, CondominioMapper mapper,
                                    BlocoRepository blocoRepository, ApartamentoRepository apartamentoRepository,
                                    PlanoContasService planoContasService, FundoReservaService fundoReservaService,
                                    OrcamentoAnualService orcamentoAnualService,
                                    ContaBancariaService contaBancariaService,
-                                   LancamentoBancarioService lancamentoBancarioService) {
+                                   LancamentoBancarioService lancamentoBancarioService,
+                                   PessoaService pessoaService) {
             return new CondominioService(repository, mapper, blocoRepository, apartamentoRepository,
                     planoContasService, fundoReservaService, orcamentoAnualService, contaBancariaService,
-                    lancamentoBancarioService);
+                    lancamentoBancarioService, pessoaService);
         }
     }
 

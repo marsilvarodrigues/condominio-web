@@ -1,212 +1,172 @@
-# Refactoring Plan — Ciclo 4
+# Refactoring Plan — Ciclo 5
 
-**Source:** Avaliação arquitetural inline — 2026-05-29 (módulo bancário: Banco, ContaBancaria, LancamentoBancario)
-**Created:** 2026-05-29
-**Target:** Corrigir 3 inconsistências detectadas no módulo bancário recém-adicionado: FundoReservaService bypassing ContaBancariaService, BancoService.findById retornando Optional em vez de lançar 404, e ausência de testes de cache para BancoService e ContaBancariaService.
-
----
+**Source:** inline — avaliação arquitetural 2026-06-05 (módulo morador: Pessoa, Proprietario)
+**Created:** 2026-06-05
+**Target:** Módulo morador alinhado com padrões estabelecidos nos Ciclos 2–4: EntityManager nos mappers (não nos services), cascade soft-delete ao deletar Condomínio, e cobertura de testes completa (mapper tests + controller tests + método update do ProprietarioServiceTest).
 
 ## Pre-flight Checks
-- [ ] All tests pass before starting (`mvn test -Dexcludes=**/integration/**,**/bdd/**`)
+- [ ] All tests pass before starting (`mvn test`)
 - [ ] No uncommitted changes
-- [ ] Working branch created
+- [ ] Working branch confirmed
 
----
+## Chunk 1: Mover EntityManager.getReference() de PessoaService/ProprietarioService para PessoaMapper/ProprietarioMapper
 
-## Chunk 1: FundoReservaService — trocar ContaBancariaRepository por ContaBancariaService
+**Why:** `PessoaService` e `ProprietarioService` injetam `EntityManager` diretamente, violando o padrão estabelecido nos Ciclos 2 e 3 onde `ApartamentoMapper`, `CondominioMapper` e `OrcamentoAnualMapper` recebem o `EntityManager` via setter `@Autowired(required = false)` e expõem métodos `*FromId()`. Os services não devem conhecer `EntityManager`.
 
-**Why:**
-`FundoReservaService` injeta `ContaBancariaRepository` para validar e resolver o `ContaBancaria` associado ao Fundo de Reserva. Isso:
-1. Bypassa o cache `contas-bancarias` (que `ContaBancariaService.findById()` usa)
-2. É inconsistente com o padrão estabelecido em `ContaBancariaService.create()`, onde `BancoService.findById()` é chamado para validar a existência do banco antes de criar a associação JPA via proxy
-
-**Entry criteria:** Todos os testes unitários passam, sem chunks pendentes.
+**Entry criteria:** All tests pass, no prior chunks pending.
 
 **Steps:**
 
-*FundoReservaService.java (`src/main/java/com/pmrodrigues/financeiro/service/FundoReservaService.java`):*
+1. `PessoaMapper.java` — adicionar campo `EntityManager em`; adicionar setter `@Autowired(required = false) public void setEntityManager(EntityManager em)` (não campo — ArchUnit proíbe campos @Autowired); adicionar método concreto `apartamentoFromId(Long id)` que retorna `em.getReference(Apartamento.class, id)` quando id não é null, ou null quando id é null; adicionar imports `Apartamento`, `EntityManager`, `org.springframework.beans.factory.annotation.Autowired`.
 
-1. Substituir o campo:
-   ```java
-   private final ContaBancariaRepository contaBancariaRepository;
-   ```
-   por:
-   ```java
-   private final ContaBancariaService contaBancariaService;
-   ```
-2. Remover o import `com.pmrodrigues.financeiro.repository.ContaBancariaRepository`
-3. Adicionar o import `com.pmrodrigues.financeiro.service.ContaBancariaService`
-4. Substituir o método `resolveContaBancaria(Long contaBancariaId)`:
-   ```java
-   private ContaBancaria resolveContaBancaria(Long contaBancariaId) {
-       var contaDTO = contaBancariaService.findById(contaBancariaId); // throws 404 if not found
-       if (contaDTO.tipo() != TipoContaBancaria.FUNDO_RESERVA) {
-           log.error("ContaBancaria {} is not of type FUNDO_RESERVA", contaBancariaId);
-           throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                   "A conta bancária vinculada ao Fundo de Reserva deve ser do tipo FUNDO_RESERVA");
-       }
-       var contaRef = new ContaBancaria();
-       contaRef.setId(contaBancariaId);
-       return contaRef;
-   }
-   ```
-   (The method body is replaced in full; `ContaBancaria` is now only needed as a proxy, not loaded.)
+2. `PessoaService.java` — remover campo `EntityManager entityManager` e import `EntityManager`; em `create()`: substituir `entity.setApartamento(entityManager.getReference(Apartamento.class, dto.apartamentoId()))` por `entity.setApartamento(mapper.apartamentoFromId(dto.apartamentoId()))`; em `assignToApartamento()`: substituir `entityManager.getReference(Apartamento.class, apartamentoId)` por `mapper.apartamentoFromId(apartamentoId)`; atualizar construtor (3 parâmetros: repository, mapper, proprietarioRepository).
 
-*FundoReservaServiceTest.java (`src/test/java/com/pmrodrigues/financeiro/service/FundoReservaServiceTest.java`):*
+3. `ProprietarioMapper.java` — adicionar campo `EntityManager em`; adicionar setter `@Autowired(required = false) public void setEntityManager(EntityManager em)`; adicionar método concreto `apartamentoFromId(Long id)`; adicionar imports `Apartamento`, `EntityManager`, `Autowired`.
 
-5. Substituir:
-   ```java
-   @Mock ContaBancariaRepository contaBancariaRepository;
-   ```
-   por:
-   ```java
-   @Mock ContaBancariaService contaBancariaService;
-   ```
-6. Remover import `com.pmrodrigues.financeiro.repository.ContaBancariaRepository`
-7. Adicionar import `com.pmrodrigues.financeiro.service.ContaBancariaService`
-8. Atualizar o construtor no `@BeforeEach`:
-   - Trocar `contaBancariaRepository` por `contaBancariaService`
-9. Nos testes `create_withContaBancaria_*` e `update_withContaBancaria_*`, trocar stubs de `contaBancariaRepository.findById(...)` por stubs de `contaBancariaService.findById(...)`:
-   - O mock retornará um `ContaBancariaDTO` com `tipo = TipoContaBancaria.FUNDO_RESERVA`
-   - Para o caso de `type_mismatch`, o mock retornará um DTO com tipo `CORRENTE`
-   - Para `not_found`, usar `doThrow(new ResponseStatusException(NOT_FOUND))` em `contaBancariaService.findById(...)`
+4. `ProprietarioService.java` — remover campo `EntityManager entityManager` e import `EntityManager`; em `associarApartamento()`: substituir `entityManager.getReference(Apartamento.class, apartamentoId)` por `mapper.apartamentoFromId(apartamentoId)`; atualizar construtor (2 parâmetros: repository, mapper).
 
-**Exit criteria:** `mvn test -Dtest="FundoReservaServiceTest"` passa, 0 falhas.
+5. `PessoaServiceTest.java` — remover `@Mock EntityManager entityManager`; atualizar construtor em `@BeforeEach` para 3 parâmetros (repository, mapper, proprietarioRepository); no teste `assignToApartamento_deveAssociarApartamento`: substituir stub `entityManager.getReference(...)` por stub `mapper.apartamentoFromId(10L)`.
 
-**Commit message:** `fix(financeiro): FundoReservaService uses ContaBancariaService (not repository) to resolve conta bancaria`
+6. `ProprietarioServiceTest.java` — remover `@Mock EntityManager entityManager`; atualizar construtor em `@BeforeEach` para 2 parâmetros (repository, mapper); no teste `associarApartamento_deveAdicionarApartamento`: substituir stub `entityManager.getReference(...)` por stub `mapper.apartamentoFromId(5L)`.
+
+**Exit criteria:** `mvn test` passa sem falhas.
+
+**Commit message:** `refactor: mover EntityManager.getReference() dos services morador para os mappers`
 
 ---
 
-## Chunk 2: BancoService.findById — lançar 404 em vez de retornar Optional
+## Chunk 2: CondominioService.delete() — cascade soft-delete para Pessoas
 
-**Why:**
-`BancoService.findById()` retorna `Optional<BancoDTO>`, enquanto `ContaBancariaService.findById()` lança 404 diretamente (conforme CLAUDE.md regra 5: "use `Exceptions.notFound()`"). Esta inconsistência força:
-- `BancoController.findById()` a usar `new ResponseStatusException(NOT_FOUND, ...)` em vez de `Exceptions.notFound()`
-- `ContaBancariaService.create()` a chamar `bancoService.findById(id).orElseThrow(() -> notFound("Banco", id))` — verboso e duplica a mensagem de erro
+**Why:** `CondominioService.delete()` propaga soft-delete para Blocos, Apartamentos, PlanoContas, FundoReserva, OrcamentoAnual, ContaBancaria e LancamentoBancario — mas não para `Pessoa`. Ao deletar um Condomínio, moradores e proprietários ficam como órfãos visíveis. Padrão: adicionar `softDeleteByCondominioId` ao repositório e service de Pessoa, depois chamar via CondominioService.
 
-**Entry criteria:** Todos os testes unitários passam (independente do Chunk 1).
+**Depends on:** nenhum (independente do Chunk 1).
+
+**Entry criteria:** All tests pass.
 
 **Steps:**
 
-*BancoService.java (`src/main/java/com/pmrodrigues/commons/service/BancoService.java`):*
-
-1. Alterar a assinatura de `findById`:
-   - Retorno: `Optional<BancoDTO>` → `BancoDTO`
-   - Body:
-     ```java
-     public BancoDTO findById(Long id) {
-         log.info("Looking up banco by id: {}", id);
-         var result = repository.findById(id)
-                 .map(mapper::toDTO)
-                 .orElseThrow(() -> notFound("Banco", id));
-         log.info("Banco lookup by id {}: found", id);
-         return result;
-     }
-     ```
-   - Remover o `unless = "#result == null"` do `@Cacheable` (já não faz sentido quando a ausência lança exception — o cache nunca guarda `null`)
-   - Remover import `java.util.Optional` (se ficar órfão)
-
-*BancoController.java (`src/main/java/com/pmrodrigues/commons/controller/BancoController.java`):*
-
-2. Em `findById()`, substituir:
+1. `PessoaRepository.java` — adicionar método:
    ```java
-   var banco = bancoService.findById(id)
-           .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Banco not found: " + id));
+   @Modifying
+   @Query("UPDATE Pessoa p SET p.deleted = true WHERE p.condominio.id = :condominioId")
+   void softDeleteByCondominioId(@Param("condominioId") Long condominioId);
    ```
-   por:
-   ```java
-   var banco = bancoService.findById(id);
-   ```
-3. Remover os imports `java.util.Optional` e `org.springframework.http.HttpStatus.NOT_FOUND` e `org.springframework.web.server.ResponseStatusException` se ficarem órfãos.
+   Adicionar imports `@Modifying`, `@Query`, `@Param`.
 
-*ContaBancariaService.java (`src/main/java/com/pmrodrigues/financeiro/service/ContaBancariaService.java`):*
+2. `PessoaService.java` — adicionar método `softDeleteByCondominioId(Long condominioId)` com `@Transactional`, `@Timed(value = "pessoa.service.softDeleteByCondominioId")`, `log.info` entrada e saída, chamando `repository.softDeleteByCondominioId(condominioId)`.
 
-4. No método `create()`, substituir:
-   ```java
-   bancoService.findById(dto.bancoId())
-           .orElseThrow(() -> notFound("Banco", dto.bancoId()));
-   var bancoRef = new Banco();
-   bancoRef.setId(dto.bancoId());
-   ```
-   por:
-   ```java
-   bancoService.findById(dto.bancoId()); // throws 404 if banco not found
-   var bancoRef = new Banco();
-   bancoRef.setId(dto.bancoId());
-   ```
+3. `CondominioService.java` — adicionar campo `private final PessoaService pessoaService`; em `delete()`, adicionar `pessoaService.softDeleteByCondominioId(id)` após a linha de `lancamentoBancarioService.softDeleteByCondominioId(id)`; adicionar import `PessoaService` do pacote `com.pmrodrigues.morador.service`.
 
-*BancoServiceTest.java (`src/test/java/com/pmrodrigues/commons/service/BancoServiceTest.java`):*
+4. `PessoaServiceTest.java` — adicionar teste `softDeleteByCondominioId_callsRepository`: verifica `verify(repository).softDeleteByCondominioId(42L)`.
 
-5. Alterar `findById_whenFound_returnsDTO`:
-   - Retorno muda de `Optional.of(...)` para direto: `assertThat(result.codigo()).isEqualTo("341")`
-   - Remove `assertThat(result).isPresent()`
-6. Renomear `findById_whenNotFound_returnsEmpty` para `findById_whenNotFound_throwsNotFound` e alterar para:
-   ```java
-   assertThatThrownBy(() -> service.findById(99L))
-           .isInstanceOf(ResponseStatusException.class)
-           .satisfies(e -> assertThat(((ResponseStatusException) e).getStatusCode().value()).isEqualTo(404));
-   ```
+5. `CondominioServiceTest.java` — adicionar `@Mock PessoaService pessoaService`; atualizar construtor do service com o novo campo; adicionar teste `delete_cascadesSoftDeleteToPessoas`: verificar que `pessoaService.softDeleteByCondominioId(id)` é chamado.
 
-**Exit criteria:** `mvn test -Dtest="BancoServiceTest,ContaBancariaServiceTest"` passa, 0 falhas.
+6. `CondominioServiceCacheTest.java` — adicionar `pessoaService` como mock bean no `TestConfig`; atualizar construtor do `CondominioService` com o novo parâmetro.
 
-**Commit message:** `fix(commons): BancoService.findById throws 404 instead of returning Optional`
+**Exit criteria:** `mvn test` passa sem falhas.
+
+**Commit message:** `feat: cascade soft-delete de Condomínio para Pessoas (moradores e proprietários)`
 
 ---
 
-## Chunk 3: Criar BancoServiceCacheTest e ContaBancariaServiceCacheTest
+## Chunk 3: PessoaMapperTest + ProprietarioMapperTest
 
-**Why:**
-`BancoService` tem `@Cacheable` em `filterBy` e `findById`, mais `@CacheEvict` em `create`/`update`/`delete`. `ContaBancariaService` tem `@Cacheable` em `findById`. Nenhum dos dois tem um teste dedicado de comportamento de cache. Todos os outros services com `@Cacheable` na base têm `*CacheTest` (EstadoServiceCacheTest, BlocoServiceCacheTest, ApartamentoServiceCacheTest, CondominioServiceCacheTest).
+**Why:** Todos os mappers com EntityManager e lógica manual têm teste dedicado (ApartamentoMapperTest, CondominioMapperTest, OrcamentoAnualMapperTest). PessoaMapper e ProprietarioMapper têm `toEntity` manual, `updateEntity` manual, e após o Chunk 1, também `apartamentoFromId` — sem teste algum.
 
-**Depends on:** Chunk 2 (BancoService.findById mudou de Optional para BancoDTO — o CacheTest precisa refletir a nova API)
+**Depends on:** Chunk 1 (PessoaMapper e ProprietarioMapper precisam ter `apartamentoFromId` para que o teste seja completo).
 
-**Entry criteria:** Chunk 2 completo e verificado.
+**Entry criteria:** Chunk 1 completo e verificado.
 
 **Steps:**
 
-*Criar `src/test/java/com/pmrodrigues/commons/service/BancoServiceCacheTest.java`:*
-
-1. Seguir o padrão de `EstadoServiceCacheTest`:
-   - `@ExtendWith(SpringExtension.class)` + `@ContextConfiguration(classes = TestConfig.class)`
-   - `@Configuration @EnableCaching static class TestConfig` com:
-     - `CacheManager` com `ConcurrentMapCacheManager("bancos")`
-     - `BancoRepository` mock
-     - `BancoMapper` mock
-     - `BancoService` bean construído com ambos
+1. Criar `src/test/java/com/pmrodrigues/morador/mapper/PessoaMapperTest.java`:
+   - `@ExtendWith(SpringExtension.class)` + `@ContextConfiguration(classes = PessoaMapperImpl.class)`
+   - `@MockitoBean EntityManager em`
+   - Em `@BeforeEach`: stub `when(em.getReference(Apartamento.class, 10L)).thenReturn(aptRef)`
    - Testes:
-     - `filterBy_cachedOnSecondCall_repositoryCalledOnce` — chama `filterBy(new BancoFilterDTO(null, null))` duas vezes, verifica `verify(repository, times(1)).findAll(any(Specification.class))`
-     - `findById_cachedOnSecondCall_repositoryCalledOnce` — chama `findById(1L)` duas vezes, verifica `verify(repository, times(1)).findById(1L)`
-     - `create_evictsCache_repositoryCalledAgainAfterCreate` — faz `filterBy`, depois `create(...)`, depois `filterBy` novamente; verifica `repository.findAll` chamado 2 vezes
-     - `update_evictsCache` — idem com `update(1L, dto)`
-     - `delete_evictsCache` — idem com `delete(1L)`
+     - `toDTO_mapsAllFields_forPessoaFisica` — verifica id, nome, tipo="PF", cpf, apartamentoId
+     - `toDTO_mapsAllFields_forPessoaJuridica` — verifica tipo="PJ", cnpj, razaoSocial
+     - `toEntity_createsPessoaFisica` — dto com tipo "PF"; assert resultado é `PessoaFisica` com cpf preenchido
+     - `toEntity_createsPessoaJuridica` — dto com tipo "PJ"; assert resultado é `PessoaJuridica` com cnpj e razaoSocial
+     - `updateEntity_updatesNonNullFields_ignoresNullFields` — aplica nome novo; campo email null não sobrescreve email original
+     - `apartamentoFromId_returnsProxy` — `assertThat(mapper.apartamentoFromId(10L)).isSameAs(aptRef)`
+     - `apartamentoFromId_whenNull_returnsNull` — `assertThat(mapper.apartamentoFromId(null)).isNull()`
 
-*Criar `src/test/java/com/pmrodrigues/financeiro/service/ContaBancariaServiceCacheTest.java`:*
-
-2. Seguir o padrão de `CondominioServiceCacheTest`:
-   - `CacheManager` com `ConcurrentMapCacheManager("contas-bancarias")`
-   - Mocks: `ContaBancariaRepository`, `BancoService`, `ContaBancariaMapper`
-   - `ContaBancariaService` bean
+2. Criar `src/test/java/com/pmrodrigues/morador/mapper/ProprietarioMapperTest.java`:
+   - Mesma estrutura com `ProprietarioMapperImpl.class`
    - Testes:
-     - `findById_cachedOnSecondCall_repositoryCalledOnce` — stub `repository.findById(1L)` com uma entidade + `mapper.toDTO(...)` com um DTO; chama `service.findById(1L)` duas vezes; verifica `repository.findById(1L)` chamado 1 vez
-     - `findById_throwsNotFound_notCached_repositoryCalledEachTime` — stub `repository.findById(99L)` retornando `Optional.empty()`; duas chamadas a `service.findById(99L)` lançam 404; verifica `repository.findById(99L)` chamado 2 vezes
-     - `create_evictsCache_repositoryCalledAgainAfterCreate` — preenche cache com `findById`, depois `create(...)`, depois `findById` de novo; verifica repository chamado 2 vezes
+     - `toDTO_mapsAllFields_forProprietarioPF` — verifica tipo="PROP_PF", cpf, lista de apartamentos
+     - `toDTO_mapsAllFields_forProprietarioPJ` — verifica tipo="PROP_PJ", cnpj, razaoSocial
+     - `toEntity_createsProprietarioPF` — dto com tipo "PROP_PF"; assert resultado é `ProprietarioPessoaFisica`
+     - `toEntity_createsProprietarioPJ` — dto com tipo "PROP_PJ"; assert resultado é `ProprietarioPessoaJuridica`
+     - `updateEntity_updatesNonNullFields` — verifica que campos null no DTO não sobrescrevem campos do entity
+     - `apartamentoFromId_returnsProxy`
+     - `apartamentoFromId_whenNull_returnsNull`
 
-**Exit criteria:** `mvn test -Dtest="BancoServiceCacheTest,ContaBancariaServiceCacheTest"` passa, 0 falhas.
+**Exit criteria:** `mvn test` passa sem falhas.
 
-**Commit message:** `test(cache): add BancoServiceCacheTest and ContaBancariaServiceCacheTest`
+**Commit message:** `test: adicionar PessoaMapperTest e ProprietarioMapperTest`
+
+---
+
+## Chunk 4: PessoaControllerTest + ProprietarioControllerTest + ProprietarioServiceTest.update
+
+**Why:** Todos os controllers do projeto têm testes de controller (BlocoControllerTest, ApartamentoControllerTest, CondominioControllerTest, BancoControllerTest…). PessoaController e ProprietarioController não têm nenhum. Além disso, o `ProprietarioService.update()` — método adicionado nesta sessão — não tem cobertura em `ProprietarioServiceTest`.
+
+**Depends on:** nenhum (independente dos Chunks 1–3).
+
+**Entry criteria:** All tests pass.
+
+**Steps:**
+
+1. `ProprietarioServiceTest.java` — adicionar 2 testes:
+   - `update_whenExists_updatesFields`: stub `repository.findById(1L)` → proprietário; stub `repository.save(any())` → mesmo entity; `doNothing().when(mapper).updateEntity(any(), any())`; verifica `mapper.updateEntity(eq(entity), any(UpdateProprietarioDTO.class))` chamado.
+   - `update_whenNotFound_throws404`: `repository.findById(99L)` → empty; assert `ResponseStatusException` 404.
+
+2. Criar `src/test/java/com/pmrodrigues/morador/controller/PessoaControllerTest.java`:
+   - `@SpringBootTest @AutoConfigureMockMvc @ActiveProfiles("test")`
+   - `@MockitoBean PessoaService pessoaService`, `@MockitoBean JwtDecoder jwtDecoder`, `@MockitoBean TokenBlacklistService tokenBlacklistService`, `@MockitoBean UserDetailsServiceImpl userDetailsService`
+   - Testes (cenários obrigatórios — CLAUDE.md regra 13):
+     - `filterBy_returns200` — `@WithMockUser`, stub `Page.empty()`, GET `/api/v1/pessoas`, verifica 200
+     - `findById_returns200` — GET `/api/v1/pessoas/1`, stub → pessoaDTO, verifica 200 e campo nome
+     - `findById_notFound_returns404` — stub lança ResponseStatusException 404, verifica 404
+     - `create_asAdmin_returns201` — `@WithMockUser(roles="ADMIN")`, POST, verifica 201
+     - `create_unauthenticated_returns401` — sem @WithMockUser, verifica 401
+     - `create_asUser_returns403` — `@WithMockUser` (sem ADMIN), verifica 403
+     - `update_asAdmin_returns200` — `@WithMockUser(roles="ADMIN")`, PUT `/api/v1/pessoas/1`, verifica 200
+     - `update_notFound_returns404` — stub lança 404, verifica 404
+     - `delete_asAdmin_returns204` — `@WithMockUser(roles="ADMIN")`, DELETE, verifica 204
+     - `assignToApartamento_asAdmin_returns200` — POST `/api/v1/pessoas/1/apartamentos?apartamentoId=5`, verifica 200
+     - `removeFromApartamento_asAdmin_returns200` — DELETE `/api/v1/pessoas/1/apartamentos`, verifica 200
+
+3. Criar `src/test/java/com/pmrodrigues/morador/controller/ProprietarioControllerTest.java`:
+   - Mesma estrutura com `@MockitoBean ProprietarioService proprietarioService`
+   - Testes:
+     - `filterBy_returns200`
+     - `findById_returns200`
+     - `findById_notFound_returns404`
+     - `create_asAdmin_returns201`
+     - `create_unauthenticated_returns401`
+     - `create_asUser_returns403`
+     - `update_asAdmin_returns200` — PUT `/api/v1/proprietarios/1`
+     - `update_notFound_returns404`
+     - `delete_asAdmin_returns204`
+     - `associarApartamento_asAdmin_returns200` — POST `/api/v1/proprietarios/1/apartamentos?apartamentoId=5`
+     - `desassociarApartamento_asAdmin_returns204` — DELETE `/api/v1/proprietarios/1/apartamentos/5`
+     - `findByApartamento_returns200` — GET `/api/v1/apartamentos/1/proprietarios`
+
+**Exit criteria:** `mvn test` passa sem falhas.
+
+**Commit message:** `test: adicionar PessoaControllerTest, ProprietarioControllerTest e ProprietarioServiceTest.update`
 
 ---
 
 ## Post-flight Checks
-- [ ] Full unit test suite passes (`mvn test -Dexcludes=**/integration/**,**/bdd/**`)
-- [ ] Nenhum TODO/FIXME deixado pelo refactoring
-- [ ] Todos os findings do assessment endereçados
-- [ ] ArchUnit continua passando (8/8 rules)
-
----
-
-## Findings fora do escopo (deliberadas não-mudanças)
-
-- **EstadoService.findById() retorna Optional** — mesmo "problema" que BancoService, mas mudar EstadoService exigiria atualizar EstadoController, EstadoServiceCacheTest e EstadoControllerTest. YAGNI: não há código que sofra com isso, e EstadoService é um catálogo de referência estática com uso diferente.
-- **LancamentoBancarioService sem cache** — intencional. Lançamentos são dados transacionais que mudam frequentemente e têm alto volume; cachear em nível de service causaria mais invalidações do que hits.
-- **FundoReservaService.resolveContaBancaria criando proxy com `new ContaBancaria()`** — consistente com o padrão do `ContaBancariaService.create()` que cria `new Banco()` como proxy. JPA só precisa do FK id para persistência.
+- [ ] Full test suite passes
+- [ ] No TODO/FIXME markers left from refactoring
+- [ ] Assessment findings are all resolved
+- [ ] `EntityManager` removido de PessoaService e ProprietarioService
+- [ ] `CondominioService.delete()` propaga para Pessoa
+- [ ] PessoaMapperTest e ProprietarioMapperTest existem
+- [ ] PessoaControllerTest e ProprietarioControllerTest existem
+- [ ] `ProprietarioServiceTest` cobre o método `update()`

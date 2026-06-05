@@ -73,7 +73,28 @@
       "Bash(xargs grep -l \"conciliacao/itens\\\\|conciliacao/importar\\\\|ItemExtratoController\\\\|ExtratoController\")",
       "Bash(xargs ls)",
       "Bash(xargs cat)",
-      "Bash(xargs grep -l \"condominiosApi\\\\|condominios.api\")"
+      "Bash(xargs grep -l \"condominiosApi\\\\|condominios.api\")",
+      "Bash(dir /s /b \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\src\\\\main\\\\java\\\\com\\\\pmrodrigues\\\\morador\")",
+      "Bash(Remove-Item \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\src\\\\main\\\\java\\\\com\\\\pmrodrigues\\\\morador\\\\controller\\\\OcupacaoController.java\" -Force)",
+      "Bash(Remove-Item \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\src\\\\main\\\\java\\\\com\\\\pmrodrigues\\\\morador\\\\controller\\\\OcupacaoQueryController.java\" -Force)",
+      "Bash(Remove-Item \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\src\\\\main\\\\java\\\\com\\\\pmrodrigues\\\\morador\\\\service\\\\OcupacaoService.java\" -Force)",
+      "Bash(Remove-Item \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\src\\\\main\\\\java\\\\com\\\\pmrodrigues\\\\morador\\\\mapper\\\\OcupacaoMapper.java\" -Force)",
+      "Bash(Remove-Item \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\src\\\\main\\\\java\\\\com\\\\pmrodrigues\\\\morador\\\\repository\\\\HistoricoOcupacaoRepository.java\" -Force)",
+      "Bash(Remove-Item *)",
+      "Bash(awk '{sum+=$3} END {print \"Total passing unit tests:\", sum}')",
+      "Bash(awk -F'Tests run: ' '{sum += $2+0} END {print \"Total passing unit tests:\", sum}')",
+      "Bash(mvn jacoco:report -q)",
+      "Bash(awk -F',' 'NR>1 && $6>0 {print $2, $3, $6, $6+$5}')",
+      "Bash(sort -t' ' -k3 -nr)",
+      "Bash(awk -F',' 'NR>1 { missed_i+=$5; covered_i+=$6; missed_b+=$7; covered_b+=$8; missed_l+=$9; covered_l+=$10; missed_m+=$13; covered_m+=$14 } END { printf \"Instrução: %.1f%% \\(%d/%d cobertos\\)\\\\nBranch:    %.1f%% \\(%d/%d cobertos\\)\\\\nLinha:     %.1f%% \\(%d/%d cobertas\\)\\\\nMétodo:    %.1f%% \\(%d/%d cobertos\\)\\\\n\", covered_i*100/\\(covered_i+missed_i\\), covered_i, covered_i+missed_i, covered_b*100/\\(covered_b+missed_b\\), covered_b, covered_b+missed_b, covered_l*100/\\(covered_l+missed_l\\), covered_l, covered_l+missed_l, covered_m*100/\\(covered_m+missed_m\\), covered_m, covered_m+missed_m }')",
+      "Bash(awk -F',' 'NR>1 { missed_i+=$4; covered_i+=$5; missed_b+=$6; covered_b+=$7; missed_l+=$8; covered_l+=$9; missed_m+=$12; covered_m+=$13 } END { printf \"Instrução: %.1f%% \\(%d/%d cobertos\\)\\\\nBranch:    %.1f%% \\(%d/%d cobertos\\)\\\\nLinha:     %.1f%% \\(%d/%d cobertas\\)\\\\nMétodo:    %.1f%% \\(%d/%d cobertos\\)\\\\n\", covered_i*100/\\(covered_i+missed_i\\), covered_i, covered_i+missed_i, covered_b*100/\\(covered_b+missed_b\\), covered_b, covered_b+missed_b, covered_l*100/\\(covered_l+missed_l\\), covered_l, covered_l+missed_l, covered_m*100/\\(covered_m+missed_m\\), covered_m, covered_m+missed_m }')",
+      "Bash(awk -F',' 'NR>1 { pkg[$2][\"mi\"]+=$4; pkg[$2][\"ci\"]+=$5; pkg[$2][\"ml\"]+=$8; pkg[$2][\"cl\"]+=$9 } END { printf \"%-65s %8s %8s\\\\n\", \"Pacote\", \"Instr%\", \"Linha%\"; for \\(p in pkg\\) { total_i = pkg[p][\"mi\"]+pkg[p][\"ci\"]; total_l = pkg[p][\"ml\"]+pkg[p][\"cl\"]; if \\(total_i > 0\\) printf \"%-65s %7.1f%% %7.1f%%\\\\n\", p, pkg[p][\"ci\"]*100/total_i, pkg[p][\"cl\"]*100/total_l } }')",
+      "Bash(sort -k2 -n)",
+      "Bash(awk -F',' '$2==\"com.pmrodrigues.morador.model\" {print $3, \"instr:\", $4+0, \"miss /\", $4+$5, \"total | line:\", $8+0, \"miss /\", $8+$9}')",
+      "Bash(awk -F',' '$2~/morador/ {printf \"%-50s  instr_cov=%s/%s  line_cov=%s/%s\\\\n\", $3, $5, $4+$5, $9, $8+$9}')",
+      "Bash(awk -F',' 'NR>1 && \\($4+$5\\)>0 { pct = $5*100/\\($4+$5\\); printf \"%7.1f%%  %-50s  %s\\\\n\", pct, $3, $2 }')",
+      "Bash(findstr /R /I \"estado\\\\|uf\\\\|state\" \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\frontend\\\\react\\\\src\\\\api\\\\*.api.ts\")",
+      "Bash(findstr /S /I \"ESTADOS\\\\|STATES\\\\|BR_STATES\\\\|BRAZILIAN\" \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\frontend\\\\react\\\\src\")"
     ]
   }
 }

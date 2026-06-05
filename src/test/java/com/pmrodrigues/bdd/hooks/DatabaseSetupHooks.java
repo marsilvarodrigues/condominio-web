@@ -4,8 +4,10 @@ import com.pmrodrigues.bdd.ScenarioContext;
 import com.pmrodrigues.commons.embeddable.Endereco;
 import com.pmrodrigues.commons.model.Estado;
 import com.pmrodrigues.commons.repository.EstadoRepository;
+import com.pmrodrigues.condominio.model.Apartamento;
 import com.pmrodrigues.condominio.model.Bloco;
 import com.pmrodrigues.condominio.model.Condominio;
+import com.pmrodrigues.condominio.repository.ApartamentoRepository;
 import com.pmrodrigues.condominio.repository.BlocoRepository;
 import com.pmrodrigues.condominio.repository.CondominioRepository;
 import io.cucumber.java.Before;
@@ -68,6 +70,7 @@ public class DatabaseSetupHooks {
     private final EstadoRepository estadoRepository;
     private final CondominioRepository condominioRepository;
     private final BlocoRepository blocoRepository;
+    private final ApartamentoRepository apartamentoRepository;
     private final ScenarioContext ctx;
     private final PlatformTransactionManager txManager;
 
@@ -91,11 +94,23 @@ public class DatabaseSetupHooks {
             var bloco = blocoRepository.save(
                     Bloco.builder().condominio(condominio).numero(1).bloco("A").build());
             ctx.setTestBlocoId(bloco.getId());
+
+            var apt = apartamentoRepository.save(
+                    Apartamento.builder()
+                            .condominio(condominio)
+                            .bloco(bloco)
+                            .numero("101")
+                            .areaConstruida(new java.math.BigDecimal("65.50"))
+                            .build());
+            ctx.setTestApartamentoId(apt.getId());
             return null;
         });
     }
 
     private void limparTabelas() {
+        // morador: proprietario_apartamentos join table depends on pessoas and apartamentos
+        jdbc.update("DELETE FROM proprietario_apartamentos");
+        jdbc.update("DELETE FROM pessoas");
         // itens_extrato FK → item_orcamento, extrato_importacoes, lancamentos_bancarios
         jdbc.update("DELETE FROM itens_extrato");
         jdbc.update("DELETE FROM extrato_importacoes");

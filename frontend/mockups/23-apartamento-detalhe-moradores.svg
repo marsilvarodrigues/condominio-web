@@ -1,0 +1,70 @@
+<svg width="900" height="620" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <rect width="900" height="620" fill="#f5f5f5"/>
+  <rect x="0" y="0" width="220" height="620" fill="#1565C0"/>
+  <text x="20" y="40" fill="white" font-size="18" font-weight="bold">CondoGest</text>
+  <text x="20" y="80" fill="#90CAF9" font-size="13">Hierarquia</text>
+  <rect x="240" y="20" width="640" height="580" rx="8" fill="white"/>
+  <!-- Header -->
+  <text x="268" y="55" fill="#212121" font-size="20" font-weight="bold">Apt 101 — Bloco A</text>
+  <text x="268" y="75" fill="#757575" font-size="13">Moradores e proprietários do apartamento</text>
+  <rect x="700" y="35" width="160" height="34" rx="4" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="718" y="57" fill="#424242" font-size="13">← Voltar</text>
+  <!-- Tabs -->
+  <rect x="268" y="90" width="592" height="44" fill="#FAFAFA" rx="4"/>
+  <rect x="268" y="130" width="592" height="2" fill="#E0E0E0"/>
+  <text x="300" y="117" fill="#1565C0" font-size="14" font-weight="bold">Moradores</text>
+  <rect x="268" y="130" width="100" height="2" fill="#1565C0"/>
+  <text x="430" y="117" fill="#9E9E9E" font-size="14">Proprietários</text>
+  <!-- Content area -->
+  <text x="268" y="160" fill="#212121" font-size="16" font-weight="bold">Moradores</text>
+  <rect x="268" y="147" width="22" height="22" rx="11" fill="#E3F2FD"/>
+  <text x="274" y="163" fill="#1565C0" font-size="11">2</text>
+  <rect x="660" y="143" width="170" height="34" rx="4" fill="#1565C0"/>
+  <text x="676" y="165" fill="white" font-size="12">+ Novo Morador</text>
+  <!-- Table -->
+  <rect x="268" y="175" width="592" height="32" fill="#F5F5F5"/>
+  <text x="280" y="196" fill="#616161" font-size="12" font-weight="bold">Nome</text>
+  <text x="430" y="196" fill="#616161" font-size="12" font-weight="bold">E-mail</text>
+  <text x="610" y="196" fill="#616161" font-size="12" font-weight="bold">CPF</text>
+  <text x="790" y="196" fill="#616161" font-size="12" font-weight="bold">Ações</text>
+  <!-- Row 1 -->
+  <rect x="268" y="207" width="592" height="36" fill="white"/>
+  <line x1="268" y1="243" x2="860" y2="243" stroke="#EEEEEE" stroke-width="1"/>
+  <text x="280" y="229" fill="#212121" font-size="13">Carlos Pereira</text>
+  <text x="430" y="229" fill="#424242" font-size="13">carlos@email.com</text>
+  <text x="610" y="229" fill="#424242" font-size="13">456.789.123-00</text>
+  <circle cx="800" cy="225" r="12" fill="#E3F2FD"/>
+  <text x="794" y="230" fill="#1565C0" font-size="13">✎</text>
+  <circle cx="830" cy="225" r="12" fill="#FFEBEE"/>
+  <text x="824" y="229" fill="#E53935" font-size="11">✗</text>
+  <!-- Row 2 -->
+  <rect x="268" y="243" width="592" height="36" fill="#FAFAFA"/>
+  <text x="280" y="265" fill="#212121" font-size="13">Ana Lima</text>
+  <text x="430" y="265" fill="#424242" font-size="13">ana@email.com</text>
+  <text x="610" y="265" fill="#424242" font-size="13">111.222.333-44</text>
+  <circle cx="800" cy="261" r="12" fill="#E3F2FD"/>
+  <text x="794" y="266" fill="#1565C0" font-size="13">✎</text>
+  <circle cx="830" cy="261" r="12" fill="#FFEBEE"/>
+  <text x="824" y="265" fill="#E53935" font-size="11">✗</text>
+
+  <!-- Dialog "Novo Morador" -->
+  <rect x="268" y="295" width="380" height="250" rx="8" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="290" y="323" fill="#212121" font-size="15" font-weight="bold">Novo Morador</text>
+  <rect x="290" y="335" width="340" height="34" rx="4" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="302" y="357" fill="#9E9E9E" font-size="12">Nome</text>
+  <rect x="290" y="378" width="340" height="34" rx="4" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="302" y="400" fill="#9E9E9E" font-size="12">E-mail</text>
+  <rect x="290" y="421" width="340" height="34" rx="4" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="302" y="443" fill="#9E9E9E" font-size="12">CPF</text>
+  <rect x="290" y="464" width="340" height="34" rx="4" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="302" y="486" fill="#9E9E9E" font-size="12">Telefone (opcional)</text>
+  <rect x="440" y="505" width="90" height="28" rx="4" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="458" y="524" fill="#424242" font-size="12">Cancelar</text>
+  <rect x="542" y="505" width="88" height="28" rx="4" fill="#1565C0"/>
+  <text x="558" y="524" fill="white" font-size="12">Salvar</text>
+
+  <!-- Notes -->
+  <text x="268" y="570" fill="#757575" font-size="11">✎ = Editar morador (nome, email, CPF, telefone) — PUT /api/pessoas/{id}</text>
+  <text x="268" y="588" fill="#757575" font-size="11">✗ = Excluir morador (soft-delete) — DELETE /api/pessoas/{id}</text>
+  <text x="268" y="606" fill="#757575" font-size="11">Novo Morador cria PessoaFisica com apartamentoId já preenchido — POST /api/pessoas</text>
+</svg>

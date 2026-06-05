@@ -1,0 +1,51 @@
+<svg width="900" height="600" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <rect width="900" height="600" fill="#00000060"/>
+
+  <!-- Dialog -->
+  <rect x="250" y="80" width="400" height="440" rx="8" fill="white" filter="url(#shadow)"/>
+
+  <!-- Title -->
+  <text x="275" y="118" fill="#212121" font-size="18" font-weight="bold">Nova Pessoa</text>
+  <line x1="250" y1="128" x2="650" y2="128" stroke="#EEEEEE" stroke-width="1"/>
+
+  <!-- Tipo field -->
+  <text x="275" y="158" fill="#616161" font-size="12">Tipo</text>
+  <rect x="275" y="164" width="350" height="40" rx="4" fill="white" stroke="#1565C0" stroke-width="2"/>
+  <text x="290" y="189" fill="#212121" font-size="14">Pessoa Física</text>
+  <text x="590" y="189" fill="#616161" font-size="16">▾</text>
+
+  <!-- Nome field -->
+  <text x="275" y="224" fill="#616161" font-size="12">Nome</text>
+  <rect x="275" y="230" width="350" height="40" rx="4" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="290" y="255" fill="#9E9E9E" font-size="14">Nome completo</text>
+
+  <!-- CPF field (dynamic label) -->
+  <text x="275" y="290" fill="#616161" font-size="12">CPF</text>
+  <rect x="275" y="296" width="350" height="40" rx="4" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="290" y="321" fill="#9E9E9E" font-size="14">000.000.000-00</text>
+
+  <!-- Email field -->
+  <text x="275" y="356" fill="#616161" font-size="12">E-mail</text>
+  <rect x="275" y="362" width="350" height="40" rx="4" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="290" y="387" fill="#9E9E9E" font-size="14">email@exemplo.com</text>
+
+  <!-- Telefone field -->
+  <text x="275" y="422" fill="#616161" font-size="12">Telefone</text>
+  <rect x="275" y="428" width="350" height="40" rx="4" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="290" y="453" fill="#9E9E9E" font-size="14">(11) 99999-9999</text>
+
+  <!-- Buttons -->
+  <rect x="400" y="490" width="90" height="36" rx="4" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="425" y="513" fill="#616161" font-size="13">Cancelar</text>
+  <rect x="505" y="490" width="120" height="36" rx="4" fill="#1565C0"/>
+  <text x="532" y="513" fill="white" font-size="13">Salvar</text>
+
+  <!-- Note: dynamic CPF/CNPJ label -->
+  <text x="275" y="545" fill="#1565C0" font-size="11">* Label muda para "CNPJ" quando tipo = Pessoa Jurídica</text>
+
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#00000040"/>
+    </filter>
+  </defs>
+</svg>

@@ -21,6 +21,7 @@ const GruposDespesaPage = lazy(() => import('@/pages/financeiro/GruposDespesaPag
 const CoeficientesPage = lazy(() => import('@/pages/financeiro/CoeficientesPage'))
 const SimulacaoRateioPage = lazy(() => import('@/pages/financeiro/SimulacaoRateioPage'))
 const ExecucoesRateioPage = lazy(() => import('@/pages/financeiro/ExecucoesRateioPage'))
+const ApartamentoDetailPage = lazy(() => import('@/pages/hierarquia/ApartamentoDetailPage'))
 
 function Loader() {
   return (
@@ -55,6 +56,7 @@ export function AppRouter() {
               }
             />
             <Route path="hierarquia" element={<HierarquiaPage />} />
+            <Route path="hierarquia/apartamentos/:id" element={<ApartamentoDetailPage />} />
             <Route
               path="usuarios"
               element={
@@ -64,7 +66,6 @@ export function AppRouter() {
               }
             />
             <Route path="alterar-senha" element={<ChangePasswordPage />} />
-
             <Route path="financeiro/plano-contas" element={<PlanoContasPage />} />
             <Route path="financeiro/orcamento" element={<OrcamentoAnualPage />} />
             <Route path="financeiro/fundo-reserva" element={<FundoReservaPage />} />

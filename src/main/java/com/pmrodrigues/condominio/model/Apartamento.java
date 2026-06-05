@@ -2,6 +2,8 @@ package com.pmrodrigues.condominio.model;
 
 import com.pmrodrigues.commons.config.TenantFilterAspect;
 import com.pmrodrigues.commons.tenant.TenantContext;
+import com.pmrodrigues.morador.model.Pessoa;
+import com.pmrodrigues.morador.model.Proprietario;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -16,6 +18,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * JPA entity representing an apartment unit belonging to a building block within a condominium, with soft-delete and multi-tenancy support.
@@ -53,6 +59,14 @@ public class Apartamento {
 
     @Column(nullable = false)
     private BigDecimal areaConstruida;
+
+    @OneToMany(mappedBy = "apartamento", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Pessoa> moradores = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "apartamentos", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<Proprietario> proprietarios = new HashSet<>();
 
     @Column(nullable = false)
     @Builder.Default

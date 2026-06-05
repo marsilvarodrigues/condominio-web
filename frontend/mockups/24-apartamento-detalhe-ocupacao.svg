@@ -1,0 +1,57 @@
+<svg width="900" height="600" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <rect width="900" height="600" fill="#f5f5f5"/>
+
+  <!-- Sidebar -->
+  <rect x="0" y="0" width="220" height="600" fill="#1565C0"/>
+  <text x="20" y="40" fill="white" font-size="18" font-weight="bold">CondoGest</text>
+
+  <!-- Main -->
+  <rect x="240" y="20" width="640" height="560" rx="8" fill="white"/>
+
+  <!-- Header -->
+  <text x="268" y="55" fill="#212121" font-size="20" font-weight="bold">Apt 101 — Bloco A</text>
+  <text x="268" y="75" fill="#757575" font-size="13">Proprietário, ocupação e histórico</text>
+
+  <!-- Tabs (Ocupação Atual active) -->
+  <rect x="268" y="90" width="592" height="44" fill="#FAFAFA" rx="4"/>
+  <rect x="268" y="130" width="592" height="2" fill="#E0E0E0"/>
+  <text x="300" y="117" fill="#9E9E9E" font-size="14">Proprietário</text>
+  <text x="420" y="117" fill="#1565C0" font-size="14" font-weight="bold">Ocupação Atual</text>
+  <rect x="415" y="130" width="130" height="2" fill="#1565C0"/>
+  <text x="600" y="117" fill="#9E9E9E" font-size="14">Histórico</text>
+
+  <!-- Content -->
+  <text x="268" y="165" fill="#212121" font-size="16" font-weight="bold">Ocupação Atual</text>
+  <rect x="600" y="148" width="50" height="34" rx="4" fill="none" stroke="#FF9800" stroke-width="1"/>
+  <text x="612" y="170" fill="#FF9800" font-size="11">■ Stop</text>
+  <rect x="665" y="148" width="160" height="34" rx="4" fill="#1565C0"/>
+  <text x="680" y="170" fill="white" font-size="12">+ Registrar Ocupação</text>
+
+  <!-- Current occupant card -->
+  <rect x="268" y="180" width="340" height="120" rx="8" fill="white" stroke="#E0E0E0" stroke-width="1"/>
+  <text x="285" y="205" fill="#757575" font-size="11">Ocupante atual</text>
+  <rect x="370" y="192" width="60" height="20" rx="10" fill="#E3F2FD"/>
+  <text x="381" y="206" fill="#1565C0" font-size="11">Inquilino</text>
+  <text x="285" y="228" fill="#212121" font-size="16" font-weight="bold">Carlos Pereira</text>
+  <text x="285" y="250" fill="#616161" font-size="13">Desde: <tspan font-weight="bold">01/03/2024</tspan></text>
+
+  <!-- Register dialog (partially shown) -->
+  <rect x="250" y="320" width="400" height="220" rx="8" fill="white" stroke="#E0E0E0" stroke-width="1" filter="url(#shadow)"/>
+  <text x="275" y="350" fill="#212121" font-size="16" font-weight="bold">Registrar Ocupação</text>
+  <text x="275" y="380" fill="#616161" font-size="12">Pessoa</text>
+  <rect x="275" y="386" width="350" height="36" rx="4" fill="white" stroke="#1565C0" stroke-width="2"/>
+  <text x="290" y="409" fill="#212121" font-size="13">Carlos Pereira — 456.789.123-00</text>
+  <text x="275" y="440" fill="#616161" font-size="12">Tipo de ocupação</text>
+  <rect x="275" y="446" width="350" height="36" rx="4" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="290" y="469" fill="#212121" font-size="13">Inquilino</text>
+  <rect x="400" y="497" width="90" height="32" rx="4" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="420" y="518" fill="#616161" font-size="13">Cancelar</text>
+  <rect x="505" y="497" width="120" height="32" rx="4" fill="#1565C0"/>
+  <text x="532" y="518" fill="white" font-size="13">Confirmar</text>
+
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#00000030"/>
+    </filter>
+  </defs>
+</svg>

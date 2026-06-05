@@ -1,0 +1,60 @@
+<svg width="900" height="620" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif">
+  <rect width="900" height="620" fill="#f5f5f5"/>
+
+  <!-- Sidebar -->
+  <rect x="0" y="0" width="220" height="620" fill="#1565C0"/>
+  <text x="20" y="40" fill="white" font-size="18" font-weight="bold">CondoGest</text>
+  <text x="20" y="80" fill="#90CAF9" font-size="13">Hierarquia</text>
+  <rect x="8" y="90" width="204" height="28" rx="4" fill="rgba(255,255,255,0.2)"/>
+  <text x="20" y="108" fill="white" font-size="13" font-weight="bold">  └ Apt 101 — Bloco A</text>
+
+  <!-- Main -->
+  <rect x="240" y="20" width="640" height="580" rx="8" fill="white"/>
+
+  <!-- Header -->
+  <text x="268" y="55" fill="#212121" font-size="20" font-weight="bold">Apt 101 — Bloco A</text>
+  <text x="268" y="75" fill="#757575" font-size="13">Proprietário, ocupação e histórico do apartamento</text>
+  <rect x="700" y="36" width="160" height="34" rx="4" fill="white" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="718" y="58" fill="#424242" font-size="13">← Voltar</text>
+
+  <!-- Tabs -->
+  <rect x="268" y="90" width="592" height="44" fill="#FAFAFA" rx="4"/>
+  <rect x="268" y="130" width="592" height="2" fill="#E0E0E0"/>
+  <text x="300" y="117" fill="#1565C0" font-size="14" font-weight="bold">Proprietário</text>
+  <rect x="268" y="130" width="120" height="2" fill="#1565C0"/>
+  <text x="430" y="117" fill="#9E9E9E" font-size="14">Ocupação Atual</text>
+  <text x="600" y="117" fill="#9E9E9E" font-size="14">Histórico</text>
+
+  <!-- Content -->
+  <text x="268" y="165" fill="#212121" font-size="16" font-weight="bold">Proprietário</text>
+  <rect x="650" y="148" width="175" height="34" rx="4" fill="#1565C0"/>
+  <text x="668" y="170" fill="white" font-size="12">+ Registrar Proprietário</text>
+
+  <!-- Current owner card -->
+  <rect x="268" y="180" width="340" height="120" rx="8" fill="white" stroke="#E0E0E0" stroke-width="1"/>
+  <text x="285" y="205" fill="#757575" font-size="11">Proprietário atual</text>
+  <text x="285" y="228" fill="#212121" font-size="16" font-weight="bold">João Silva Santos</text>
+  <text x="285" y="248" fill="#616161" font-size="13">123.456.789-00</text>
+  <text x="285" y="270" fill="#616161" font-size="13">Desde: <tspan font-weight="bold">01/01/2020</tspan></text>
+
+  <!-- History table -->
+  <text x="268" y="325" fill="#212121" font-size="14" font-weight="bold">Histórico de Proprietários</text>
+  <rect x="268" y="335" width="592" height="32" fill="#F5F5F5"/>
+  <text x="280" y="356" fill="#616161" font-size="12" font-weight="bold">Pessoa</text>
+  <text x="430" y="356" fill="#616161" font-size="12" font-weight="bold">CPF/CNPJ</text>
+  <text x="590" y="356" fill="#616161" font-size="12" font-weight="bold">Início</text>
+  <text x="700" y="356" fill="#616161" font-size="12" font-weight="bold">Fim</text>
+
+  <line x1="268" y1="367" x2="860" y2="367" stroke="#EEEEEE" stroke-width="1"/>
+  <text x="280" y="388" fill="#212121" font-size="13">João Silva Santos</text>
+  <text x="430" y="388" fill="#424242" font-size="13">123.456.789-00</text>
+  <text x="590" y="388" fill="#424242" font-size="13">01/01/2020</text>
+  <rect x="695" y="375" width="55" height="20" rx="10" fill="#E8F5E9"/>
+  <text x="705" y="389" fill="#2E7D32" font-size="11">Atual</text>
+
+  <line x1="268" y1="400" x2="860" y2="400" stroke="#EEEEEE" stroke-width="1"/>
+  <text x="280" y="424" fill="#212121" font-size="13">Maria Oliveira</text>
+  <text x="430" y="424" fill="#424242" font-size="13">987.654.321-00</text>
+  <text x="590" y="424" fill="#424242" font-size="13">15/03/2015</text>
+  <text x="695" y="424" fill="#424242" font-size="13">31/12/2019</text>
+</svg>

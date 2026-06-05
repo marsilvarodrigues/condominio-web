@@ -61,7 +61,7 @@ public class UserController {
     @Timed(value = "user.controller.findById", description = "Find user by id")
     public ResponseEntity<ApiResponse<UserDTO>> findById(@PathVariable Long id, HttpServletRequest request) {
         log.info("GET /users/{} - finding user by id", id);
-        var user = userService.findById(id)
+        var user = userService.findUserById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "User not found: " + id));
         log.info("GET /users/{} - user found", id);
         return ResponseEntity.ok(ApiResponse.of(requestId(request), user));

@@ -1,4 +1,5 @@
 export { PageHeader } from './PageHeader'
+export { EstadoAutocomplete } from './EstadoAutocomplete'
 export { StatusChip } from './StatusChip'
 export { ConfirmDialog } from './ConfirmDialog'
 export { FormDialog } from './FormDialog'

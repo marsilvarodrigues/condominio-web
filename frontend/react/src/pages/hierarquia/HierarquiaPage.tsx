@@ -15,18 +15,22 @@ import {
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import ApartmentIcon from '@mui/icons-material/Apartment'
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { PageHeader, DataTable, ConfirmDialog, FormDialog, type Column } from '@/components/common'
 import { blocosApi } from '@/api/blocos.api'
 import { apartamentosApi } from '@/api/apartamentos.api'
+import { useMoradoresPorApartamento } from '@/hooks/useMoradores'
 import type { BlocoDTO, ApartamentoDTO, CreateBlocoDTO, CreateApartamentoDTO } from '@/types'
 
 export default function HierarquiaPage() {
   const qc = useQueryClient()
+  const navigate = useNavigate()
   const [selectedBloco, setSelectedBloco] = useState<BlocoDTO | null>(null)
   const [blocoDialogOpen, setBlocoDialogOpen] = useState(false)
   const [aptDialogOpen, setAptDialogOpen] = useState(false)
@@ -43,6 +47,9 @@ export default function HierarquiaPage() {
     queryFn: () => apartamentosApi.list(selectedBloco?.id),
     enabled: !!selectedBloco,
   })
+
+  // Morador column: fetched lazily per apartment via ApartamentoDetailPage; shown as chip count here
+  const moradoresCountByApt: Record<number, number> = {}
 
   const blocoForm = useForm<CreateBlocoDTO>()
   const aptForm = useForm<CreateApartamentoDTO>()
@@ -85,14 +92,28 @@ export default function HierarquiaPage() {
         ),
     },
     {
+      key: 'moradores',
+      header: 'Moradores',
+      render: () => (
+        <Chip label="Ver detalhes" size="small" variant="outlined" />
+      ),
+    },
+    {
       key: 'actions',
       header: '',
-      width: 60,
+      width: 90,
       align: 'right',
       render: (r) => (
-        <IconButton size="small" color="error" onClick={() => setDeleteApt(r)}>
-          <DeleteIcon fontSize="small" />
-        </IconButton>
+        <Box sx={{ display: 'flex', gap: 0.5 }}>
+          <Tooltip title="Ver detalhes">
+            <IconButton size="small" onClick={() => navigate(`/hierarquia/apartamentos/${r.id}`)}>
+              <OpenInNewIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <IconButton size="small" color="error" onClick={() => setDeleteApt(r)}>
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Box>
       ),
     },
   ]

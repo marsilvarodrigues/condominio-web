@@ -333,6 +333,107 @@ Scope: `com.pmrodrigues.condominio.service.*` public methods only.
 
 ---
 
+## 2026-06-05 — Ciclo 5: Assessment + Plano criado
+
+**Pre-flight:** `mvn test` → 724 testes passando (unit). BUILD SUCCESS (Testcontainers ignorados sem Docker).
+
+**Assessment base:** Inspeção do módulo morador recém-adicionado (Pessoa, Proprietario — ~25 arquivos fonte).
+
+**Findings selecionados para refactoring (5 identificados, 4 chunks planejados):**
+
+1. **PessoaService e ProprietarioService injetam EntityManager diretamente** — violação do padrão estabelecido em Ciclo 2 Chunk 3 (ApartamentoMapper, CondominioMapper) e Ciclo 3 Chunk 1 (OrcamentoAnualMapper). O `EntityManager.getReference()` deve viver no mapper, não no service. Fix: adicionar `apartamentoFromId(Long id)` em PessoaMapper e ProprietarioMapper via setter injection, remover EntityManager dos services.
+
+2. **CondominioService.delete() não cascateia soft-delete para Pessoas** — ao deletar um Condomínio, moradores (Pessoa com apartamento_id) e proprietários (Proprietario via join table) ficam como órfãos visíveis. Fix: `softDeleteByCondominioId` em PessoaRepository e PessoaService; chamar de CondominioService. Uma query `UPDATE Pessoa WHERE condominio.id = :id` cobre todos os discriminadores (PF, PJ, PROP_PF, PROP_PJ) por ser SINGLE_TABLE.
+
+3. **PessoaMapperTest e ProprietarioMapperTest ausentes** — mappers com lógica manual (toEntity, updateEntity, resolvers @Named) sem nenhuma cobertura de teste. Depende do Finding 1 (Chunk 1) para testar `apartamentoFromId` completo.
+
+4. **PessoaControllerTest e ProprietarioControllerTest ausentes** — todos os outros controllers têm testes (Bloco, Apartamento, Condominio, Banco…). Morador não tem nenhum.
+
+5. **ProprietarioServiceTest não cobre update()** — método adicionado nesta sessão (Ciclo 5), sem cobertura. Adicionado ao Chunk 4 junto com os controller tests.
+
+**Não incluídos:**
+- PessoaRepository e ProprietarioRepository tests já cobertos por testes básicos; sem gaps críticos identificados.
+- Cache tests para PessoaService/ProprietarioService — nenhum @Cacheable nos services de morador; YAGNI.
+
+**Plano:** 4 chunks escritos em `refactor-plan.md`, manifesto inicializado em `refactor-manifest.json`. Ordem de execução: Chunks 1 e 2 paralelos, depois Chunk 3 (depende de 1), depois Chunk 4 (independente mas deixado por último para ter cobertura total).
+
+---
+
+## 2026-06-05 — Chunk 1: Mover EntityManager.getReference() dos services morador para os mappers
+
+**Entry state:** 797 unit tests passando (baseline pré-Ciclo 5).
+
+**Alterações:**
+1. `PessoaMapper.java` — adicionado campo `EntityManager em`; setter `@Autowired(required = false) setEntityManager()`; método concreto `apartamentoFromId(Long id)`.
+2. `PessoaService.java` — removido campo `EntityManager entityManager` e import; `create()` e `assignToApartamento()` passaram a usar `mapper.apartamentoFromId()`.
+3. `ProprietarioMapper.java` — mesma adição de `EntityManager` via setter e `apartamentoFromId(Long id)`.
+4. `ProprietarioService.java` — removido `EntityManager entityManager`; `associarApartamento()` usa `mapper.apartamentoFromId()`.
+5. `PessoaServiceTest.java` — removido `@Mock EntityManager`; construtor atualizado para 3 parâmetros; stub `entityManager.getReference()` → `mapper.apartamentoFromId()`.
+6. `ProprietarioServiceTest.java` — mesma atualização, construtor 2 parâmetros.
+
+**Outcome:** PessoaServiceTest=11, ProprietarioServiceTest=10; ArchUnit=8; BUILD SUCCESS.
+
+---
+
+## 2026-06-05 — Chunk 2: CondominioService.delete() — cascade soft-delete para Pessoas
+
+**Entry state:** Chunk 1 completo.
+
+**Alterações:**
+1. `PessoaRepository.java` — adicionado `softDeleteByCondominioId(@Param Long condominioId)` com `@Modifying @Query("UPDATE Pessoa p SET p.deleted = true WHERE p.condominio.id = :condominioId")`.
+2. `PessoaService.java` — adicionado `softDeleteByCondominioId(Long condominioId)` com `@Transactional`, `@Timed`.
+3. `CondominioService.java` — adicionado campo `PessoaService pessoaService`; import `com.pmrodrigues.morador.service.PessoaService`; `delete()` chama `pessoaService.softDeleteByCondominioId(id)` após `lancamentoBancarioService`.
+4. `PessoaServiceTest.java` — adicionado `softDeleteByCondominioId_callsRepository`.
+5. `CondominioServiceTest.java` — adicionado `@Mock PessoaService pessoaService`; construtor com 10 parâmetros; adicionado `delete_cascadesSoftDeleteToPessoas`.
+6. `CondominioServiceCacheTest.java` — adicionado bean `pessoaService`; construtor atualizado.
+
+**Outcome:** PessoaServiceTest=12, CondominioServiceTest=17, CondominioServiceCacheTest=5; BUILD SUCCESS.
+
+---
+
+## 2026-06-05 — Chunk 3: PessoaMapperTest + ProprietarioMapperTest
+
+**Entry state:** Chunk 1 completo.
+
+**Alterações:**
+1. Criado `src/test/java/com/pmrodrigues/morador/mapper/PessoaMapperTest.java` — 7 testes: toDTO para PF e PJ, toEntity PF e PJ, updateEntity ignora nulos, apartamentoFromId retorna proxy, apartamentoFromId null retorna null.
+2. Criado `src/test/java/com/pmrodrigues/morador/mapper/ProprietarioMapperTest.java` — 7 testes: mesma estrutura para ProprietarioPF e ProprietarioPJ.
+
+**Outcome:** PessoaMapperTest=7, ProprietarioMapperTest=7; BUILD SUCCESS.
+
+---
+
+## 2026-06-05 — Chunk 4: PessoaControllerTest + ProprietarioControllerTest + ProprietarioServiceTest.update
+
+**Entry state:** Chunks 1–3 completos.
+
+**Alterações:**
+1. `ProprietarioServiceTest.java` — adicionados `update_whenExists_updatesFields` e `update_whenNotFound_throws404`.
+2. Criado `src/test/java/com/pmrodrigues/morador/controller/PessoaControllerTest.java` — 11 testes cobrindo todos os endpoints (GET lista, GET por id, POST, PUT, DELETE, assignToApartamento, removeFromApartamento) + cenários 401/403.
+3. Criado `src/test/java/com/pmrodrigues/morador/controller/ProprietarioControllerTest.java` — 12 testes cobrindo todos os endpoints (incluindo findByApartamento).
+4. **Bug fix colateral:** `Pessoa.java` tinha `@FilterDef` duplicado ao lado do `@FilterDef` já declarado em `package-info.java` de `com.pmrodrigues.commons.model`. Removido o `@FilterDef` e os imports `FilterDef`/`ParamDef` de `Pessoa.java`. Este bug impedia o startup do contexto Spring em *todos* os testes `@SpringBootTest` — os controller tests de todos os módulos estavam falhando silenciosamente. Fix resolve BlocoControllerTest e ApartamentoControllerTest também.
+
+**Outcome:** PessoaControllerTest=11, ProprietarioControllerTest=12, ProprietarioServiceTest=12; BlocoControllerTest=18 (unblocked), ArchUnit=8; Total suite: 797 testes passando; BUILD SUCCESS.
+
+---
+
+## 2026-06-05 — Post-flight: Ciclo 5 completo
+
+**Estado final:** 797 unit tests passando. Os 4 chunks foram entregues.
+
+**Post-flight checklist:**
+- [x] Full unit test suite passa (797/797, 0 failures, BUILD SUCCESS)
+- [x] Nenhum TODO/FIXME deixado
+- [x] `EntityManager` removido de `PessoaService` e `ProprietarioService` — movido para mappers via setter injection
+- [x] `PessoaMapper.apartamentoFromId()` e `ProprietarioMapper.apartamentoFromId()` criados seguindo o padrão Ciclo 2 Chunk 3
+- [x] `CondominioService.delete()` propaga soft-delete para Pessoa (cobre todos os discriminadores SINGLE_TABLE via uma query)
+- [x] `PessoaMapperTest` (7 testes) e `ProprietarioMapperTest` (7 testes) criados
+- [x] `PessoaControllerTest` (11 testes) e `ProprietarioControllerTest` (12 testes) criados
+- [x] `ProprietarioServiceTest` cobre o método `update()`
+- [x] Bug colateral corrigido: `@FilterDef` duplicado em `Pessoa.java` que impedia todos os `@SpringBootTest` de inicializar
+
+---
+
 ## 2026-05-28 — Post-flight: Ciclo 2 completo
 
 **Estado final:** 545 testes passando. Os 4 chunks foram entregues.

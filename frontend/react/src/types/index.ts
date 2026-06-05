@@ -382,6 +382,98 @@ export interface RateioExecucaoFilterDTO {
   dataFim?: string
 }
 
+// ── Moradores / Pessoas ───────────────────────────────────────────────────────
+
+/** Discriminator values matching backend SINGLE_TABLE inheritance */
+export type TipoPessoa = 'MORADOR' | 'PROP_PF' | 'PROP_PJ'
+
+export interface ApartamentoResumoDTO {
+  id: number
+  numero: string
+  blocoNome: string | null
+  condominioId: number
+}
+
+export interface PessoaDTO {
+  id: number
+  nome: string
+  /** MORADOR | PROP_PF | PROP_PJ */
+  tipo: TipoPessoa
+  cpf: string | null
+  email: string | null
+  telefone: string | null
+  apartamentoId: number | null
+  apartamentoNumero: string | null
+  userId: number | null
+  createdAt: string | null
+  updatedAt: string | null
+}
+
+export interface CreatePessoaDTO {
+  nome: string
+  email: string
+  telefone?: string
+  cpf: string
+  apartamentoId?: number
+}
+
+export interface UpdatePessoaDTO {
+  nome?: string
+  email?: string
+  telefone?: string
+  cpf?: string
+}
+
+export interface PessoaFilterDTO {
+  nome?: string
+  tipo?: TipoPessoa
+  cpf?: string
+  email?: string
+}
+
+export interface ProprietarioDTO {
+  id: number
+  nome: string
+  /** PROP_PF | PROP_PJ */
+  tipo: 'PROP_PF' | 'PROP_PJ'
+  cpf: string | null
+  cnpj: string | null
+  razaoSocial: string | null
+  email: string | null
+  telefone: string | null
+  apartamentos: ApartamentoResumoDTO[]
+  userId: number | null
+  createdAt: string | null
+  updatedAt: string | null
+}
+
+export interface CreateProprietarioDTO {
+  nome: string
+  email: string
+  telefone?: string
+  /** "PROP_PF" or "PROP_PJ" */
+  tipo: 'PROP_PF' | 'PROP_PJ'
+  cpf?: string
+  cnpj?: string
+  razaoSocial?: string
+}
+
+export interface UpdateProprietarioDTO {
+  nome?: string
+  email?: string
+  telefone?: string
+  cpf?: string
+  cnpj?: string
+  razaoSocial?: string
+}
+
+export interface ProprietarioFilterDTO {
+  nome?: string
+  tipo?: 'PROP_PF' | 'PROP_PJ'
+  cpf?: string
+  cnpj?: string
+}
+
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
 export interface DashboardStats {

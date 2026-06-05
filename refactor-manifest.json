@@ -1,9 +1,9 @@
 {
   "plan_file": "refactor-plan.md",
-  "assessment_source": "inline — avaliação arquitetural 2026-05-29 (módulo bancário: Banco, ContaBancaria, LancamentoBancario)",
-  "created": "2026-05-29",
-  "total_chunks": 3,
-  "current_chunk": 3,
+  "assessment_source": "inline — avaliação arquitetural 2026-06-05 (módulo morador: Pessoa, Proprietario)",
+  "created": "2026-06-05",
+  "total_chunks": 4,
+  "current_chunk": 4,
   "status": "completed",
   "preflight_passed": true,
   "verification": {
@@ -16,33 +16,43 @@
   "chunks": [
     {
       "id": 1,
-      "name": "FundoReservaService — trocar ContaBancariaRepository por ContaBancariaService",
+      "name": "Mover EntityManager.getReference() dos services morador para os mappers",
       "status": "completed",
       "depends_on": [],
-      "verification": "16 tests, 0 failures, BUILD SUCCESS",
+      "verification": "21 tests (PessoaServiceTest=11, ProprietarioServiceTest=10), 0 failures; ArchUnit 8/8 pass; BUILD SUCCESS",
       "commit_sha": null,
-      "started_at": "2026-05-29",
-      "completed_at": "2026-05-29"
+      "started_at": "2026-06-05",
+      "completed_at": "2026-06-05"
     },
     {
       "id": 2,
-      "name": "BancoService.findById — lançar 404 em vez de retornar Optional",
+      "name": "CondominioService.delete() — cascade soft-delete para Pessoas",
       "status": "completed",
       "depends_on": [],
-      "verification": "22 tests (BancoServiceTest=9, ContaBancariaServiceTest=13), 0 failures, BUILD SUCCESS",
+      "verification": "PessoaServiceTest=12, CondominioServiceTest=17, CondominioServiceCacheTest=5; BUILD SUCCESS",
       "commit_sha": null,
-      "started_at": "2026-05-29",
-      "completed_at": "2026-05-29"
+      "started_at": "2026-06-05",
+      "completed_at": "2026-06-05"
     },
     {
       "id": 3,
-      "name": "Criar BancoServiceCacheTest e ContaBancariaServiceCacheTest",
+      "name": "PessoaMapperTest + ProprietarioMapperTest",
       "status": "completed",
-      "depends_on": [2],
-      "verification": "8 tests (BancoServiceCacheTest=5, ContaBancariaServiceCacheTest=3), 0 failures, BUILD SUCCESS",
+      "depends_on": [1],
+      "verification": "PessoaMapperTest=7, ProprietarioMapperTest=7; BUILD SUCCESS",
       "commit_sha": null,
-      "started_at": "2026-05-29",
-      "completed_at": "2026-05-29"
+      "started_at": "2026-06-05",
+      "completed_at": "2026-06-05"
+    },
+    {
+      "id": 4,
+      "name": "PessoaControllerTest + ProprietarioControllerTest + ProprietarioServiceTest.update",
+      "status": "completed",
+      "depends_on": [],
+      "verification": "PessoaControllerTest=11, ProprietarioControllerTest=12, ProprietarioServiceTest=12; also fixed @FilterDef duplicate bug in Pessoa.java unblocking all controller tests; BUILD SUCCESS",
+      "commit_sha": null,
+      "started_at": "2026-06-05",
+      "completed_at": "2026-06-05"
     }
   ]
 }

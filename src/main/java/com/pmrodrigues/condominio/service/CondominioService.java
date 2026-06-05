@@ -13,12 +13,13 @@ import com.pmrodrigues.financeiro.service.FundoReservaService;
 import com.pmrodrigues.financeiro.service.LancamentoBancarioService;
 import com.pmrodrigues.financeiro.service.OrcamentoAnualService;
 import com.pmrodrigues.financeiro.service.PlanoContasService;
+import com.pmrodrigues.morador.service.PessoaService;
 import io.micrometer.core.annotation.Timed;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +36,6 @@ import org.springframework.data.jpa.domain.Specification;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class CondominioService {
 
     private final CondominioRepository repository;
@@ -47,6 +47,29 @@ public class CondominioService {
     private final OrcamentoAnualService orcamentoAnualService;
     private final ContaBancariaService contaBancariaService;
     private final LancamentoBancarioService lancamentoBancarioService;
+    private final PessoaService pessoaService;
+
+    public CondominioService(CondominioRepository repository,
+                             CondominioMapper mapper,
+                             BlocoRepository blocoRepository,
+                             ApartamentoRepository apartamentoRepository,
+                             PlanoContasService planoContasService,
+                             FundoReservaService fundoReservaService,
+                             OrcamentoAnualService orcamentoAnualService,
+                             ContaBancariaService contaBancariaService,
+                             LancamentoBancarioService lancamentoBancarioService,
+                             @Lazy PessoaService pessoaService) {
+        this.repository = repository;
+        this.mapper = mapper;
+        this.blocoRepository = blocoRepository;
+        this.apartamentoRepository = apartamentoRepository;
+        this.planoContasService = planoContasService;
+        this.fundoReservaService = fundoReservaService;
+        this.orcamentoAnualService = orcamentoAnualService;
+        this.contaBancariaService = contaBancariaService;
+        this.lancamentoBancarioService = lancamentoBancarioService;
+        this.pessoaService = pessoaService;
+    }
 
     /**
      * Returns condominios matching the supplied filter criteria.
@@ -179,6 +202,7 @@ public class CondominioService {
         orcamentoAnualService.softDeleteByCondominioId(id);
         contaBancariaService.softDeleteByCondominioId(id);
         lancamentoBancarioService.softDeleteByCondominioId(id);
+        pessoaService.softDeleteByCondominioId(id);
         repository.delete(entity);
         log.info("Condominio soft-deleted successfully: {}", id);
     }

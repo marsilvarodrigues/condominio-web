@@ -8,12 +8,13 @@ import com.pmrodrigues.security.dto.UserDTO;
 import com.pmrodrigues.security.dto.UserFilterDTO;
 import com.pmrodrigues.security.mapper.UserMapper;
 import com.pmrodrigues.security.model.PasswordHistory;
+import com.pmrodrigues.security.model.User;
 import com.pmrodrigues.security.repository.PasswordHistoryRepository;
 import com.pmrodrigues.security.repository.UserRepository;
 import io.micrometer.core.annotation.Timed;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,21 +43,66 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 /**
  * Application service for user CRUD operations and the email-based account activation flow.
+ * Subclasses ({@link com.pmrodrigues.morador.service.PessoaService},
+ * {@link com.pmrodrigues.morador.service.ProprietarioService}) extend this service to reuse
+ * the user-creation ceremony via {@link #persistUser}.
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@Primary
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final MailService mailService;
-    private final UserMapper mapper;
-    private final PasswordHistoryRepository passwordHistoryRepository;
-    private final CondominioService condominioService;
-    private final PasswordEncoder passwordEncoder;
+    protected final UserRepository userRepository;
+    protected final MailService mailService;
+    protected final UserMapper userMapper;
+    protected final PasswordHistoryRepository passwordHistoryRepository;
+    protected final CondominioService condominioService;
+    protected final PasswordEncoder passwordEncoder;
 
     @Value("${app.security.password-history-count:3}")
     private int passwordHistoryCount;
+
+    public UserService(UserRepository userRepository,
+                       MailService mailService,
+                       UserMapper userMapper,
+                       PasswordHistoryRepository passwordHistoryRepository,
+                       CondominioService condominioService,
+                       PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.mailService = mailService;
+        this.userMapper = userMapper;
+        this.passwordHistoryRepository = passwordHistoryRepository;
+        this.condominioService = condominioService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    /**
+     * Saves a new user entity, handling email uniqueness, condominium associations, and
+     * activation email dispatch. Intended to be called by subclasses in their own {@code create}
+     * methods after building the concrete entity.
+     *
+     * @param entity        new user entity (any subtype of {@link User})
+     * @param email         the user's email — checked for uniqueness
+     * @param condominioIds optional set of condominium IDs to associate; null means global access
+     * @return the saved entity
+     * @throws ResponseStatusException 400 if the email is already in use or a condominium does not exist
+     */
+    protected User persistUser(User entity, String email, Set<Long> condominioIds) {
+        log.info("Persisting new user with email: {}", email);
+        userRepository.findByEmail(email).ifPresent(existing -> {
+            log.error("Email already in use: {}", email);
+            throw new ResponseStatusException(BAD_REQUEST, "Não foi possível criar o usuário com os dados informados");
+        });
+        var condominios = loadCondominioEntities(condominioIds);
+        if (entity.getRoles() == null) {
+            entity.setRoles(new HashSet<>(Set.of("ROLE_USER")));
+        }
+        entity.setCondominios(condominios);
+        var saved = userRepository.save(entity);
+        mailService.sendActivationEmail(saved.getEmail(), saved.getName(), saved.getRawPassword(), saved.getActivationToken());
+        log.info("User persisted successfully with id: {}", saved.getId());
+        return saved;
+    }
 
     /**
      * Persists a new user and dispatches an activation email containing the generated temporary password and token.
@@ -72,20 +118,10 @@ public class UserService {
     @Timed(value = "user.service.create", description = "Create user")
     public UserDTO create(CreateUserDTO dto) {
         log.info("Creating new user with email: {}", dto.email());
-        userRepository.findByEmail(dto.email()).ifPresent(existing -> {
-            log.error("Email already in use: {}", dto.email());
-            throw new ResponseStatusException(BAD_REQUEST, "Não foi possível criar o usuário com os dados informados");
-        });
-        var condominios = loadCondominioEntities(dto.condominioIds());
-        var user = mapper.toEntity(dto);
-        if (user.getRoles() == null) {
-            user.setRoles(new HashSet<>(Set.of("ROLE_USER")));
-        }
-        user.setCondominios(condominios);
-        var saved = userRepository.save(user);
-        mailService.sendActivationEmail(saved.getEmail(), saved.getName(), saved.getRawPassword(), saved.getActivationToken());
+        var user = userMapper.toEntity(dto);
+        var saved = persistUser(user, dto.email(), dto.condominioIds());
         log.info("User created successfully with id: {}", saved.getId());
-        return mapper.toDTO(saved);
+        return userMapper.toDTO(saved);
     }
 
     /**
@@ -95,9 +131,9 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     @Timed(value = "user.service.findById", description = "Find user by id")
-    public Optional<UserDTO> findById(Long id) {
+    public Optional<UserDTO> findUserById(Long id) {
         log.info("Looking up user by id: {}", id);
-        var result = userRepository.findById(id).map(mapper::toDTO);
+        var result = userRepository.findById(id).map(userMapper::toDTO);
         log.info("User lookup by id {}: {}", id, result.isPresent() ? "found" : "not found");
         return result;
     }
@@ -113,7 +149,7 @@ public class UserService {
     public List<UserDTO> filterBy(UserFilterDTO dto) {
         log.info("Filtering users: nome={}, email={}, enabled={}, role={}", dto.nome(), dto.email(), dto.enabled(), dto.role());
         var users = userRepository.findAll(Specification.allOf(hasNome(dto.nome()), hasEmail(dto.email()), hasEnabled(dto.enabled()), hasRole(dto.role())))
-                .stream().map(mapper::toDTO).toList();
+                .stream().map(userMapper::toDTO).toList();
         log.info("Filter users: {} results", users.size());
         return users;
     }
@@ -143,13 +179,13 @@ public class UserService {
             throw new ResponseStatusException(FORBIDDEN, "Acesso negado");
         }
 
-        mapper.updateEntity(user, dto);
+        userMapper.updateEntity(user, dto);
         if (dto.condominioIds() != null) {
             user.setCondominios(loadCondominioEntities(dto.condominioIds()));
         }
         var saved = userRepository.save(user);
         log.info("User updated successfully: {}", dto.id());
-        return mapper.toDTO(saved);
+        return userMapper.toDTO(saved);
     }
 
     /**
@@ -193,7 +229,7 @@ public class UserService {
 
         var activated = userRepository.save(user);
         log.info("Account activated successfully for user: {}", activated.getEmail());
-        return mapper.toDTO(activated);
+        return userMapper.toDTO(activated);
     }
 
     /**
@@ -250,7 +286,7 @@ public class UserService {
         log.info("Password changed successfully for user id: {}", userId);
     }
 
-    private Set<Condominio> loadCondominioEntities(Set<Long> condominioIds) {
+    protected Set<Condominio> loadCondominioEntities(Set<Long> condominioIds) {
         if (condominioIds == null || condominioIds.isEmpty()) return new HashSet<>();
         var result = new HashSet<Condominio>();
         for (Long condId : condominioIds) {

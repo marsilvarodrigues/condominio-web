@@ -48,6 +48,28 @@ Autenticação e autorização com JWT + OAuth2.
 - **OAuth2 Authorization Server** — configurado via `AuthorizationServerConfig` para emissão de tokens.
 - Soft delete em usuários; `UserRepository` não usa `@Filter` (Spring Security consulta usuários globalmente; isolamento por service).
 
+### Módulo Moradores
+Gestão de moradores e proprietários de apartamentos.
+
+- **Hierarquia de herança** — `Pessoa` herda de `User` via JPA JOINED inheritance (`@Inheritance(InheritanceType.JOINED)` em `User`, `@PrimaryKeyJoinColumn(name="id")` em `Pessoa`). A tabela `pessoas` tem `id` como FK para `users.id`. Dentro de `pessoas`, as subclasses usam SINGLE_TABLE inheritance com discriminador `pessoa_tipo`.
+- **Subclasses de Pessoa** (discriminadores):
+  - `PessoaFisica` (`"PF"`) — campo `cpf`; papel `ROLE_MORADOR`
+  - `PessoaJuridica` (`"PJ"`) — campos `cnpj`, `razao_social`; papel `ROLE_MORADOR`
+  - `Proprietario` (abstract, `"PROP"`) — estende Pessoa; papel `ROLE_PROPRIETARIO`
+  - `ProprietarioPessoaFisica` (`"PROP_PF"`) — campo `cpf`
+  - `ProprietarioPessoaJuridica` (`"PROP_PJ"`) — campos `cnpj`, `razao_social`
+- **`@PrePersist`** em `Pessoa` — chama `super.prePersist()` e adiciona automaticamente `ROLE_MORADOR` ao set de papéis do `User`. `Proprietario.prePersist()` adiciona também `ROLE_PROPRIETARIO`. O `roles` em `User` foi alterado de `Set.of(...)` imutável para `new HashSet<>(Set.of(...))` para suportar `add()`.
+- **Moradores (1:N)** — `Apartamento` tem `@OneToMany(mappedBy = "apartamento") List<Pessoa> moradores`. A FK `apartamento_id` reside diretamente na tabela `pessoas`. Não há tabela de junção separada nem histórico de ocupação.
+- **Proprietários (N:M)** — `Proprietario` tem `@ManyToMany @JoinTable(name="proprietario_apartamentos") Set<Apartamento> apartamentos`. A join table armazena `proprietario_id`, `apartamento_id`, `condominio_id`, `data_inicio`, `data_fim`.
+- **Sem HASH partitioning** em `pessoas` — JOINED inheritance exige que `pessoas.id` seja FK única para `users.id` (PK simples), o que é incompatível com a restrição do PostgreSQL de incluir a chave de partição na PK. A tabela `pessoas` usa índices simples em `condominio_id`.
+- CRUD de **Pessoas** (`PF`/`PJ`) via `PessoaController` (`/api/pessoas`).
+- CRUD de **Proprietários** (`PROP_PF`/`PROP_PJ`) via `ProprietarioController` (`/api/proprietarios`).
+- Associação/desassociação de moradores: `POST /api/pessoas/{id}/apartamento?apartamentoId=X`, `DELETE /api/pessoas/{id}/apartamento`.
+- Associação/desassociação de proprietários: `POST /api/proprietarios/{id}/apartamentos?apartamentoId=X`, `DELETE /api/proprietarios/{id}/apartamentos/{aptId}`.
+- Listagem de proprietários por apartamento: `GET /api/apartamentos/{aptId}/proprietarios`.
+- Filtros dinâmicos por `nome`, `tipo`, `email` via `JpaSpecificationExecutor`.
+- **Frontend** — `PessoasPage` em `/pessoas` (CRUD com chips de tipo e documento), `ApartamentoDetailPage` em `/hierarquia/apartamentos/:id` (abas Moradores e Proprietários com dialogs de atribuição/criação).
+
 ### Módulo Financeiro
 Gestão financeira completa do condomínio.
 
@@ -127,6 +149,18 @@ src/main/java/com/pmrodrigues/
 │   ├── repository/     # ApartamentoRepository, BlocoRepository, CondominioRepository
 │   ├── service/        # ApartamentoService, BlocoService, CondominioService
 │   └── specification/  # ApartamentoSpecification, BlocoSpecification, CondominioSpecification
+├── morador/
+│   ├── controller/     # PessoaController, ProprietarioController
+│   ├── dto/            # PessoaDTO, CreatePessoaDTO, UpdatePessoaDTO, PessoaFilterDTO,
+│   │                   # ProprietarioDTO, CreateProprietarioDTO, ProprietarioFilterDTO,
+│   │                   # AssociarProprietarioApartamentoDTO
+│   ├── mapper/         # PessoaMapper, ProprietarioMapper
+│   ├── model/          # Pessoa (abstract), PessoaFisica, PessoaJuridica,
+│   │                   # Proprietario (abstract), ProprietarioPessoaFisica, ProprietarioPessoaJuridica
+│   ├── repository/     # PessoaRepository, PessoaFisicaRepository,
+│   │                   # PessoaJuridicaRepository, ProprietarioRepository
+│   ├── service/        # PessoaService, ProprietarioService
+│   └── specification/  # PessoaSpecification, ProprietarioSpecification
 ├── financeiro/
 │   ├── controller/     # AssociacaoOrcamentoController, ContaBancariaController,
 │   │                   # FundoReservaController, LancamentoBancarioController,
@@ -195,8 +229,14 @@ src/main/java/com/pmrodrigues/
 | 0021 | refactor-fundo-reserva-conta-bancaria | Associa `fundo_reserva` a `conta_bancaria` |
 | 0022 | add-item-orcamento-to-itens-extrato | FK de `itens_extrato` para `item_orcamento` (conciliação) |
 | 0023 | user-condominios-many-to-many | Cria `user_condominios`; migra dados; remove `condominio_id` de `users` |
+| 0024 | add-roles-to-users | Coluna `roles` (array texto) em `users` para suportar `ROLE_MORADOR`/`ROLE_PROPRIETARIO` |
+| 0025 | add-dtype-to-users | Coluna `dtype VARCHAR(31) DEFAULT 'USER'` em `users` (discriminator JPA para JOINED inheritance) |
+| 0026 | create-pessoas | Tabela `pessoas` com `id` FK → `users.id`; discriminador `pessoa_tipo`; FK `apartamento_id`; sem HASH partitioning (incompatível com JOINED inheritance) |
+| 0027 | add-cpf-cnpj-to-pessoas | Colunas `cpf`, `cnpj`, `razao_social` em `pessoas` |
+| 0028 | create-proprietario-apartamentos | Join table N:M `proprietario_apartamentos` (`proprietario_id`, `apartamento_id`, `condominio_id`, `data_inicio`, `data_fim`) |
+| 0029 | drop-historico-ocupacao | Remove tabelas legadas `historico_ocupacao` e `proprietarios` |
 
-Para adicionar uma migração: criar `NNNN-descricao.sql` (próximo: `0024`) e registrar no `db.changelog-master.yaml`.
+Para adicionar uma migração: criar `NNNN-descricao.sql` (próximo: `0030`) e registrar no `db.changelog-master.yaml`.
 
 ---
 
@@ -300,8 +340,8 @@ mvn test -Pperformance -Dapp.host=localhost -Dapp.port=8080 \
 
 | Tipo | Frameworks | Quantidade |
 |---|---|---|
-| Unitários (service, mapper, repository) | JUnit 5 + Mockito + H2 | ~580 testes |
-| BDD (integração full-stack) | Cucumber 7 + Testcontainers PG16 + Redis7 | 97 cenários |
+| Unitários (service, mapper, repository) | JUnit 5 + Mockito + H2 | ~620 testes |
+| BDD (integração full-stack) | Cucumber 7 + Testcontainers PG16 + Redis7 | ~117 cenários |
 | Arquitetura | ArchUnit 1.3 | 7 regras |
 | Performance | Apache JMeter 5.6 | profile dedicado |
 
@@ -328,6 +368,8 @@ mvn test -Pperformance -Dapp.host=localhost -Dapp.port=8080 \
 | `plano-contas.feature` | CRUD, hierarquia, arvore |
 | `fundo-reserva.feature` | Criar, creditar, debitar, movimentações |
 | `orcamento-anual.feature` | CRUD, adicionar item, aprovar, encerrar |
+| `pessoas.feature` | Criar PF/PJ, filtros, atribuir/remover apartamento, 401/403/404 |
+| `proprietarios.feature` | Criar PROP_PF/PROP_PJ, associar/desassociar apartamento, 401/403/404 |
 
 ---
 
@@ -403,6 +445,31 @@ Usuários com acesso a múltiplos condomínios devem enviar o header `X-Condomin
 | `GET` | `/api/apartamentos/{id}` | Buscar por ID |
 | `PUT` | `/api/apartamentos/{id}` | Atualizar |
 | `DELETE` | `/api/apartamentos/{id}` | Soft-delete |
+
+### Pessoas (Moradores)
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| `GET` | `/api/pessoas` | Listar (filtros: `nome`, `tipo`, `email`) |
+| `POST` | `/api/pessoas` | Criar pessoa PF (`tipo: "PF"`) ou PJ (`tipo: "PJ"`) |
+| `GET` | `/api/pessoas/{id}` | Buscar por ID |
+| `PUT` | `/api/pessoas/{id}` | Atualizar |
+| `DELETE` | `/api/pessoas/{id}` | Soft-delete |
+| `POST` | `/api/pessoas/{id}/apartamento` | Atribuir ao apartamento (`?apartamentoId=X`) |
+| `DELETE` | `/api/pessoas/{id}/apartamento` | Remover do apartamento (seta FK para null) |
+
+### Proprietários
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| `GET` | `/api/proprietarios` | Listar (filtros: `nome`, `tipo`, `email`) |
+| `POST` | `/api/proprietarios` | Criar proprietário PF (`tipo: "PROP_PF"`) ou PJ (`tipo: "PROP_PJ"`) |
+| `GET` | `/api/proprietarios/{id}` | Buscar por ID (inclui lista de apartamentos) |
+| `PUT` | `/api/proprietarios/{id}` | Atualizar (tipo não pode ser alterado após criação) |
+| `DELETE` | `/api/proprietarios/{id}` | Soft-delete |
+| `POST` | `/api/proprietarios/{id}/apartamentos` | Associar ao apartamento (`?apartamentoId=X`) |
+| `DELETE` | `/api/proprietarios/{id}/apartamentos/{aptId}` | Desassociar do apartamento |
+| `GET` | `/api/apartamentos/{aptId}/proprietarios` | Listar proprietários de um apartamento |
 
 ### Plano de Contas
 
@@ -488,6 +555,8 @@ Usuários com acesso a múltiplos condomínios devem enviar o header `X-Condomin
 
 Todas as tabelas de domínio têm `condominio_id`. Nove tabelas são HASH-particionadas por `condominio_id` em 4 buckets (PostgreSQL table partitioning): `blocos`, `apartamentos`, `plano_contas`, `fundo_reserva`, `fundo_reserva_movimentacao`, `orcamento_anual`, `item_orcamento`, `contas_bancarias`, `lancamentos_bancarios`. PKs compostas incluem `condominio_id`; FKs entre tabelas particionadas carregam a chave de partição para respeitar a restrição do PostgreSQL.
 
+**Exceção — tabela `pessoas`**: JPA JOINED inheritance exige que `pessoas.id` seja uma FK simples para `users.id` (PK de coluna única). PostgreSQL HASH partitioning requer que a chave de partição (`condominio_id`) faça parte da PK — o que cria uma PK composta `(id, condominio_id)` incompatível com a FK `REFERENCES users(id)`. Por essa razão, `pessoas` e `proprietario_apartamentos` **não são particionadas**; isolamento multi-tenant é garantido pelo `@Filter` Hibernate e pelo índice `idx_pessoas_condominio_id`.
+
 O `TenantContext` (ThreadLocal) é populado pelo `CustomBearerTokenFilter` a partir da claim `condominio_ids` do JWT e do header `X-Condominio-Id`:
 
 - **0 condominios no token** → acesso global (sem filtro Hibernate; comportamento de master admin).
@@ -497,6 +566,25 @@ O `TenantContext` (ThreadLocal) é populado pelo `CustomBearerTokenFilter` a par
 O `TenantFilterAspect` ativa o filtro Hibernate (`condominioFilter`) em toda query. Entidades têm `@PrePersist` que seta `condominio_id` automaticamente — o caller nunca precisa setar manualmente.
 
 A tabela `user_condominios` (join table `@ManyToMany`) é global (sem particionamento por tenant), pois representa direitos de acesso, não dados de negócio.
+
+### Hierarquia de herança — Módulo Moradores
+
+```
+User (users)
+└── Pessoa (pessoas — JOINED, PK = FK → users.id)
+    ├── PessoaFisica        discriminator="PF"
+    ├── PessoaJuridica      discriminator="PJ"
+    └── Proprietario (abstract)  discriminator="PROP"
+        ├── ProprietarioPessoaFisica   discriminator="PROP_PF"
+        └── ProprietarioPessoaJuridica discriminator="PROP_PJ"
+```
+
+- `User → Pessoa`: **JOINED** (`InheritanceType.JOINED`). Tabelas separadas; `pessoas.id` é FK para `users.id`. Cada `Pessoa` tem login e credenciais próprios.
+- `Pessoa → subclasses`: **SINGLE_TABLE** dentro de `pessoas`, discriminadas pela coluna `pessoa_tipo`.
+- **Roles atribuídas em `@PrePersist`**: `Pessoa` adiciona `ROLE_MORADOR`; `Proprietario` adiciona também `ROLE_PROPRIETARIO`.
+- **Relacionamentos**:
+  - **1:N moradores** — `Apartamento.moradores` (`@OneToMany mappedBy="apartamento"`); FK `pessoas.apartamento_id` (nullable, setada a null ao remover o morador).
+  - **N:M proprietários** — `Proprietario.apartamentos` (`@ManyToMany @JoinTable(name="proprietario_apartamentos")`); a join table armazena também `condominio_id` e datas de início/fim.
 
 ### Cache em dois níveis
 
@@ -525,7 +613,8 @@ Cascata de delete ao remover um Condomínio:
 3. Movimentações de fundo → Fundo de reserva (módulo financeiro)
 4. Plano de contas (módulo financeiro)
 5. Lançamentos bancários → Contas bancárias (módulo financeiro)
-6. Condomínio
+6. Pessoas (moradores e proprietários do módulo moradores)
+7. Condomínio
 
 ### Observabilidade
 

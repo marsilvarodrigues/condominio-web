@@ -92,7 +92,7 @@ class UserControllerTest {
     @Test
     @WithMockUser
     void findById_whenFound_returns200() throws Exception {
-        when(userService.findById(1L)).thenReturn(Optional.of(dto(1L, "test@test.com")));
+        when(userService.findUserById(1L)).thenReturn(Optional.of(dto(1L, "test@test.com")));
 
         mockMvc.perform(get("/users/1").header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
                 .andExpect(status().isOk())
@@ -103,7 +103,7 @@ class UserControllerTest {
     @Test
     @WithMockUser
     void findById_whenNotFound_returns404() throws Exception {
-        when(userService.findById(99L)).thenReturn(Optional.empty());
+        when(userService.findUserById(99L)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/users/99").header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
                 .andExpect(status().isNotFound());

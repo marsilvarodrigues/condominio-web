@@ -45,6 +45,22 @@ test.describe('Hierarquia — Blocos e Apartamentos', () => {
     await expect(page.getByText('Vago')).toBeVisible()
   })
 
+  test('exibe coluna de moradores com chip "Ver detalhes"', async ({ page }) => {
+    mockGet(page, '**/api/apartamentos**', APARTAMENTOS)
+    await page.getByText('Bloco A').click()
+    await expect(page.getByText('Ver detalhes').first()).toBeVisible()
+  })
+
+  test('navega para detalhe do apartamento ao clicar em detalhes', async ({ page }) => {
+    mockGet(page, '**/api/apartamentos**', APARTAMENTOS)
+    mockGet(page, '**/api/apartamentos/10', APARTAMENTOS[0])
+    mockGet(page, '**/api/apartamentos/10/proprietarios', [])
+    mockGet(page, '**/api/pessoas**', { content: [], totalElements: 0 })
+    await page.getByText('Bloco A').click()
+    await page.getByTitle('Ver detalhes').first().click()
+    await expect(page).toHaveURL(/\/hierarquia\/apartamentos\//)
+  })
+
   test('abre dialog de novo bloco', async ({ page }) => {
     await page.getByRole('button', { name: /novo$/i }).click()
     await expect(page.getByRole('dialog')).toBeVisible()

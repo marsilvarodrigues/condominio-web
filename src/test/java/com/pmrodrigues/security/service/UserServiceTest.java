@@ -184,7 +184,7 @@ class UserServiceTest {
         var user = userWithId(1L, "test@test.com");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        var result = userService.findById(1L);
+        var result = userService.findUserById(1L);
 
         assertThat(result).isPresent();
         assertThat(result.get().email()).isEqualTo("test@test.com");
@@ -194,7 +194,7 @@ class UserServiceTest {
     void findById_whenNotFound_returnsEmpty() {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        var result = userService.findById(99L);
+        var result = userService.findUserById(99L);
 
         assertThat(result).isEmpty();
     }

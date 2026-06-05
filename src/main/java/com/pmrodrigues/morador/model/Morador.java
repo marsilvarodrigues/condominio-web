@@ -1,0 +1,40 @@
+package com.pmrodrigues.morador.model;
+
+import com.pmrodrigues.commons.tenant.TenantContext;
+import com.pmrodrigues.condominio.model.Condominio;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
+/**
+ * Concrete JPA entity for a condominium resident (morador), identified by CPF.
+ * Stored as a SINGLE_TABLE row in {@code pessoas} with discriminator value {@code MORADOR}.
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@Accessors(chain = true)
+@Entity
+@Table(name = "moradores")
+@PrimaryKeyJoinColumn(name = "id")
+@DiscriminatorValue("MORADOR")
+public class Morador extends Pessoa {
+
+    /** CPF — Brazilian natural-person tax identifier (up to 14 chars including punctuation). */
+    @Column(length = 14)
+    private String cpf;
+
+    @Override
+    @PrePersist
+    public void prePersist() {
+        super.prePersist();
+        getRoles().add("ROLE_MORADOR");
+    }
+}

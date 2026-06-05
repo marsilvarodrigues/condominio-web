@@ -1,0 +1,100 @@
+package com.pmrodrigues.morador.model;
+
+import com.pmrodrigues.commons.config.TenantFilterAspect;
+import com.pmrodrigues.commons.tenant.TenantContext;
+import com.pmrodrigues.condominio.model.Apartamento;
+import com.pmrodrigues.condominio.model.Condominio;
+import com.pmrodrigues.security.model.User;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.Accessors;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+/**
+ * Abstract JPA entity representing a person (natural or legal) residing in a condominium.
+ * Extends {@link User} via JOINED inheritance so that every {@code Pessoa} is also a system user.
+ * The sub-hierarchy within the {@code pessoas} table uses SINGLE_TABLE with discriminator
+ * column {@code pessoa_tipo}.
+ *
+ * <p>Fields inherited from {@link User} (stored in {@code users} table): {@code id},
+ * {@code email}, {@code password}, {@code name}, {@code enabled}, {@code deleted},
+ * {@code roles}, {@code condominios}, {@code createdAt}, {@code updatedAt}.
+ *
+ * <p>Soft-delete is inherited from {@code User}: {@code @SQLRestriction("deleted = false")}
+ * uses the {@code deleted} column in the {@code users} table.
+ * The {@link TenantFilterAspect#CONDOMINIO_FILTER} applies to the {@code condominio_id}
+ * column in the {@code pessoas} table.
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
+@Entity
+@Table(name = "pessoas")
+@PrimaryKeyJoinColumn(name = "id")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "pessoa_tipo", discriminatorType = DiscriminatorType.STRING)
+@SQLRestriction("deleted = false")
+@Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
+@EntityListeners(AuditingEntityListener.class)
+public abstract class Pessoa extends User {
+
+    /**
+     * Multi-tenancy discriminator. Not directly accessible — set via {@link TenantContext} in {@link #prePersist()}.
+     * The getter/setter are suppressed to avoid bypassing the tenant mechanism.
+     */
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "condominio_id", nullable = false)
+    private Condominio condominio;
+
+    /**
+     * Current apartment assignment (morador relationship).
+     * Null means the person is not currently assigned to any apartment.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "apartamento_id")
+    private Apartamento apartamento;
+
+    /**
+     * Phone number.
+     */
+    @Column(length = 20)
+    private String telefone;
+
+    /**
+     * Spring Data audit: username that created this pessoa record.
+     */
+    @CreatedBy
+    @Column(name = "created_by", updatable = false)
+    private String createdBy;
+
+    /**
+     * Spring Data audit: username that last modified this pessoa record.
+     */
+    @LastModifiedBy
+    @Column(name = "updated_by")
+    private String updatedBy;
+
+    /**
+     * Sets the {@code condominio} from {@link TenantContext} before the entity is first persisted,
+     * and adds the {@code ROLE_MORADOR} role to this user's role set.
+     */
+    @Override
+    @PrePersist
+    public void prePersist() {
+        super.prePersist();
+        Long condominioId = TenantContext.getCondominioId();
+        if (condominioId != null) {
+            var c = new Condominio();
+            c.setId(condominioId);
+            this.condominio = c;
+        }
+    }
+}

@@ -1,0 +1,55 @@
+package com.pmrodrigues.morador.model;
+
+import com.pmrodrigues.condominio.model.Apartamento;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Abstract JPA entity for a property owner (proprietário).
+ * Extends {@link Pessoa} and adds a many-to-many relationship with {@link Apartamento}
+ * via the {@code proprietario_apartamentos} join table.
+ *
+ * <p>Concrete subclasses are {@link ProprietarioPessoaFisica} (CPF) and
+ * {@link ProprietarioPessoaJuridica} (CNPJ + razão social).
+ *
+ * <p>The {@code ROLE_PROPRIETARIO} role is assigned at persist time in addition to
+ * the {@code ROLE_MORADOR} role already set by {@link Pessoa#prePersist()}.
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@Accessors(chain = true)
+@Entity
+@Table(name = "proprietarios")
+@PrimaryKeyJoinColumn(name = "id")
+@DiscriminatorValue("PROP")
+public abstract class Proprietario extends Pessoa {
+
+    /**
+     * Apartments owned by this proprietário (many-to-many through {@code proprietario_apartamentos}).
+     */
+    @ManyToMany
+    @JoinTable(
+            name = "proprietario_apartamentos",
+            joinColumns = @JoinColumn(name = "proprietario_id"),
+            inverseJoinColumns = @JoinColumn(name = "apartamento_id")
+    )
+    private Set<Apartamento> apartamentos = new HashSet<>();
+
+    /**
+     * Adds the {@code ROLE_PROPRIETARIO} role at persist time in addition to
+     * the roles already configured by {@link Pessoa#prePersist()}.
+     */
+    @Override
+    @PrePersist
+    public void prePersist() {
+        super.prePersist();
+        getRoles().add("ROLE_PROPRIETARIO");
+    }
+}

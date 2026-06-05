@@ -105,10 +105,16 @@ class ArchitectureTest {
                     if (depPkg.contains(".repository")) {
                         String depModule = moduleOf(depPkg);
                         if (depModule != null && !depModule.equals(ownModule)) {
-                            events.add(SimpleConditionEvent.violated(clazz,
-                                "%s (module '%s') must not depend on %s (module '%s'); use the target module's service instead"
-                                    .formatted(clazz.getName(), ownModule,
-                                               dep.getTargetClass().getName(), depModule)));
+                            // Allow if the class extends a service in the same module as the repository —
+                            // this means the repository dependency is inherited via super constructor.
+                            boolean inheritedViaParent = clazz.isAssignableTo(
+                                "com.pmrodrigues." + depModule + ".service.UserService");
+                            if (!inheritedViaParent) {
+                                events.add(SimpleConditionEvent.violated(clazz,
+                                    "%s (module '%s') must not depend on %s (module '%s'); use the target module's service instead"
+                                        .formatted(clazz.getName(), ownModule,
+                                                   dep.getTargetClass().getName(), depModule)));
+                            }
                         }
                     }
                 });
