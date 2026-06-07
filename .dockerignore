@@ -28,7 +28,7 @@ Thumbs.db
 .claude/
 
 # Documentação e arquivos de projeto (não afetam o build)
-CLAUDE.md
+.claude/CLAUDE.md
 README.md
 *.md
 

@@ -1,5 +1,3 @@
-# language: pt
-
 @e2e
 Feature: Gestão de Proprietários
 

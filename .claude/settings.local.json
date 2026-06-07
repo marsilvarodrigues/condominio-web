@@ -94,7 +94,9 @@
       "Bash(awk -F',' '$2~/morador/ {printf \"%-50s  instr_cov=%s/%s  line_cov=%s/%s\\\\n\", $3, $5, $4+$5, $9, $8+$9}')",
       "Bash(awk -F',' 'NR>1 && \\($4+$5\\)>0 { pct = $5*100/\\($4+$5\\); printf \"%7.1f%%  %-50s  %s\\\\n\", pct, $3, $2 }')",
       "Bash(findstr /R /I \"estado\\\\|uf\\\\|state\" \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\frontend\\\\react\\\\src\\\\api\\\\*.api.ts\")",
-      "Bash(findstr /S /I \"ESTADOS\\\\|STATES\\\\|BR_STATES\\\\|BRAZILIAN\" \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\frontend\\\\react\\\\src\")"
+      "Bash(findstr /S /I \"ESTADOS\\\\|STATES\\\\|BR_STATES\\\\|BRAZILIAN\" \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\frontend\\\\react\\\\src\")",
+      "Bash(npm test *)",
+      "Bash(xxd /c/Users/marsi/IdeaProjects/condominio-web/src/test/resources/features/moradores/pessoas.feature)"
     ]
   }
 }
