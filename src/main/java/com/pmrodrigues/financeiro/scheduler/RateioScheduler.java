@@ -36,22 +36,24 @@ public class RateioScheduler {
         List<Long> condominios = condominioRepository.findAllIds();
         log.info("RateioScheduler: {} condomínios a processar", condominios.size());
 
-        for (Long condominioId : condominios) {
-            long inicio = System.currentTimeMillis();
-            try {
-                TenantContext.setCondominioId(condominioId);
-                var resultado = rateioService.ratearPendentes(condominioId, TipoExecucaoRateio.AUTOMATICO);
-                log.info("Rateio automático — condominioId={} total={} sucesso={} erro={} duracaoMs={}",
-                        condominioId, resultado.total(), resultado.sucesso(), resultado.erro(),
-                        System.currentTimeMillis() - inicio);
-            } catch (Exception e) {
-                log.error("Falha no rateio automático — condominioId={}: {}",
-                        condominioId, e.getMessage(), e);
-            } finally {
-                TenantContext.clear();
-            }
-        }
+        condominios.forEach(this::processarCondominio);
 
         log.info("RateioScheduler concluído");
+    }
+
+    private void processarCondominio(Long condominioId) {
+        long inicio = System.currentTimeMillis();
+        try {
+            TenantContext.setCondominioId(condominioId);
+            var resultado = rateioService.ratearPendentes(condominioId, TipoExecucaoRateio.AUTOMATICO);
+            log.info("Rateio automático — condominioId={} total={} sucesso={} erro={} duracaoMs={}",
+                    condominioId, resultado.total(), resultado.sucesso(), resultado.erro(),
+                    System.currentTimeMillis() - inicio);
+        } catch (Exception e) {
+            log.error("Falha no rateio automático — condominioId={}: {}",
+                    condominioId, e.getMessage(), e);
+        } finally {
+            TenantContext.clear();
+        }
     }
 }

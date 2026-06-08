@@ -18,19 +18,25 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
 import EditIcon from '@mui/icons-material/Edit'
 import AddIcon from '@mui/icons-material/Add'
 import LinkOffIcon from '@mui/icons-material/LinkOff'
+import EmailIcon from '@mui/icons-material/Email'
+import CancelIcon from '@mui/icons-material/Cancel'
+import CreditCardIcon from '@mui/icons-material/CreditCard'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import { PageHeader, DataTable, ConfirmDialog, FormDialog, type Column } from '@/components/common'
 import { apartamentosApi } from '@/api/apartamentos.api'
 import {
   useMoradoresDeApartamento,
   useProprietariosDeApartamento,
 } from '@/hooks/useMoradores'
-import type { PessoaDTO, ProprietarioDTO, CreateProprietarioDTO } from '@/types'
+import { useCobrancasDoApartamento, useCobrancaMutations } from '@/hooks/useCobrancas'
+import type { PessoaDTO, ProprietarioDTO, CreateProprietarioDTO, CobrancaResumoDTO } from '@/types'
 
 const moradorSchema = z.object({
   nome: z.string().min(2, 'Nome obrigatório'),
@@ -77,6 +83,7 @@ export default function ApartamentoDetailPage() {
     open: false, editing: null,
   })
   const [dissocTarget, setDissocTarget] = useState<{ propId: number; nome: string } | null>(null)
+  const [cancelTarget, setCancelTarget] = useState<CobrancaResumoDTO | null>(null)
 
   const { data: apt } = useQuery({
     queryKey: ['apartamento', aptId],
@@ -92,6 +99,10 @@ export default function ApartamentoDetailPage() {
     useProprietariosDeApartamento(aptId)
   const proprietarios = propQuery.data ?? []
 
+  const cobrancasQuery = useCobrancasDoApartamento(aptId)
+  const cobrancas = cobrancasQuery.data?.content ?? []
+  const { cancelar: cancelarCobranca, reenviarEmail } = useCobrancaMutations(aptId)
+
   const moradorForm = useForm<MoradorFormValues>({ resolver: zodResolver(moradorSchema) })
   const propForm = useForm<ProprietarioFormValues>({
     resolver: zodResolver(proprietarioSchema),
@@ -102,6 +113,81 @@ export default function ApartamentoDetailPage() {
   const aptLabel = apt
     ? `Apt ${apt.numero} — Bloco ${apt.blocoNome ?? ''}`
     : `Apartamento #${aptId}`
+
+  const statusChipStyle = (status: string) => {
+    const map: Record<string, { bg: string; color: string; fw?: string; td?: string }> = {
+      PENDENTE:    { bg: '#E3F2FD', color: '#1565C0' },
+      ENVIADA:     { bg: '#E8F5E9', color: '#2E7D32' },
+      VISUALIZADA: { bg: '#F3E5F5', color: '#6A1B9A' },
+      PAGA:        { bg: '#E8F5E9', color: '#1B5E20', fw: '700' },
+      VENCIDA:     { bg: '#FCE4EC', color: '#C62828' },
+      CANCELADA:   { bg: '#ECEFF1', color: '#546E7A', td: 'line-through' },
+    }
+    return map[status] ?? { bg: '#F5F5F5', color: '#555' }
+  }
+
+  const cobrancasColumns: Column<CobrancaResumoDTO>[] = [
+    {
+      key: 'criadaEm',
+      header: 'Emitida em',
+      render: (r) => format(new Date(r.criadaEm), 'dd/MM/yyyy', { locale: ptBR }),
+    },
+    {
+      key: 'vencimento',
+      header: 'Vencimento',
+      render: (r) => {
+        const isOverdue = r.status === 'VENCIDA'
+        return (
+          <Typography variant="body2" color={isOverdue ? 'error' : 'inherit'} fontWeight={isOverdue ? 700 : 400}>
+            {format(new Date(r.vencimento), 'dd/MM/yyyy', { locale: ptBR })}
+          </Typography>
+        )
+      },
+    },
+    {
+      key: 'valor',
+      header: 'Valor',
+      render: (r) => `R$ ${r.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      render: (r) => {
+        const s = statusChipStyle(r.status)
+        return (
+          <Box component="span" sx={{
+            px: 1.5, py: 0.5, borderRadius: 3, fontSize: 12,
+            fontWeight: s.fw ?? 500, background: s.bg, color: s.color,
+            textDecoration: s.td,
+          }}>
+            {r.status}
+          </Box>
+        )
+      },
+    },
+    {
+      key: 'actions',
+      header: '',
+      width: 100,
+      align: 'right',
+      render: (r) => (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
+          <Tooltip title="Reenviar e-mail">
+            <IconButton size="small" onClick={() => reenviarEmail.mutate(r.id)}>
+              <EmailIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          {r.status !== 'CANCELADA' && r.status !== 'PAGA' && (
+            <Tooltip title="Cancelar cobrança">
+              <IconButton size="small" color="error" onClick={() => setCancelTarget(r)}>
+                <CancelIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
+      ),
+    },
+  ]
 
   function openNewMorador() {
     moradorForm.reset({ nome: '', email: '', cpf: '', telefone: '' })
@@ -208,7 +294,7 @@ export default function ApartamentoDetailPage() {
       <PageHeader
         title={aptLabel}
         subtitle="Moradores e proprietários do apartamento"
-        action={
+        actions={
           <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/hierarquia')}>
             Voltar
           </Button>
@@ -219,6 +305,7 @@ export default function ApartamentoDetailPage() {
         <Tabs value={tab} onChange={(_, v) => setTab(v)}>
           <Tab label="Moradores" />
           <Tab label="Proprietários" />
+          <Tab icon={<CreditCardIcon />} iconPosition="start" label="Cobranças" />
         </Tabs>
       </Paper>
 
@@ -274,6 +361,31 @@ export default function ApartamentoDetailPage() {
             rows={proprietarios}
             keyField="id"
             emptyMessage="Sem proprietários."
+          />
+        )}
+      </TabPanel>
+
+      {/* Tab 2 — Cobranças */}
+      <TabPanel value={tab} index={2}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+          <Typography variant="h6">
+            Cobranças
+            <Chip label={cobrancas.length} size="small" sx={{ ml: 1 }} />
+          </Typography>
+        </Box>
+        {cobrancas.length === 0 ? (
+          <Card variant="outlined" sx={{ textAlign: 'center', py: 4 }}>
+            <CardContent>
+              <Typography color="text.secondary">Nenhuma cobrança emitida para este apartamento.</Typography>
+            </CardContent>
+          </Card>
+        ) : (
+          <DataTable
+            columns={cobrancasColumns}
+            rows={cobrancas}
+            keyField="id"
+            loading={cobrancasQuery.isLoading}
+            emptyMessage="Sem cobranças."
           />
         )}
       </TabPanel>
@@ -448,6 +560,22 @@ export default function ApartamentoDetailPage() {
           desassociar.mutate(dissocTarget!.propId, { onSuccess: () => setDissocTarget(null) })
         }
         onCancel={() => setDissocTarget(null)}
+      />
+
+      {/* Confirm cancelar cobrança */}
+      <ConfirmDialog
+        open={!!cancelTarget}
+        title="Cancelar Cobrança"
+        message={`Cancelar cobrança de R$ ${cancelTarget?.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} com vencimento ${cancelTarget ? format(new Date(cancelTarget.vencimento), 'dd/MM/yyyy', { locale: ptBR }) : ''}?`}
+        destructive
+        loading={cancelarCobranca.isPending}
+        onConfirm={() =>
+          cancelarCobranca.mutate(
+            { id: cancelTarget!.id, motivo: 'Cancelamento pelo administrador' },
+            { onSuccess: () => setCancelTarget(null) },
+          )
+        }
+        onCancel={() => setCancelTarget(null)}
       />
     </Box>
   )

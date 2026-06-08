@@ -2,12 +2,15 @@ package com.pmrodrigues.financeiro.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pmrodrigues.condominio.model.Apartamento;
 import com.pmrodrigues.financeiro.dto.CotaUnidadeDTO;
 import com.pmrodrigues.financeiro.dto.RateioExecucaoDTO;
+import com.pmrodrigues.financeiro.dto.RateioExecucaoFilterDTO;
 import com.pmrodrigues.financeiro.dto.RateioLoteResultado;
 import com.pmrodrigues.financeiro.dto.SimularRateioRequest;
 import com.pmrodrigues.financeiro.dto.SimularRateioResponse;
 import com.pmrodrigues.financeiro.mapper.RateioExecucaoMapper;
+import com.pmrodrigues.financeiro.model.CoeficienteRateio;
 import com.pmrodrigues.financeiro.model.CotaRateio;
 import com.pmrodrigues.financeiro.model.Despesa;
 import com.pmrodrigues.financeiro.model.RateioExecucao;
@@ -32,8 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -76,65 +79,11 @@ public class RateioService {
     @Timed(value = "rateio.service.calcular", description = "Rate a single despesa")
     public RateioExecucao ratear(Long despesaId, TipoExecucaoRateio tipoExecucao) {
         log.info("Rateando despesa id={} tipoExecucao={}", despesaId, tipoExecucao);
-        Despesa despesa = despesaRepo.findById(despesaId)
+        var despesa = despesaRepo.findById(despesaId)
                 .orElseThrow(() -> notFound("Despesa", despesaId));
 
-        var grupo = despesa.getGrupoDespesa();
-        var execucao = RateioExecucao.builder()
-                .despesa(despesa)
-                .grupoDespesaId(grupo.getId())
-                .tipoExecucao(tipoExecucao)
-                .despesaTotal(despesa.getValorTotal())
-                .dataExecucao(LocalDateTime.now())
-                .build();
-
-        try {
-            var coeficientes = coeficienteRepo.findVigentesPorGrupo(grupo.getId(), despesa.getCompetencia());
-            if (coeficientes.isEmpty()) {
-                throw new IllegalStateException(
-                        "Nenhum coeficiente vigente para grupoDespesaId=" + grupo.getId());
-            }
-
-            var estrategia = resolverEstrategia(grupo.getTipoRateio().name());
-            Map<String, Object> parametros = deserializarParametros(grupo.getParametrosJson());
-            Map<Long, BigDecimal> cotasCalculadas =
-                    estrategia.calcular(coeficientes, despesa.getValorTotal(), parametros);
-
-            // replace existing quotas
-            cotaRateioRepo.deleteByDespesaId(despesaId);
-
-            BigDecimal somaCotas = BigDecimal.ZERO;
-            for (var entry : cotasCalculadas.entrySet()) {
-                var cota = CotaRateio.builder()
-                        .despesa(despesa)
-                        .apartamento(coeficientes.stream()
-                                .filter(c -> c.getApartamento().getId().equals(entry.getKey()))
-                                .findFirst()
-                                .orElseThrow()
-                                .getApartamento())
-                        .valor(entry.getValue())
-                        .rateioExecucao(execucao)
-                        .build();
-                cotaRateioRepo.save(cota);
-                somaCotas = somaCotas.add(entry.getValue());
-            }
-
-            execucao.setTotalUnidades(coeficientes.size());
-            execucao.setTotalCotas(somaCotas);
-            execucao.setStatus(StatusExecucaoRateio.SUCESSO);
-
-            despesa.setRateioStatus(StatusRateio.RATEADA);
-            despesa.setDataUltimoRateio(LocalDateTime.now());
-
-            log.info("Despesa id={} rateada com sucesso: {} unidades, total={}",
-                    despesaId, coeficientes.size(), somaCotas);
-        } catch (Exception e) {
-            log.error("Erro ao ratear despesa id={}: {}", despesaId, e.getMessage(), e);
-            execucao.setStatus(StatusExecucaoRateio.ERRO);
-            execucao.setErroMensagem(e.getMessage());
-            despesa.setRateioStatus(StatusRateio.ERRO);
-            despesa.setDataUltimoRateio(LocalDateTime.now());
-        }
+        var execucao = novaExecucao(despesa, tipoExecucao);
+        calcularEPersistirCotas(despesa, execucao);
 
         despesaRepo.save(despesa);
         return execucaoRepo.save(execucao);
@@ -166,24 +115,13 @@ public class RateioService {
         log.info("ratearPendentes condominioId={} tipoExecucao={}", condominioId, tipoExecucao);
         long inicio = System.currentTimeMillis();
 
-        List<Despesa> pendentes = despesaRepo.findPendentesOuErro();
-        int sucesso = 0;
-        int erro = 0;
+        var pendentes = despesaRepo.findPendentesOuErro();
+        var resultados = pendentes.stream()
+                .map(d -> executarRateioSeguro(d, tipoExecucao))
+                .toList();
 
-        for (Despesa d : pendentes) {
-            try {
-                RateioExecucao exec = ratear(d.getId(), tipoExecucao);
-                if (exec.getStatus() == StatusExecucaoRateio.SUCESSO) {
-                    sucesso++;
-                } else {
-                    erro++;
-                }
-            } catch (Exception e) {
-                log.error("Falha inesperada ao ratear despesa id={}: {}", d.getId(), e.getMessage(), e);
-                erro++;
-            }
-        }
-
+        int sucesso = (int) resultados.stream().filter(b -> b).count();
+        int erro = pendentes.size() - sucesso;
         long duracao = System.currentTimeMillis() - inicio;
         log.info("ratearPendentes concluído: total={} sucesso={} erro={} duracaoMs={}",
                 pendentes.size(), sucesso, erro, duracao);
@@ -222,41 +160,28 @@ public class RateioService {
         var grupo = grupoDespesaRepo.findById(request.grupoDespesaId())
                 .orElseThrow(() -> notFound("GrupoDespesa", request.grupoDespesaId()));
 
-        var coeficientes = coeficienteRepo.findVigentesPorGrupo(
-                grupo.getId(), java.time.LocalDate.now());
-
-        if (coeficientes.isEmpty()) {
-            throw new IllegalStateException(
-                    "Nenhum coeficiente vigente para grupoDespesaId=" + grupo.getId());
-        }
+        var coeficientes = coeficienteRepo.findVigentesPorGrupo(grupo.getId(), LocalDate.now());
+        validarCoeficientes(coeficientes, grupo.getId());
 
         var estrategia = resolverEstrategia(grupo.getTipoRateio().name());
-        Map<String, Object> parametros = request.parametros() != null
+        var parametros = request.parametros() != null
                 ? request.parametros()
                 : deserializarParametros(grupo.getParametrosJson());
 
-        Map<Long, BigDecimal> cotasCalculadas =
-                estrategia.calcular(coeficientes, request.despesaTotal(), parametros);
+        var cotasCalculadas = estrategia.calcular(coeficientes, request.despesaTotal(), parametros);
+        var somaCotas = cotasCalculadas.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal somaCotas = cotasCalculadas.values().stream()
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal somaPesos = somaCotas.compareTo(BigDecimal.ZERO) == 0
-                ? BigDecimal.ONE : somaCotas;
+        var cotas = coeficientes.stream()
+                .map(c -> {
+                    var aptId = c.getApartamento().getId();
+                    var cota = cotasCalculadas.getOrDefault(aptId, BigDecimal.ZERO);
+                    return new CotaUnidadeDTO(aptId, c.getApartamento().getNumero(), null, null,
+                            cota, percentualCota(cota, request.despesaTotal()));
+                })
+                .toList();
 
-        List<CotaUnidadeDTO> cotasDto = new ArrayList<>();
-        for (var c : coeficientes) {
-            Long aptId = c.getApartamento().getId();
-            BigDecimal cota = cotasCalculadas.getOrDefault(aptId, BigDecimal.ZERO);
-            BigDecimal pctCota = somaCotas.compareTo(BigDecimal.ZERO) == 0
-                    ? BigDecimal.ZERO
-                    : cota.divide(request.despesaTotal(), 4, RoundingMode.HALF_UP)
-                            .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP);
-            cotasDto.add(new CotaUnidadeDTO(aptId, c.getApartamento().getNumero(),
-                    null, null, cota, pctCota));
-        }
-
-        log.info("Simulação concluída: {} unidades, somaCotas={}", coeficientes.size(), somaCotas);
-        return new SimularRateioResponse(cotasDto, somaCotas);
+        log.info("Simulação concluída: {} unidades, somaCotas={}", cotas.size(), somaCotas);
+        return new SimularRateioResponse(cotas, somaCotas);
     }
 
     /**
@@ -268,8 +193,7 @@ public class RateioService {
      */
     @Transactional(readOnly = true)
     @Timed(value = "rateio.service.execucoes", description = "List rateio executions")
-    public Page<RateioExecucaoDTO> findExecucoes(
-            com.pmrodrigues.financeiro.dto.RateioExecucaoFilterDTO filter, Pageable pageable) {
+    public Page<RateioExecucaoDTO> findExecucoes(RateioExecucaoFilterDTO filter, Pageable pageable) {
         log.info("Listing rateio execucoes: filter={}", filter);
         return execucaoRepo.findAll(
                 Specification.allOf(
@@ -280,19 +204,112 @@ public class RateioService {
                 pageable).map(execucaoMapper::toDTO);
     }
 
+    private RateioExecucao novaExecucao(Despesa despesa, TipoExecucaoRateio tipoExecucao) {
+        return RateioExecucao.builder()
+                .despesa(despesa)
+                .grupoDespesaId(despesa.getGrupoDespesa().getId())
+                .tipoExecucao(tipoExecucao)
+                .despesaTotal(despesa.getValorTotal())
+                .dataExecucao(LocalDateTime.now())
+                .build();
+    }
+
+    private void calcularEPersistirCotas(Despesa despesa, RateioExecucao execucao) {
+        try {
+            var grupo = despesa.getGrupoDespesa();
+            var coeficientes = coeficienteRepo.findVigentesPorGrupo(grupo.getId(), despesa.getCompetencia());
+            validarCoeficientes(coeficientes, grupo.getId());
+
+            var estrategia = resolverEstrategia(grupo.getTipoRateio().name());
+            var parametros = deserializarParametros(grupo.getParametrosJson());
+            var cotasCalculadas = estrategia.calcular(coeficientes, despesa.getValorTotal(), parametros);
+
+            cotaRateioRepo.deleteByDespesaId(despesa.getId());
+            var somaCotas = persistirCotas(cotasCalculadas, coeficientes, despesa, execucao);
+
+            marcarSucesso(execucao, despesa, coeficientes.size(), somaCotas);
+        } catch (Exception e) {
+            marcarErro(execucao, despesa, e);
+        }
+    }
+
+    private BigDecimal persistirCotas(Map<Long, BigDecimal> cotasCalculadas,
+                                       List<CoeficienteRateio> coeficientes,
+                                       Despesa despesa, RateioExecucao execucao) {
+        var cotas = cotasCalculadas.entrySet().stream()
+                .map(entry -> CotaRateio.builder()
+                        .despesa(despesa)
+                        .apartamento(resolverApartamento(coeficientes, entry.getKey()))
+                        .valor(entry.getValue())
+                        .rateioExecucao(execucao)
+                        .build())
+                .toList();
+        cotaRateioRepo.saveAll(cotas);
+        return cotas.stream().map(CotaRateio::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private Apartamento resolverApartamento(List<CoeficienteRateio> coeficientes, Long aptId) {
+        return coeficientes.stream()
+                .filter(c -> c.getApartamento().getId().equals(aptId))
+                .findFirst()
+                .orElseThrow()
+                .getApartamento();
+    }
+
+    private void marcarSucesso(RateioExecucao execucao, Despesa despesa, int totalUnidades, BigDecimal somaCotas) {
+        execucao.setTotalUnidades(totalUnidades);
+        execucao.setTotalCotas(somaCotas);
+        execucao.setStatus(StatusExecucaoRateio.SUCESSO);
+        despesa.setRateioStatus(StatusRateio.RATEADA);
+        despesa.setDataUltimoRateio(LocalDateTime.now());
+        log.info("Despesa id={} rateada com sucesso: {} unidades, total={}",
+                despesa.getId(), totalUnidades, somaCotas);
+    }
+
+    private void marcarErro(RateioExecucao execucao, Despesa despesa, Exception e) {
+        log.error("Erro ao ratear despesa id={}: {}", despesa.getId(), e.getMessage(), e);
+        execucao.setStatus(StatusExecucaoRateio.ERRO);
+        execucao.setErroMensagem(e.getMessage());
+        despesa.setRateioStatus(StatusRateio.ERRO);
+        despesa.setDataUltimoRateio(LocalDateTime.now());
+    }
+
+    private boolean executarRateioSeguro(Despesa despesa, TipoExecucaoRateio tipoExecucao) {
+        try {
+            var exec = ratear(despesa.getId(), tipoExecucao);
+            return exec.getStatus() == StatusExecucaoRateio.SUCESSO;
+        } catch (Exception e) {
+            log.error("Falha inesperada ao ratear despesa id={}: {}", despesa.getId(), e.getMessage(), e);
+            return false;
+        }
+    }
+
+    private void validarCoeficientes(List<CoeficienteRateio> coeficientes, Long grupoDespesaId) {
+        if (coeficientes.isEmpty()) {
+            throw new IllegalStateException(
+                    "Nenhum coeficiente vigente para grupoDespesaId=" + grupoDespesaId);
+        }
+    }
+
+    private BigDecimal percentualCota(BigDecimal cota, BigDecimal despesaTotal) {
+        if (despesaTotal.compareTo(BigDecimal.ZERO) == 0) return BigDecimal.ZERO;
+        return cota.divide(despesaTotal, 4, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100))
+                .setScale(2, RoundingMode.HALF_UP);
+    }
+
     private EstrategiaRateio resolverEstrategia(String tipoRateioName) {
-        EstrategiaRateio estrategia = estrategias.get(tipoRateioName);
+        var estrategia = estrategias.get(tipoRateioName);
         if (estrategia == null) {
             throw new IllegalStateException("Estratégia não encontrada para tipo: " + tipoRateioName);
         }
         return estrategia;
     }
 
-    @SuppressWarnings("unchecked")
     private Map<String, Object> deserializarParametros(String json) {
         if (json == null || json.isBlank()) return Map.of();
         try {
-            return objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+            return objectMapper.readValue(json, new TypeReference<>() {});
         } catch (Exception e) {
             log.error("Erro ao desserializar parametrosJson: {}", e.getMessage());
             return Map.of();

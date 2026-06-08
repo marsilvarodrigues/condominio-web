@@ -25,7 +25,6 @@ import { useForm } from 'react-hook-form'
 import { PageHeader, DataTable, ConfirmDialog, FormDialog, type Column } from '@/components/common'
 import { blocosApi } from '@/api/blocos.api'
 import { apartamentosApi } from '@/api/apartamentos.api'
-import { useMoradoresPorApartamento } from '@/hooks/useMoradores'
 import type { BlocoDTO, ApartamentoDTO, CreateBlocoDTO, CreateApartamentoDTO } from '@/types'
 
 export default function HierarquiaPage() {
@@ -47,9 +46,6 @@ export default function HierarquiaPage() {
     queryFn: () => apartamentosApi.list(selectedBloco?.id),
     enabled: !!selectedBloco,
   })
-
-  // Morador column: fetched lazily per apartment via ApartamentoDetailPage; shown as chip count here
-  const moradoresCountByApt: Record<number, number> = {}
 
   const blocoForm = useForm<CreateBlocoDTO>()
   const aptForm = useForm<CreateApartamentoDTO>()

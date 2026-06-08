@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Spring Data JPA repository for {@link Pessoa} entities, supporting specification-based filtering.
  */
@@ -23,4 +25,12 @@ public interface PessoaRepository extends JpaRepository<Pessoa, Long>, JpaSpecif
     @Modifying
     @Query("UPDATE Pessoa p SET p.deleted = true WHERE p.condominio.id = :condominioId")
     void softDeleteByCondominioId(@Param("condominioId") Long condominioId);
+
+    /**
+     * Returns all active pessoas (moradores) assigned to the given apartment.
+     *
+     * @param apartamentoId apartment primary key
+     * @return list of pessoas linked to this apartment
+     */
+    List<Pessoa> findByApartamentoId(Long apartamentoId);
 }

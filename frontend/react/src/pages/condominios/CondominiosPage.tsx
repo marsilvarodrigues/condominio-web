@@ -58,7 +58,7 @@ export default function CondominiosPage() {
 
   const openCreate = () => {
     setEditTarget(null)
-    reset({ endereco: { estado: null } })
+    reset({ endereco: { estado: undefined } })
     setDialogOpen(true)
   }
 
@@ -76,7 +76,7 @@ export default function CondominiosPage() {
         logradouro: row.endereco.logradouro,
         cep: row.endereco.cep,
         cidade: row.endereco.cidade,
-        estado: estadoObj,
+        estado: estadoObj ?? undefined,
       },
     })
     setDialogOpen(true)

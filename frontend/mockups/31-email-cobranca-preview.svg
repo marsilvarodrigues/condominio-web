@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="email-shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-opacity="0.12"/>
+    </filter>
+    <filter id="card-shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-opacity="0.08"/>
+    </filter>
+    <!-- QR Code pattern -->
+    <pattern id="qr-pattern" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+      <rect width="8" height="8" fill="white"/>
+      <rect x="0" y="0" width="4" height="4" fill="#1A2332"/>
+      <rect x="4" y="4" width="4" height="4" fill="#1A2332"/>
+    </pattern>
+  </defs>
+
+  <!-- Email client background -->
+  <rect width="1280" height="900" fill="#F5F5F5"/>
+
+  <!-- ── Gmail-style client header ── -->
+  <rect x="0" y="0" width="1280" height="52" fill="#333333"/>
+  <text x="24" y="32" fill="white" font-size="16" font-weight="500">Gmail — Caixa de entrada</text>
+  <!-- Window controls (decorative) -->
+  <circle cx="1230" cy="26" r="8" fill="#FF5F56"/>
+  <circle cx="1252" cy="26" r="8" fill="#FFBD2E"/>
+  <circle cx="1274" cy="26" r="8" fill="#27C93F"/>
+
+  <!-- ── Email message card ── -->
+  <rect x="200" y="72" width="880" height="808" rx="4" fill="white" filter="url(#email-shadow)"/>
+
+  <!-- Email header: From / To / Subject -->
+  <rect x="200" y="72" width="880" height="84" rx="4" fill="white"/>
+  <rect x="200" y="144" width="880" height="1" fill="#E0E0E0"/>
+  <text x="224" y="100" fill="#546E7A" font-size="12">De:</text>
+  <text x="260" y="100" fill="#1A2332" font-size="12">noreply@condogest.com.br</text>
+  <text x="224" y="120" fill="#546E7A" font-size="12">Para:</text>
+  <text x="260" y="120" fill="#1A2332" font-size="12">maria@email.com</text>
+  <text x="224" y="140" fill="#546E7A" font-size="12">Assunto:</text>
+  <text x="274" y="140" fill="#1A2332" font-size="13" font-weight="700">💳 Taxa Condominial — Residencial Solar das Flores — Jul/2026</text>
+
+  <!-- ── Email body — rendered cobranca.html ── -->
+  <!-- Outer blue background inside email body -->
+  <rect x="200" y="156" width="880" height="724" fill="#E3F2FD"/>
+
+  <!-- Email container card -->
+  <rect x="300" y="176" width="680" height="692" rx="8" fill="white" filter="url(#card-shadow)"/>
+
+  <!-- Header gradient (simulated with two rects) -->
+  <rect x="300" y="176" width="680" height="80" rx="8" fill="#1565C0"/>
+  <rect x="300" y="216" width="680" height="40" fill="#1976D2"/>
+  <text x="332" y="213" fill="white" font-size="20" font-weight="700">CondoGest</text>
+  <text x="332" y="232" fill="rgba(255,255,255,0.80)" font-size="12">Sistema de Gestão de Condomínios</text>
+
+  <!-- Hero section -->
+  <rect x="300" y="256" width="680" height="100" fill="white"/>
+  <!-- Icon circle -->
+  <circle cx="640" cy="286" r="28" fill="#1565C0"/>
+  <text x="640" y="294" fill="white" font-size="20" text-anchor="middle">📋</text>
+  <text x="640" y="330" fill="#1A2332" font-size="17" font-weight="700" text-anchor="middle">Taxa Condominial</text>
+  <text x="640" y="348" fill="#546E7A" font-size="12" text-anchor="middle">Residencial Solar das Flores · Apt 101 · Bloco A</text>
+
+  <!-- Greeting -->
+  <text x="332" y="378" fill="#1A2332" font-size="13">Olá, <tspan font-weight="700">Maria Aparecida</tspan>,</text>
+  <text x="332" y="398" fill="#546E7A" font-size="12">Sua taxa condominial do mês está disponível para pagamento.</text>
+  <text x="332" y="414" fill="#546E7A" font-size="12">Escolha a forma mais conveniente:</text>
+
+  <!-- Value card -->
+  <rect x="332" y="428" width="616" height="72" rx="10" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1.5"/>
+  <text x="640" y="454" fill="#78909C" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1">VALOR A PAGAR</text>
+  <text x="640" y="480" fill="#1565C0" font-size="30" font-weight="700" text-anchor="middle">R$ 450,00</text>
+  <text x="640" y="494" fill="#546E7A" font-size="12" text-anchor="middle">Vencimento: <tspan font-weight="700">10/07/2026</tspan></text>
+
+  <!-- PIX section -->
+  <rect x="332" y="512" width="616" height="140" rx="10" fill="#E8F5E9" stroke="#A5D6A7" stroke-width="1.5"/>
+  <text x="640" y="536" fill="#2E7D32" font-size="13" font-weight="700" text-anchor="middle">✅  Pague com Pix — rápido e sem custo</text>
+  <text x="640" y="552" fill="#546E7A" font-size="11" text-anchor="middle">Escaneie o QR Code ou copie o código abaixo</text>
+
+  <!-- QR Code (simulated with pattern) -->
+  <rect x="560" y="558" width="160" height="160" rx="4" fill="white" stroke="#A5D6A7" stroke-width="2"/>
+  <!-- QR pattern simulation (simplified grid) -->
+  <rect x="566" y="564" width="7" height="7" fill="#1A2332"/>
+  <rect x="573" y="564" width="7" height="7" fill="#1A2332"/>
+  <rect x="580" y="564" width="7" height="7" fill="#1A2332"/>
+  <rect x="594" y="564" width="7" height="7" fill="#1A2332"/>
+  <rect x="608" y="564" width="7" height="7" fill="#1A2332"/>
+  <rect x="622" y="564" width="7" height="7" fill="#1A2332"/>
+  <rect x="629" y="564" width="7" height="7" fill="#1A2332"/>
+  <rect x="636" y="564" width="7" height="7" fill="#1A2332"/>
+  <rect x="566" y="571" width="7" height="7" fill="#1A2332"/>
+  <rect x="594" y="571" width="7" height="7" fill="#1A2332"/>
+  <rect x="622" y="571" width="7" height="7" fill="#1A2332"/>
+  <rect x="636" y="571" width="7" height="7" fill="#1A2332"/>
+  <rect x="566" y="578" width="7" height="7" fill="#1A2332"/>
+  <rect x="573" y="578" width="7" height="7" fill="#1A2332"/>
+  <rect x="580" y="578" width="7" height="7" fill="#1A2332"/>
+  <rect x="594" y="578" width="7" height="7" fill="#1A2332"/>
+  <rect x="601" y="578" width="7" height="7" fill="#1A2332"/>
+  <rect x="615" y="578" width="7" height="7" fill="#1A2332"/>
+  <rect x="622" y="578" width="7" height="7" fill="#1A2332"/>
+  <rect x="636" y="578" width="7" height="7" fill="#1A2332"/>
+  <rect x="643" y="578" width="7" height="7" fill="#1A2332"/>
+  <rect x="566" y="592" width="7" height="7" fill="#1A2332"/>
+  <rect x="594" y="592" width="7" height="7" fill="#1A2332"/>
+  <rect x="608" y="592" width="7" height="7" fill="#1A2332"/>
+  <rect x="615" y="592" width="7" height="7" fill="#1A2332"/>
+  <rect x="629" y="592" width="7" height="7" fill="#1A2332"/>
+  <!-- More QR squares... simplified for visual representation -->
+  <rect x="566" y="606" width="42" height="42" fill="none" stroke="#1A2332" stroke-width="3"/>
+  <rect x="574" y="614" width="26" height="26" fill="#1A2332"/>
+  <rect x="622" y="606" width="42" height="42" fill="none" stroke="#1A2332" stroke-width="3"/>
+  <rect x="630" y="614" width="26" height="26" fill="#1A2332"/>
+  <rect x="566" y="662" width="42" height="42" fill="none" stroke="#1A2332" stroke-width="3"/>
+  <rect x="574" y="670" width="26" height="26" fill="#1A2332"/>
+  <!-- Center module -->
+  <rect x="618" y="656" width="24" height="24" fill="#1A2332"/>
+  <rect x="642" y="656" width="7" height="7" fill="#1A2332"/>
+  <rect x="649" y="663" width="7" height="7" fill="#1A2332"/>
+  <rect x="618" y="680" width="7" height="7" fill="#1A2332"/>
+  <rect x="625" y="687" width="14" height="7" fill="#1A2332"/>
+  <rect x="649" y="687" width="7" height="7" fill="#1A2332"/>
+  <!-- End QR Code -->
+
+  <!-- Note: QR code continues in mockup 29 below to avoid overflow -->
+  <text x="640" y="664" fill="#E8F5E9" font-size="8" text-anchor="middle">QR Code Pix</text>
+
+  <!-- Pix copia e cola (shown below PIX section) -->
+  <rect x="332" y="660" width="616" height="40" rx="8" fill="white" stroke="#C8E6C9" stroke-width="1"/>
+  <text x="348" y="675" fill="#78909C" font-size="10">Pix copia e cola:</text>
+  <text x="348" y="690" fill="#1A2332" font-size="10" font-family="monospace">00020126580014BR.GOV.BCB.PIX0136random-uuid-here5204000053039865...</text>
+
+  <!-- Boleto section -->
+  <rect x="332" y="710" width="616" height="88" rx="10" fill="white" stroke="#CFD8DC" stroke-width="1.5"/>
+  <text x="352" y="732" fill="#1A2332" font-size="13" font-weight="700">Pagar com Boleto Bancário</text>
+  <!-- Barcode area -->
+  <rect x="352" y="740" width="576" height="28" rx="6" fill="#F8FAFC" stroke="#90A4AE" stroke-width="1" stroke-dasharray="4 2"/>
+  <text x="362" y="752" fill="#78909C" font-size="10">Linha digitável:</text>
+  <text x="362" y="763" fill="#1565C0" font-size="11" font-weight="700" font-family="monospace" letter-spacing="1">10491.90001 50000.000000 05000.006607 6 92870000045000</text>
+  <!-- Open boleto button -->
+  <rect x="484" y="774" width="152" height="18" rx="4" fill="#37474F"/>
+  <text x="560" y="787" fill="white" font-size="11" font-weight="700" text-anchor="middle">ABRIR BOLETO</text>
+
+  <!-- Attention box -->
+  <rect x="332" y="806" width="616" height="36" rx="6" fill="#FFF8E1" stroke="#FFE082" stroke-width="1.5"/>
+  <text x="352" y="820" fill="#795548" font-size="10" font-weight="600">Atenção: </text>
+  <text x="400" y="820" fill="#795548" font-size="10">O boleto vence em 10/07/2026. Após o vencimento incidem juros de mora</text>
+  <text x="352" y="834" fill="#795548" font-size="10">de 1% ao mês e multa de 2%. O QR Code Pix pode ser utilizado mesmo após o vencimento.</text>
+
+  <!-- Email footer -->
+  <rect x="300" y="848" width="680" height="20" fill="#F8FAFC"/>
+  <rect x="300" y="848" width="680" height="1" fill="#E3E8EF"/>
+  <text x="640" y="863" fill="#90A4AE" font-size="10" text-anchor="middle">Este e-mail foi enviado automaticamente pelo CondoGest. Não responda a esta mensagem.  ©  2026 CondoGest</text>
+</svg>

@@ -88,7 +88,8 @@ class PessoaServiceTest {
         }).when(pessoaMapper).updateEntity(any(), any(UpdatePessoaDTO.class));
 
         lenient().when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
-        lenient().doNothing().when(mailService).sendActivationEmail(any(), any(), any(), any());
+        lenient().doNothing().when(mailService).sendEmail(any(), any());
+        org.springframework.test.util.ReflectionTestUtils.setField(service, "frontendUrl", "http://localhost:5173");
     }
 
     private Morador morador(Long id, String nome) {

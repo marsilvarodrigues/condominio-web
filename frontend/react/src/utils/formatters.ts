@@ -1,6 +1,5 @@
 const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 const pct = new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 2 })
-const num = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 export const formatCurrency = (value: number): string => brl.format(value)
 

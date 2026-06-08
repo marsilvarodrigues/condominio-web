@@ -186,6 +186,15 @@ app:
         l1-ttl: 10m
         l2-ttl: 30m
         max-size: 500
+  cobranca:
+    asaas:
+      base-url: ${ASAAS_BASE_URL:https://sandbox.asaas.com/api/v3}
+      api-key: ${ASAAS_API_KEY:}
+      wallet-id: ${ASAAS_WALLET_ID:}
+    vencimento-dias: ${COBRANCA_VENCIMENTO_DIAS:10}
+    juros-mora-percent: ${COBRANCA_JUROS_MORA:1.0}
+    multa-percent: ${COBRANCA_MULTA_PERCENT:2.0}
+    descricao-padrao: "Taxa condominial"
 
 # Actuator
 management:

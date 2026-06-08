@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Spring Data JPA repository for {@link CotaRateio} records.
  */
@@ -20,4 +22,13 @@ public interface CotaRateioRepository extends JpaRepository<CotaRateio, Long> {
     @Modifying
     @Query("DELETE FROM CotaRateio c WHERE c.despesa.id = :despesaId")
     void deleteByDespesaId(@Param("despesaId") Long despesaId);
+
+    /**
+     * Returns all quota records belonging to the given rateio execution.
+     * Used by the billing module to generate charges from a completed rateio run.
+     *
+     * @param rateioExecucaoId primary key of the {@code RateioExecucao}
+     * @return list of cotas (may be empty if the execution had no units)
+     */
+    List<CotaRateio> findByRateioExecucaoId(Long rateioExecucaoId);
 }

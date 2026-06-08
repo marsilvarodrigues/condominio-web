@@ -204,6 +204,26 @@ public class PessoaService extends UserService {
     }
 
     /**
+     * Returns all active pessoas (moradores) assigned to the given apartment.
+     * Used by the billing module to resolve the resident for a charge without crossing
+     * module boundaries through a direct repository call.
+     *
+     * @param apartamentoId apartment primary key
+     * @return list of pessoa DTOs for all moradores of the apartment (may be empty)
+     */
+    @Transactional(readOnly = true)
+    @Timed(value = "pessoa.service.listarPorApartamento", description = "List pessoas by apartamento")
+    public java.util.List<PessoaDTO> listarPorApartamento(Long apartamentoId) {
+        log.info("Listing pessoas for apartamentoId={}", apartamentoId);
+        var result = pessoaRepository.findByApartamentoId(apartamentoId)
+                .stream()
+                .map(pessoaMapper::toDTO)
+                .toList();
+        log.info("Found {} pessoas for apartamentoId={}", result.size(), apartamentoId);
+        return result;
+    }
+
+    /**
      * Removes the pessoa from their current apartment assignment.
      *
      * @param pessoaId pessoa primary key

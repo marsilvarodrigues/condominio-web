@@ -24,7 +24,7 @@ export default function UsuariosPage() {
   const [editTarget, setEditTarget] = useState<UserDTO | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<UserDTO | null>(null)
 
-  const { register, handleSubmit, reset, control, formState: { errors } } = useForm<CreateUserDTO>()
+  const { register, handleSubmit, reset, control } = useForm<CreateUserDTO>()
 
   const create = useMutation({
     mutationFn: usuariosApi.create,

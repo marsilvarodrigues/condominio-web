@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="980" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-opacity="0.08"/>
+    </filter>
+    <filter id="shadow-sm">
+      <feDropShadow dx="0" dy="1" stdDeviation="3" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="980" fill="#F0F2F5"/>
+
+  <!-- ── Sidebar ── -->
+  <rect x="0" y="0" width="240" height="980" fill="#1A2332"/>
+  <rect x="0" y="0" width="240" height="60" fill="#151D2B"/>
+  <text x="20" y="35" fill="white" font-size="18" font-weight="700">CondoGest</text>
+  <text x="20" y="52" fill="rgba(255,255,255,0.5)" font-size="11">Gestão de Condomínios</text>
+
+  <text x="20" y="94"  fill="rgba(255,255,255,0.55)" font-size="13">🏠  Dashboard</text>
+  <text x="20" y="130" fill="rgba(255,255,255,0.55)" font-size="13">🏢  Condomínio</text>
+  <!-- Hierarquia active (subdued highlight) -->
+  <rect x="0" y="142" width="240" height="36" fill="#162840" rx="0"/>
+  <text x="20" y="165" fill="rgba(255,255,255,0.85)" font-size="13" font-weight="500">🏗️  Hierarquia</text>
+  <text x="20" y="202" fill="rgba(255,255,255,0.55)" font-size="13">👥  Moradores</text>
+  <text x="20" y="238" fill="rgba(255,255,255,0.55)" font-size="13">💰  Financeiro</text>
+  <text x="20" y="274" fill="rgba(255,255,255,0.55)" font-size="13">📊  Rateio</text>
+  <text x="20" y="310" fill="rgba(255,255,255,0.55)" font-size="13">💳  Cobranças</text>
+  <text x="20" y="346" fill="rgba(255,255,255,0.55)" font-size="13">⚙️  Configurações</text>
+
+  <!-- ── Top bar ── -->
+  <rect x="240" y="0" width="1040" height="56" fill="white" filter="url(#shadow-sm)"/>
+  <text x="264" y="32" fill="#546E7A" font-size="12">Hierarquia /</text>
+  <text x="348" y="32" fill="#546E7A" font-size="12">Bloco A /</text>
+  <text x="406" y="32" fill="#1A2332" font-size="12" font-weight="600">Apartamento 101</text>
+  <circle cx="1240" cy="28" r="18" fill="#1565C0"/>
+  <text x="1240" y="33" fill="white" font-size="13" font-weight="700" text-anchor="middle">A</text>
+
+  <!-- ── Page header ── -->
+  <text x="264" y="92" fill="#1A2332" font-size="22" font-weight="700">Apartamento 101 — Bloco A</text>
+  <!-- Back button -->
+  <rect x="1160" y="68" width="120" height="36" rx="6" fill="white" stroke="#E3E8EF" stroke-width="1.5"/>
+  <text x="1220" y="91" fill="#546E7A" font-size="13" text-anchor="middle">← Voltar</text>
+
+  <!-- ── Apt info bar ── -->
+  <rect x="264" y="108" width="1064" height="52" rx="8" fill="white" filter="url(#shadow-sm)"/>
+  <text x="284" y="132" fill="#78909C" font-size="11">APARTAMENTO</text>
+  <text x="284" y="148" fill="#1A2332" font-size="14" font-weight="700">101</text>
+  <line x1="360" y1="116" x2="360" y2="152" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="376" y="132" fill="#78909C" font-size="11">BLOCO</text>
+  <text x="376" y="148" fill="#1A2332" font-size="14">A</text>
+  <line x1="440" y1="116" x2="440" y2="152" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="456" y="132" fill="#78909C" font-size="11">ANDAR</text>
+  <text x="456" y="148" fill="#1A2332" font-size="14">1º</text>
+  <line x1="520" y1="116" x2="520" y2="152" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="536" y="132" fill="#78909C" font-size="11">ÁREA</text>
+  <text x="536" y="148" fill="#1A2332" font-size="14">85 m²</text>
+  <line x1="616" y1="116" x2="616" y2="152" stroke="#E3E8EF" stroke-width="1"/>
+  <rect x="632" y="122" width="68" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="666" y="137" fill="#2E7D32" font-size="11" font-weight="600" text-anchor="middle">OCUPADO</text>
+
+  <!-- ── Tabs ── -->
+  <rect x="264" y="176" width="1064" height="48" fill="white" filter="url(#shadow-sm)"/>
+  <!-- Tab items -->
+  <text x="300" y="205" fill="#78909C" font-size="13">🏠  Proprietário</text>
+  <text x="460" y="205" fill="#78909C" font-size="13">👤  Ocupação Atual</text>
+  <text x="640" y="205" fill="#78909C" font-size="13">📋  Histórico</text>
+  <!-- Active tab: Cobranças -->
+  <text x="790" y="205" fill="#1565C0" font-size="13" font-weight="600">💳  Cobranças</text>
+  <rect x="784" y="220" width="100" height="4" rx="2" fill="#1565C0"/>
+
+  <!-- ── Cobranças table card ── -->
+  <rect x="264" y="240" width="1064" height="620" rx="8" fill="white" filter="url(#shadow)"/>
+
+  <!-- Table header -->
+  <rect x="264" y="240" width="1064" height="40" rx="8" fill="#F8FAFC"/>
+  <rect x="264" y="260" width="1064" height="20" fill="#F8FAFC"/>
+  <line x1="264" y1="280" x2="1328" y2="280" stroke="#E3E8EF" stroke-width="1"/>
+
+  <text x="284" y="265" fill="#546E7A" font-size="11" font-weight="700">EMITIDA EM</text>
+  <text x="420" y="265" fill="#546E7A" font-size="11" font-weight="700">VENCIMENTO</text>
+  <text x="600" y="265" fill="#546E7A" font-size="11" font-weight="700">VALOR</text>
+  <text x="740" y="265" fill="#546E7A" font-size="11" font-weight="700">STATUS</text>
+  <text x="920" y="265" fill="#546E7A" font-size="11" font-weight="700">AÇÕES</text>
+
+  <!-- Row 1 — PENDENTE (hover) -->
+  <rect x="264" y="280" width="1064" height="56" fill="#F5F8FF"/>
+  <text x="284" y="313" fill="#1A2332" font-size="13">01/06/2026</text>
+  <text x="420" y="313" fill="#546E7A" font-size="13">10/07/2026</text>
+  <text x="600" y="313" fill="#1A2332" font-size="13" font-weight="600">R$ 450,00</text>
+  <rect x="740" y="299" width="72" height="22" rx="11" fill="#E3F2FD"/>
+  <text x="776" y="314" fill="#1565C0" font-size="11" font-weight="600" text-anchor="middle">PENDENTE</text>
+  <text x="928" y="313" fill="#546E7A" font-size="14">📧</text>
+  <text x="960" y="313" fill="#546E7A" font-size="14">🔗</text>
+  <text x="992" y="313" fill="#C62828" font-size="14">✕</text>
+  <line x1="264" y1="336" x2="1328" y2="336" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Row 2 — PAGA (maio) -->
+  <rect x="264" y="336" width="1064" height="56" fill="white"/>
+  <text x="284" y="369" fill="#1A2332" font-size="13">01/05/2026</text>
+  <text x="420" y="369" fill="#546E7A" font-size="13">10/06/2026</text>
+  <text x="600" y="369" fill="#1A2332" font-size="13" font-weight="600">R$ 450,00</text>
+  <rect x="740" y="355" width="56" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="768" y="370" fill="#1B5E20" font-size="11" font-weight="700" text-anchor="middle">PAGA</text>
+  <text x="840" y="369" fill="#78909C" font-size="11">pago em 05/06/2026</text>
+  <line x1="264" y1="392" x2="1328" y2="392" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Row 3 — PAGA (abril) -->
+  <rect x="264" y="392" width="1064" height="56" fill="white"/>
+  <text x="284" y="425" fill="#1A2332" font-size="13">01/04/2026</text>
+  <text x="420" y="425" fill="#546E7A" font-size="13">10/05/2026</text>
+  <text x="600" y="425" fill="#1A2332" font-size="13" font-weight="600">R$ 420,00</text>
+  <rect x="740" y="411" width="56" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="768" y="426" fill="#1B5E20" font-size="11" font-weight="700" text-anchor="middle">PAGA</text>
+  <text x="840" y="425" fill="#78909C" font-size="11">pago em 08/05/2026</text>
+  <line x1="264" y1="448" x2="1328" y2="448" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Row 4 — PAGA (março) -->
+  <rect x="264" y="448" width="1064" height="56" fill="white"/>
+  <text x="284" y="481" fill="#1A2332" font-size="13">01/03/2026</text>
+  <text x="420" y="481" fill="#546E7A" font-size="13">10/04/2026</text>
+  <text x="600" y="481" fill="#1A2332" font-size="13" font-weight="600">R$ 420,00</text>
+  <rect x="740" y="467" width="56" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="768" y="482" fill="#1B5E20" font-size="11" font-weight="700" text-anchor="middle">PAGA</text>
+  <text x="840" y="481" fill="#78909C" font-size="11">pago em 09/04/2026</text>
+  <line x1="264" y1="504" x2="1328" y2="504" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Row 5 — VENCIDA -->
+  <rect x="264" y="504" width="1064" height="56" fill="#FFF5F5"/>
+  <text x="284" y="537" fill="#1A2332" font-size="13">01/02/2026</text>
+  <text x="420" y="537" fill="#C62828" font-size="13" font-weight="600">10/03/2026</text>
+  <text x="600" y="537" fill="#1A2332" font-size="13" font-weight="600">R$ 380,00</text>
+  <rect x="740" y="523" width="66" height="22" rx="11" fill="#FCE4EC"/>
+  <text x="773" y="538" fill="#C62828" font-size="11" font-weight="600" text-anchor="middle">VENCIDA</text>
+  <text x="928" y="537" fill="#546E7A" font-size="14">📧</text>
+  <text x="960" y="537" fill="#546E7A" font-size="14">🔗</text>
+  <text x="992" y="537" fill="#C62828" font-size="14">✕</text>
+  <line x1="264" y1="560" x2="1328" y2="560" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Row 6 — PAGA (janeiro) -->
+  <rect x="264" y="560" width="1064" height="56" fill="white"/>
+  <text x="284" y="593" fill="#1A2332" font-size="13">01/01/2026</text>
+  <text x="420" y="593" fill="#546E7A" font-size="13">10/02/2026</text>
+  <text x="600" y="593" fill="#1A2332" font-size="13" font-weight="600">R$ 380,00</text>
+  <rect x="740" y="579" width="56" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="768" y="594" fill="#1B5E20" font-size="11" font-weight="700" text-anchor="middle">PAGA</text>
+  <text x="840" y="593" fill="#78909C" font-size="11">pago em 07/02/2026</text>
+  <line x1="264" y1="616" x2="1328" y2="616" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Row 7 — PAGA (dezembro) -->
+  <rect x="264" y="616" width="1064" height="56" fill="white"/>
+  <text x="284" y="649" fill="#1A2332" font-size="13">01/12/2025</text>
+  <text x="420" y="649" fill="#546E7A" font-size="13">10/01/2026</text>
+  <text x="600" y="649" fill="#1A2332" font-size="13" font-weight="600">R$ 350,00</text>
+  <rect x="740" y="635" width="56" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="768" y="650" fill="#1B5E20" font-size="11" font-weight="700" text-anchor="middle">PAGA</text>
+  <text x="840" y="649" fill="#78909C" font-size="11">pago em 03/01/2026</text>
+  <line x1="264" y1="672" x2="1328" y2="672" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Empty filler -->
+  <rect x="264" y="672" width="1064" height="116" fill="white"/>
+
+  <!-- ── Table footer ── -->
+  <rect x="264" y="788" width="1064" height="1" fill="#E3E8EF"/>
+  <rect x="264" y="789" width="1064" height="48" fill="#F8FAFC"/>
+  <text x="284" y="818" fill="#546E7A" font-size="12">Mostrando 1–7 de 7 cobranças</text>
+  <text x="700" y="818" fill="#78909C" font-size="12" font-weight="500">Total pago: </text>
+  <text x="775" y="818" fill="#1B5E20" font-size="12" font-weight="700">R$ 2.400,00</text>
+  <text x="870" y="818" fill="#78909C" font-size="12">  ·  Pendente: </text>
+  <text x="960" y="818" fill="#1565C0" font-size="12" font-weight="700">R$ 450,00</text>
+</svg>

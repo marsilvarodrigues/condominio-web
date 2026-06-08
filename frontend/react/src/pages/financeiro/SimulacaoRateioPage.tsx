@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Chip,
   MenuItem,
   TextField,
   Typography,
@@ -16,7 +15,7 @@ import {
 } from '@mui/material'
 import CalculateIcon from '@mui/icons-material/Calculate'
 import { useState } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { PageHeader } from '@/components/common'
 import { rateioApi } from '@/api/financeiro/rateio.api'
 import { useGruposDespesa } from '@/hooks/useRateio'

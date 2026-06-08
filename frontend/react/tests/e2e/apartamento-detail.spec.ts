@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { setAdminAuth, mockGet, mockMutation } from './helpers'
+import { setAdminAuth, mockGet } from './helpers'
 
 const APT = {
   id: 10, numero: '101', andar: 1, blocoId: 1, blocoNome: 'A',

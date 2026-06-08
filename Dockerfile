@@ -235,32 +235,25 @@ RUN java -Djarmode=layertools -jar app.jar extract
 # ─────────────────────────────────────────────────────────────────────────────
 # STAGE 5 — Runtime do Spring Boot
 # ─────────────────────────────────────────────────────────────────────────────
-# eclipse-temurin:21-jre-jammy (Ubuntu 22.04 LTS, glibc) em vez de Alpine.
-# Alpine usa musl libc, que NÃO suporta ZGC. Com glibc + ZGC Generacional,
-# as pausas GC ficam abaixo de 1 ms — fundamental com virtual threads Java 21.
-FROM eclipse-temurin:21-jre-jammy AS runtime
+# gcr.io/distroless/java21-debian12 usa glibc (Debian 12) sem shell nem utilitários.
+# Vantagens sobre eclipse-temurin:21-jre-jammy: ~530 MB menor, superfície de ataque
+# drasticamente reduzida (sem apt, bash, adduser). Mantém glibc → ZGC Generacional
+# continua disponível. A tag :nonroot executa como uid 65532 sem configuração extra.
+FROM gcr.io/distroless/java21-debian12:nonroot AS runtime
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN groupadd -r appgroup && useradd -r -g appgroup -s /sbin/nologin appuser
 WORKDIR /app
 
 # Camadas em ordem crescente de frequência de mudança:
 # dependencies e spring-boot-loader raramente mudam → invalidam menos o cache.
-COPY --from=layers /app/dependencies/        ./
-COPY --from=layers /app/spring-boot-loader/  ./
-COPY --from=layers /app/snapshot-dependencies/ ./
-COPY --from=layers /app/application/         ./
+COPY --from=layers --chown=nonroot:nonroot /app/dependencies/          ./
+COPY --from=layers --chown=nonroot:nonroot /app/spring-boot-loader/    ./
+COPY --from=layers --chown=nonroot:nonroot /app/snapshot-dependencies/ ./
+COPY --from=layers --chown=nonroot:nonroot /app/application/           ./
 
-RUN chown -R appuser:appgroup /app
-USER appuser
 EXPOSE 8080
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-    CMD curl -sf http://localhost:8080/api/actuator/health \
-        | grep -q '"status":"UP"' || exit 1
+# Sem shell disponível em distroless — use liveness/readiness probes do orquestrador
+# (Kubernetes, Docker Compose healthcheck via curl em sidecar) em vez de HEALTHCHECK aqui.
 
 # ── JVM tuning ────────────────────────────────────────────────────────────────
 # Heap   : inicia em 50% e cresce até 75% do memory limit do container.

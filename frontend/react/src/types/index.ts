@@ -474,6 +474,34 @@ export interface ProprietarioFilterDTO {
   cnpj?: string
 }
 
+// ── Cobrança ──────────────────────────────────────────────────────────────────
+
+export type StatusCobranca = 'PENDENTE' | 'ENVIADA' | 'VISUALIZADA' | 'PAGA' | 'VENCIDA' | 'CANCELADA'
+
+export interface CobrancaResumoDTO {
+  id: number
+  vencimento: string        // ISO date (YYYY-MM-DD)
+  valor: number
+  status: StatusCobranca
+  criadaEm: string          // ISO datetime
+  pagoEm: string | null
+  emailEnviado: boolean
+}
+
+export interface CobrancaDTO extends CobrancaResumoDTO {
+  apartamentoId: number
+  apartamentoNumero: string
+  blocoNome: string | null
+  moradorId: number | null
+  moradorNome: string | null
+  moradorEmail: string | null
+  boletoUrl: string | null
+  boletoCodBarras: string | null
+  pixQrCodeBase64: string | null
+  pixCopiaCola: string | null
+  emailEnviadoEm: string | null
+}
+
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
 export interface DashboardStats {

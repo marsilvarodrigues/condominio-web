@@ -68,6 +68,7 @@ class UserServiceTest {
     void setUp() {
         userService = new UserService(userRepository, mailService, mapper, passwordHistoryRepository, condominioService, ENCODER);
         ReflectionTestUtils.setField(userService, "passwordHistoryCount", 3);
+        ReflectionTestUtils.setField(userService, "frontendUrl", "http://localhost:5173");
 
         lenient().when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
         lenient().when(condominioService.findById(any())).thenReturn(Optional.of(TEST_CONDOMINIO));
@@ -125,12 +126,7 @@ class UserServiceTest {
         var result = userService.create(dto);
 
         verify(userRepository).save(any(User.class));
-        verify(mailService).sendActivationEmail(
-                eq("new@test.com"),
-                any(String.class),
-                any(String.class),
-                any(String.class)
-        );
+        verify(mailService).sendEmail(eq("new@test.com"), any());
         assertThat(result.enabled()).isFalse();
     }
 

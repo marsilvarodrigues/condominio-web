@@ -1,0 +1,201 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-opacity="0.08"/>
+    </filter>
+    <filter id="shadow-sm">
+      <feDropShadow dx="0" dy="1" stdDeviation="3" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Page background -->
+  <rect width="1280" height="860" fill="#F0F2F5"/>
+
+  <!-- ── Sidebar ── -->
+  <rect x="0" y="0" width="240" height="860" fill="#1A2332"/>
+  <!-- Sidebar header -->
+  <rect x="0" y="0" width="240" height="60" fill="#151D2B"/>
+  <text x="20" y="35" fill="white" font-size="18" font-weight="700">CondoGest</text>
+  <text x="20" y="52" fill="rgba(255,255,255,0.5)" font-size="11">Gestão de Condomínios</text>
+
+  <!-- Nav items -->
+  <text x="20" y="94" fill="rgba(255,255,255,0.55)" font-size="13">🏠  Dashboard</text>
+  <text x="20" y="130" fill="rgba(255,255,255,0.55)" font-size="13">🏢  Condomínio</text>
+  <text x="20" y="166" fill="rgba(255,255,255,0.55)" font-size="13">🏗️  Hierarquia</text>
+  <text x="20" y="202" fill="rgba(255,255,255,0.55)" font-size="13">👥  Moradores</text>
+  <text x="20" y="238" fill="rgba(255,255,255,0.55)" font-size="13">💰  Financeiro</text>
+  <text x="20" y="274" fill="rgba(255,255,255,0.55)" font-size="13">📊  Rateio</text>
+
+  <!-- Active nav item: Cobranças -->
+  <rect x="0" y="286" width="240" height="36" fill="#1976D2" rx="0"/>
+  <rect x="0" y="286" width="4" height="36" fill="#42A5F5"/>
+  <text x="20" y="309" fill="white" font-size="13" font-weight="600">💳  Cobranças</text>
+
+  <text x="20" y="358" fill="rgba(255,255,255,0.55)" font-size="13">⚙️  Configurações</text>
+
+  <!-- ── Top bar ── -->
+  <rect x="240" y="0" width="1040" height="56" fill="white" filter="url(#shadow-sm)"/>
+  <text x="264" y="32" fill="#546E7A" font-size="12">Home /</text>
+  <text x="318" y="32" fill="#1A2332" font-size="12" font-weight="600">Cobranças</text>
+  <!-- User avatar placeholder -->
+  <circle cx="1240" cy="28" r="18" fill="#1565C0"/>
+  <text x="1240" y="33" fill="white" font-size="13" font-weight="700" text-anchor="middle">A</text>
+
+  <!-- ── Page title area ── -->
+  <text x="264" y="92" fill="#1A2332" font-size="22" font-weight="700">Cobranças</text>
+  <text x="264" y="112" fill="#546E7A" font-size="13">Gestão de cobranças condominiais — boleto e Pix</text>
+
+  <!-- Gerar Cobranças button -->
+  <rect x="1080" y="72" width="168" height="36" rx="6" fill="#1565C0"/>
+  <text x="1164" y="95" fill="white" font-size="13" font-weight="600" text-anchor="middle">💳  Gerar Cobranças</text>
+
+  <!-- ── Summary chips ── -->
+  <rect x="264" y="128" width="180" height="28" rx="14" fill="#E3F2FD"/>
+  <text x="354" y="147" fill="#1565C0" font-size="12" font-weight="600" text-anchor="middle">R$ 34.200 pendente</text>
+
+  <rect x="456" y="128" width="120" height="28" rx="14" fill="#E8F5E9"/>
+  <text x="516" y="147" fill="#2E7D32" font-size="12" font-weight="600" text-anchor="middle">12 pagas</text>
+
+  <rect x="588" y="128" width="120" height="28" rx="14" fill="#FCE4EC"/>
+  <text x="648" y="147" fill="#C62828" font-size="12" font-weight="600" text-anchor="middle">3 vencidas</text>
+
+  <!-- ── Filter toolbar ── -->
+  <rect x="264" y="172" width="1064" height="52" rx="8" fill="white" filter="url(#shadow-sm)"/>
+  <!-- Search input -->
+  <rect x="280" y="184" width="220" height="28" rx="6" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="290" y="202" fill="#90A4AE" font-size="12">🔍  Buscar morador...</text>
+  <!-- Status select -->
+  <rect x="512" y="184" width="150" height="28" rx="6" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="522" y="202" fill="#546E7A" font-size="12">Status: Todos ▾</text>
+  <!-- Apartamento select -->
+  <rect x="674" y="184" width="170" height="28" rx="6" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="684" y="202" fill="#546E7A" font-size="12">Apartamento: Todos ▾</text>
+  <!-- Date range -->
+  <rect x="856" y="184" width="120" height="28" rx="6" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="866" y="202" fill="#90A4AE" font-size="12">Venc. de</text>
+  <rect x="988" y="184" width="120" height="28" rx="6" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="998" y="202" fill="#90A4AE" font-size="12">Venc. até</text>
+
+  <!-- ── Main table card ── -->
+  <rect x="264" y="240" width="1064" height="544" rx="8" fill="white" filter="url(#shadow)"/>
+
+  <!-- Table header -->
+  <rect x="264" y="240" width="1064" height="40" rx="8" fill="#F8FAFC"/>
+  <rect x="264" y="260" width="1064" height="20" fill="#F8FAFC"/>
+  <line x1="264" y1="280" x2="1328" y2="280" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Column headers -->
+  <text x="284" y="265" fill="#546E7A" font-size="11" font-weight="700">APARTAMENTO</text>
+  <text x="420" y="265" fill="#546E7A" font-size="11" font-weight="700">MORADOR</text>
+  <text x="590" y="265" fill="#546E7A" font-size="11" font-weight="700">EMITIDA EM</text>
+  <text x="700" y="265" fill="#546E7A" font-size="11" font-weight="700">VENCIMENTO</text>
+  <text x="820" y="265" fill="#546E7A" font-size="11" font-weight="700">VALOR</text>
+  <text x="920" y="265" fill="#546E7A" font-size="11" font-weight="700">STATUS</text>
+  <text x="1060" y="265" fill="#546E7A" font-size="11" font-weight="700">AÇÕES</text>
+
+  <!-- Row 1 — PENDENTE (hover) -->
+  <rect x="264" y="280" width="1064" height="48" fill="#F5F8FF"/>
+  <text x="284" y="309" fill="#1A2332" font-size="13">Apt 101 Bl.A</text>
+  <text x="420" y="309" fill="#1A2332" font-size="13">Maria A. F.</text>
+  <text x="590" y="309" fill="#546E7A" font-size="13">01/06/2026</text>
+  <text x="700" y="309" fill="#546E7A" font-size="13">10/07/2026</text>
+  <text x="820" y="309" fill="#1A2332" font-size="13" font-weight="600">R$ 450,00</text>
+  <rect x="920" y="295" width="72" height="22" rx="11" fill="#E3F2FD"/>
+  <text x="956" y="310" fill="#1565C0" font-size="11" font-weight="600" text-anchor="middle">PENDENTE</text>
+  <text x="1066" y="309" fill="#546E7A" font-size="14">📧</text>
+  <text x="1090" y="309" fill="#546E7A" font-size="14">🔗</text>
+  <text x="1114" y="309" fill="#C62828" font-size="14">✕</text>
+  <line x1="264" y1="328" x2="1328" y2="328" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Row 2 — PAGA -->
+  <rect x="264" y="328" width="1064" height="48" fill="white"/>
+  <text x="284" y="357" fill="#1A2332" font-size="13">Apt 102 Bl.A</text>
+  <text x="420" y="357" fill="#1A2332" font-size="13">Carlos E. S.</text>
+  <text x="590" y="357" fill="#546E7A" font-size="13">01/06/2026</text>
+  <text x="700" y="357" fill="#546E7A" font-size="13">10/07/2026</text>
+  <text x="820" y="357" fill="#1A2332" font-size="13" font-weight="600">R$ 380,00</text>
+  <rect x="920" y="343" width="56" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="948" y="358" fill="#1B5E20" font-size="11" font-weight="700" text-anchor="middle">PAGA</text>
+  <line x1="264" y1="376" x2="1328" y2="376" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Row 3 — CANCELADA (vago) -->
+  <rect x="264" y="376" width="1064" height="48" fill="white"/>
+  <text x="284" y="405" fill="#1A2332" font-size="13">Apt 103 Bl.A</text>
+  <text x="420" y="405" fill="#B0BEC5" font-size="13">— (vago)</text>
+  <text x="590" y="405" fill="#B0BEC5" font-size="13">—</text>
+  <text x="700" y="405" fill="#B0BEC5" font-size="13">—</text>
+  <text x="820" y="405" fill="#B0BEC5" font-size="13">—</text>
+  <rect x="920" y="391" width="82" height="22" rx="11" fill="#ECEFF1"/>
+  <text x="961" y="406" fill="#546E7A" font-size="11" font-weight="500" text-anchor="middle">CANCELADA</text>
+  <line x1="264" y1="424" x2="1328" y2="424" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Row 4 — VENCIDA -->
+  <rect x="264" y="424" width="1064" height="48" fill="#FFF5F5"/>
+  <text x="284" y="453" fill="#1A2332" font-size="13">Apt 201 Bl.A</text>
+  <text x="420" y="453" fill="#1A2332" font-size="13">Roberto L.</text>
+  <text x="590" y="453" fill="#546E7A" font-size="13">01/06/2026</text>
+  <text x="700" y="453" fill="#C62828" font-size="13" font-weight="600">10/07/2026</text>
+  <text x="820" y="453" fill="#1A2332" font-size="13" font-weight="600">R$ 450,00</text>
+  <rect x="920" y="439" width="66" height="22" rx="11" fill="#FCE4EC"/>
+  <text x="953" y="454" fill="#C62828" font-size="11" font-weight="600" text-anchor="middle">VENCIDA</text>
+  <text x="1066" y="453" fill="#546E7A" font-size="14">📧</text>
+  <text x="1090" y="453" fill="#546E7A" font-size="14">🔗</text>
+  <text x="1114" y="453" fill="#C62828" font-size="14">✕</text>
+  <line x1="264" y1="472" x2="1328" y2="472" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Row 5 — ENVIADA -->
+  <rect x="264" y="472" width="1064" height="48" fill="white"/>
+  <text x="284" y="501" fill="#1A2332" font-size="13">Apt 202 Bl.B</text>
+  <text x="420" y="501" fill="#1A2332" font-size="13">Fernanda O.</text>
+  <text x="590" y="501" fill="#546E7A" font-size="13">01/06/2026</text>
+  <text x="700" y="501" fill="#546E7A" font-size="13">10/07/2026</text>
+  <text x="820" y="501" fill="#1A2332" font-size="13" font-weight="600">R$ 420,00</text>
+  <rect x="920" y="487" width="66" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="953" y="502" fill="#2E7D32" font-size="11" font-weight="600" text-anchor="middle">ENVIADA</text>
+  <text x="1066" y="501" fill="#546E7A" font-size="14">📧</text>
+  <text x="1090" y="501" fill="#546E7A" font-size="14">🔗</text>
+  <line x1="264" y1="520" x2="1328" y2="520" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Rows 6-8 — muted -->
+  <rect x="264" y="520" width="1064" height="48" fill="white"/>
+  <text x="284" y="549" fill="#B0BEC5" font-size="13">Apt 301 Bl.A</text>
+  <text x="420" y="549" fill="#B0BEC5" font-size="13">João P. M.</text>
+  <text x="590" y="549" fill="#B0BEC5" font-size="13">01/06/2026</text>
+  <text x="700" y="549" fill="#B0BEC5" font-size="13">10/07/2026</text>
+  <text x="820" y="549" fill="#B0BEC5" font-size="13">R$ 380,00</text>
+  <rect x="920" y="535" width="72" height="22" rx="11" fill="#E3F2FD"/>
+  <text x="956" y="550" fill="#1565C0" font-size="11" font-weight="600" text-anchor="middle">PENDENTE</text>
+  <line x1="264" y1="568" x2="1328" y2="568" stroke="#E3E8EF" stroke-width="1"/>
+
+  <rect x="264" y="568" width="1064" height="48" fill="white"/>
+  <text x="284" y="597" fill="#B0BEC5" font-size="13">Apt 302 Bl.B</text>
+  <text x="420" y="597" fill="#B0BEC5" font-size="13">Ana C. L.</text>
+  <text x="590" y="597" fill="#B0BEC5" font-size="13">01/06/2026</text>
+  <text x="700" y="597" fill="#B0BEC5" font-size="13">10/07/2026</text>
+  <text x="820" y="597" fill="#B0BEC5" font-size="13">R$ 400,00</text>
+  <rect x="920" y="583" width="82" height="22" rx="11" fill="#F3E5F5"/>
+  <text x="961" y="598" fill="#6A1B9A" font-size="11" font-weight="600" text-anchor="middle">VISUALIZADA</text>
+  <line x1="264" y1="616" x2="1328" y2="616" stroke="#E3E8EF" stroke-width="1"/>
+
+  <rect x="264" y="616" width="1064" height="48" fill="white"/>
+  <text x="284" y="645" fill="#B0BEC5" font-size="13">Apt 401 Bl.A</text>
+  <text x="420" y="645" fill="#B0BEC5" font-size="13">Paulo R. T.</text>
+  <text x="590" y="645" fill="#B0BEC5" font-size="13">01/05/2026</text>
+  <text x="700" y="645" fill="#B0BEC5" font-size="13">10/06/2026</text>
+  <text x="820" y="645" fill="#B0BEC5" font-size="13">R$ 450,00</text>
+  <rect x="920" y="631" width="56" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="948" y="646" fill="#1B5E20" font-size="11" font-weight="700" text-anchor="middle">PAGA</text>
+  <line x1="264" y1="664" x2="1328" y2="664" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Empty rows filler -->
+  <rect x="264" y="664" width="1064" height="120" fill="white"/>
+
+  <!-- ── Pagination footer ── -->
+  <rect x="264" y="756" width="1064" height="28" rx="0" fill="#F8FAFC"/>
+  <rect x="264" y="756" width="1064" height="1" fill="#E3E8EF"/>
+  <text x="284" y="774" fill="#546E7A" font-size="12">Mostrando 1–8 de 47 cobranças</text>
+  <text x="1220" y="774" fill="#546E7A" font-size="12" text-anchor="middle">1  2  3  ›</text>
+
+  <!-- ── Bottom border of card ── -->
+  <rect x="264" y="784" width="1064" height="0" rx="0"/>
+</svg>

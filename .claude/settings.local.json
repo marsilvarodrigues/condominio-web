@@ -96,7 +96,9 @@
       "Bash(findstr /R /I \"estado\\\\|uf\\\\|state\" \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\frontend\\\\react\\\\src\\\\api\\\\*.api.ts\")",
       "Bash(findstr /S /I \"ESTADOS\\\\|STATES\\\\|BR_STATES\\\\|BRAZILIAN\" \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\frontend\\\\react\\\\src\")",
       "Bash(npm test *)",
-      "Bash(xxd /c/Users/marsi/IdeaProjects/condominio-web/src/test/resources/features/moradores/pessoas.feature)"
+      "Bash(xxd /c/Users/marsi/IdeaProjects/condominio-web/src/test/resources/features/moradores/pessoas.feature)",
+      "Bash(cat \"C:\\\\\\\\Users\\\\\\\\marsi\\\\\\\\.claude\\\\\\\\projects\\\\\\\\C--Users-marsi-IdeaProjects-condominio-web\\\\\\\\8d98d2ce-0b09-4e98-bbfd-865dfd0cdb8c\\\\\\\\tool-results\\\\\\\\bviycm64c.txt\")",
+      "Bash(grep -E \"^\\\\\\\\[INFO\\\\\\\\] Tests run|BUILD SUCCESS|BUILD FAILURE\")"
     ]
   }
 }

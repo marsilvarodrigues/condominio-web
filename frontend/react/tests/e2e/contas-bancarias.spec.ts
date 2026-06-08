@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { setAdminAuth, mockGet, mockMutation } from './helpers'
+import { setAdminAuth, mockGet } from './helpers'
 
 const BANCOS = [
   { id: 1, codigo: '001', nome: 'Banco do Brasil', ativo: true },

@@ -60,7 +60,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login", "/auth/refresh", "/auth/activate",
-                                "/actuator/health", "/actuator/prometheus").permitAll()
+                                "/actuator/health", "/actuator/prometheus", "/cobrancas/webhook").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(customBearerTokenFilter, BearerTokenAuthenticationFilter.class)
                 .oauth2ResourceServer(oauth2 -> oauth2

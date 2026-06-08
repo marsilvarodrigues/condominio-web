@@ -64,16 +64,14 @@ export function EstadoAutocomplete({
           label={label}
           error={error}
           helperText={helperText}
-          slotProps={{
-            input: {
-              ...params.InputProps,
-              endAdornment: (
-                <>
-                  {isFetching && <CircularProgress size={16} sx={{ mr: 1 }} />}
-                  {params.InputProps.endAdornment}
-                </>
-              ),
-            },
+          InputProps={{
+            ...params.InputProps,
+            endAdornment: (
+              <>
+                {isFetching && <CircularProgress size={16} sx={{ mr: 1 }} />}
+                {params.InputProps.endAdornment}
+              </>
+            ),
           }}
         />
       )}

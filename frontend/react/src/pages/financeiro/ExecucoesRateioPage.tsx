@@ -3,8 +3,6 @@ import {
   Button,
   Chip,
   IconButton,
-  MenuItem,
-  TextField,
   Tooltip,
   Typography,
   Paper,
@@ -21,7 +19,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { PageHeader, DataTable, StatusChip, type Column } from '@/components/common'
+import { PageHeader, StatusChip } from '@/components/common'
 import { rateioApi } from '@/api/financeiro/rateio.api'
 import { formatCurrency, formatDateTime } from '@/utils/formatters'
 import type { RateioExecucaoDTO, RateioLancamentoDTO } from '@/types'

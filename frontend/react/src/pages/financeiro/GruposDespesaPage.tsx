@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, MenuItem, Select, TextField, Tooltip } from '@mui/material'
+import { Box, Button, IconButton, MenuItem, TextField, Tooltip } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { PageHeader, DataTable, ConfirmDialog, FormDialog, StatusChip, type Column } from '@/components/common'
 import { useGruposDespesa, useGruposDespesaMutations } from '@/hooks/useRateio'
-import type { GrupoDespesaDTO, CreateGrupoDespesaDTO, TipoRateio, EscopoRateio } from '@/types'
+import type { GrupoDespesaDTO, CreateGrupoDespesaDTO } from '@/types'
 import { TIPO_RATEIO_LABELS, ESCOPO_RATEIO_LABELS } from '@/utils/constants'
 
 const schema = z.object({

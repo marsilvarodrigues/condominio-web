@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { setAdminAuth, mockGet, mockMutation, apiOk } from './helpers'
+import { setAdminAuth, mockGet, mockMutation } from './helpers'
 
 const CONDOMINIOS = [
   {

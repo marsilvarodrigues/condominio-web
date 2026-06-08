@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { setAdminAuth, mockGet, mockMutation } from './helpers'
+import { setAdminAuth, mockGet } from './helpers'
 
 const BLOCOS = [
   { id: 1, numero: 1, bloco: 'A', condominioId: 1 },

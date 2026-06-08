@@ -165,7 +165,7 @@ export default function PessoasPage() {
       <PageHeader
         title="Moradores"
         subtitle={`${pessoas.length} morador${pessoas.length !== 1 ? 'es' : ''} encontrado${pessoas.length !== 1 ? 's' : ''}`}
-        action={
+        actions={
           <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>
             Novo Morador
           </Button>

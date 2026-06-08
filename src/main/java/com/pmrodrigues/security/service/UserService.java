@@ -1,5 +1,6 @@
 package com.pmrodrigues.security.service;
 
+import com.pmrodrigues.commons.email.ActivationEmailTemplate;
 import com.pmrodrigues.commons.service.MailService;
 import com.pmrodrigues.condominio.service.CondominioService;
 import com.pmrodrigues.security.dto.ChangePasswordDTO;
@@ -62,6 +63,9 @@ public class UserService {
     @Value("${app.security.password-history-count:3}")
     private int passwordHistoryCount;
 
+    @Value("${app.frontend-url:http://localhost:5173}")
+    private String frontendUrl;
+
     public UserService(UserRepository userRepository,
                        MailService mailService,
                        UserMapper userMapper,
@@ -99,7 +103,9 @@ public class UserService {
         }
         entity.setCondominios(condominios);
         var saved = userRepository.save(entity);
-        mailService.sendActivationEmail(saved.getEmail(), saved.getName(), saved.getRawPassword(), saved.getActivationToken());
+        String activationUrl = frontendUrl + "/auth/activate?token=" + saved.getActivationToken();
+        mailService.sendEmail(saved.getEmail(),
+                new ActivationEmailTemplate(saved.getName(), saved.getRawPassword(), activationUrl));
         log.info("User persisted successfully with id: {}", saved.getId());
         return saved;
     }

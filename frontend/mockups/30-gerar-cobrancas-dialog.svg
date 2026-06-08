@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-opacity="0.08"/>
+    </filter>
+    <filter id="shadow-sm">
+      <feDropShadow dx="0" dy="1" stdDeviation="3" flood-opacity="0.06"/>
+    </filter>
+    <filter id="dialog-shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="24" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <!-- Background page (same as mockup 28 but dimmed) -->
+  <rect width="1280" height="860" fill="#F0F2F5"/>
+
+  <!-- Sidebar (dimmed) -->
+  <rect x="0" y="0" width="240" height="860" fill="#1A2332" opacity="0.5"/>
+  <rect x="0" y="0" width="240" height="60" fill="#151D2B" opacity="0.5"/>
+  <text x="20" y="35" fill="white" font-size="18" font-weight="700" opacity="0.4">CondoGest</text>
+
+  <!-- Top bar (dimmed) -->
+  <rect x="240" y="0" width="1040" height="56" fill="white" opacity="0.4"/>
+
+  <!-- Page content (dimmed) -->
+  <rect x="264" y="72" width="1064" height="720" rx="8" fill="white" opacity="0.2"/>
+
+  <!-- Dim overlay -->
+  <rect width="1280" height="860" fill="rgba(0,0,0,0.45)"/>
+
+  <!-- ── Dialog ── (520×600, centered at x=380 y=130) -->
+  <rect x="380" y="130" width="520" height="600" rx="12" fill="white" filter="url(#dialog-shadow)"/>
+
+  <!-- Dialog header -->
+  <rect x="380" y="130" width="520" height="64" rx="12" fill="#1565C0"/>
+  <rect x="380" y="170" width="520" height="24" fill="#1565C0"/>
+  <text x="408" y="169" fill="white" font-size="18" font-weight="700">💳  Gerar Cobranças</text>
+  <!-- Close button -->
+  <text x="876" y="169" fill="rgba(255,255,255,0.8)" font-size="20">✕</text>
+
+  <!-- Section 1: Execução de Rateio -->
+  <text x="408" y="226" fill="#78909C" font-size="11" font-weight="700">EXECUÇÃO DE RATEIO *</text>
+  <rect x="408" y="234" width="464" height="40" rx="6" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1.5"/>
+  <text x="424" y="258" fill="#1A2332" font-size="13">Execução #47 — Jun/2026 — R$ 12.400,00 (120 unidades)  ▾</text>
+
+  <!-- Info chip -->
+  <rect x="408" y="284" width="464" height="32" rx="6" fill="#E3F2FD"/>
+  <text x="424" y="304" fill="#1565C0" font-size="12">ℹ️  Cobranças geradas para todas as unidades com morador vinculado</text>
+
+  <!-- Section 2: Vencimento -->
+  <text x="408" y="344" fill="#78909C" font-size="11" font-weight="700">DATA DE VENCIMENTO *</text>
+  <rect x="408" y="352" width="220" height="40" rx="6" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1.5"/>
+  <text x="424" y="376" fill="#1A2332" font-size="13">10/07/2026</text>
+  <text x="408" y="404" fill="#90A4AE" font-size="11">Boleto e Pix expiram nesta data. Após o vencimento incidem juros e multa.</text>
+
+  <!-- Section 3: Preview table -->
+  <text x="408" y="434" fill="#78909C" font-size="11" font-weight="700">PRÉVIA DAS COBRANÇAS</text>
+  <rect x="408" y="442" width="464" height="130" rx="6" fill="#F8FAFC" stroke="#E3E8EF" stroke-width="1"/>
+
+  <!-- Preview table header -->
+  <rect x="408" y="442" width="464" height="28" rx="6" fill="#F0F2F5"/>
+  <rect x="408" y="456" width="464" height="14" fill="#F0F2F5"/>
+  <text x="424" y="462" fill="#546E7A" font-size="10" font-weight="700">APARTAMENTO</text>
+  <text x="568" y="462" fill="#546E7A" font-size="10" font-weight="700">MORADOR</text>
+  <text x="760" y="462" fill="#546E7A" font-size="10" font-weight="700">VALOR ESTIMADO</text>
+
+  <text x="424" y="486" fill="#1A2332" font-size="12">Apt 101 · Bloco A</text>
+  <text x="568" y="486" fill="#1A2332" font-size="12">Maria A. F.</text>
+  <text x="760" y="486" fill="#1A2332" font-size="12">R$ 450,00</text>
+  <line x1="408" y1="494" x2="872" y2="494" stroke="#E3E8EF" stroke-width="1"/>
+
+  <text x="424" y="511" fill="#1A2332" font-size="12">Apt 102 · Bloco A</text>
+  <text x="568" y="511" fill="#1A2332" font-size="12">Carlos E. S.</text>
+  <text x="760" y="511" fill="#1A2332" font-size="12">R$ 380,00</text>
+  <line x1="408" y1="519" x2="872" y2="519" stroke="#E3E8EF" stroke-width="1"/>
+
+  <text x="424" y="536" fill="#1A2332" font-size="12">Apt 201 · Bloco A</text>
+  <text x="568" y="536" fill="#1A2332" font-size="12">Roberto L.</text>
+  <text x="760" y="536" fill="#1A2332" font-size="12">R$ 450,00</text>
+  <line x1="408" y1="544" x2="872" y2="544" stroke="#E3E8EF" stroke-width="1"/>
+
+  <text x="424" y="561" fill="#78909C" font-size="11">... e mais 117 unidades</text>
+
+  <!-- Preview footer -->
+  <text x="408" y="584" fill="#78909C" font-size="11">Total estimado: </text>
+  <text x="498" y="584" fill="#1A2332" font-size="11" font-weight="700">R$ 12.400,00</text>
+  <text x="590" y="584" fill="#78909C" font-size="11">  ·  120 unidades  ·  </text>
+  <text x="690" y="584" fill="#C62828" font-size="11">3 vagos (ignorados)</text>
+
+  <!-- Warning alert -->
+  <rect x="408" y="596" width="464" height="44" rx="6" fill="#FFF3E0" stroke="#FFCC02" stroke-width="1"/>
+  <text x="424" y="616" fill="#795548" font-size="12" font-weight="600">⚠️  Atenção</text>
+  <text x="424" y="631" fill="#795548" font-size="11">Ao confirmar, os boletos e QR Codes Pix serão gerados e os e-mails enviados imediatamente.</text>
+
+  <!-- Dialog footer -->
+  <line x1="380" y1="652" x2="900" y2="652" stroke="#E3E8EF" stroke-width="1"/>
+  <rect x="380" y="652" width="520" height="78" rx="0" fill="white"/>
+  <rect x="380" y="706" width="520" height="24" rx="12" fill="white"/>
+
+  <!-- Cancel button -->
+  <rect x="644" y="666" width="110" height="40" rx="6" fill="white" stroke="#E3E8EF" stroke-width="1.5"/>
+  <text x="699" y="691" fill="#546E7A" font-size="13" font-weight="500" text-anchor="middle">Cancelar</text>
+
+  <!-- Confirm button -->
+  <rect x="766" y="666" width="116" height="40" rx="6" fill="#1565C0"/>
+  <text x="824" y="691" fill="white" font-size="13" font-weight="600" text-anchor="middle">💳  Gerar e Enviar</text>
+</svg>

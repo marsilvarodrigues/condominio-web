@@ -18,23 +18,23 @@
       </td></tr>
       <!-- Body -->
       <tr><td style="padding:0 40px 24px;">
-        <p style="color:#1A2332;font-size:14px;margin:0 0 16px;">Olá, <strong>{{userName}}</strong>,</p>
+        <p style="color:#1A2332;font-size:14px;margin:0 0 16px;">Olá, <strong>${userName}</strong>,</p>
         <p style="color:#546E7A;font-size:14px;margin:0 0 24px;">Um administrador criou sua conta no sistema. Para ativar o acesso, utilize a senha temporária abaixo e clique no botão para definir uma nova senha segura.</p>
         <!-- Password box -->
         <table width="100%" cellpadding="0" cellspacing="0" style="border:1.5px dashed #CFD8DC;border-radius:10px;background:#F8FAFC;">
           <tr><td style="padding:20px;text-align:center;">
             <p style="margin:0 0 8px;color:#78909C;font-size:12px;">Senha temporária</p>
-            <p style="margin:0;color:#1565C0;font-size:22px;font-weight:700;letter-spacing:4px;">{{password}}</p>
+            <p style="margin:0;color:#1565C0;font-size:22px;font-weight:700;letter-spacing:4px;">${password}</p>
           </td></tr>
         </table>
         <p style="color:#546E7A;font-size:13px;margin:20px 0 28px;">Esta senha é válida para o <strong>primeiro acesso</strong>. Você será solicitado a criar uma senha pessoal após a ativação.</p>
         <!-- CTA -->
         <table width="100%" cellpadding="0" cellspacing="0">
           <tr><td align="center">
-            <a href="{{activationUrl}}" style="display:inline-block;background:#1565C0;color:#fff;text-decoration:none;font-size:15px;font-weight:700;padding:16px 40px;border-radius:10px;letter-spacing:0.5px;">ATIVAR MINHA CONTA</a>
+            <a href="${activationUrl}" style="display:inline-block;background:#1565C0;color:#fff;text-decoration:none;font-size:15px;font-weight:700;padding:16px 40px;border-radius:10px;letter-spacing:0.5px;">ATIVAR MINHA CONTA</a>
           </td></tr>
         </table>
-        <p style="text-align:center;color:#90A4AE;font-size:11px;margin:12px 0 0;">ou acesse: <a href="{{activationUrl}}" style="color:#1976D2;">{{activationUrl}}</a></p>
+        <p style="text-align:center;color:#90A4AE;font-size:11px;margin:12px 0 0;">ou acesse: <a href="${activationUrl}" style="color:#1976D2;">${activationUrl}</a></p>
       </td></tr>
       <!-- Warning -->
       <tr><td style="padding:0 40px 32px;">

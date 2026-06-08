@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Taxa Condominial</title>
+  <style>
+    body { margin: 0; padding: 0; background: #F0F4F8; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
+    .wrapper { max-width: 600px; margin: 32px auto; background: #FFFFFF; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+    .header { background: #1A2332; padding: 28px 32px; text-align: center; }
+    .header h1 { margin: 0; color: #FFFFFF; font-size: 22px; font-weight: 700; letter-spacing: .5px; }
+    .header p  { margin: 4px 0 0; color: #B0BEC5; font-size: 13px; }
+    .body  { padding: 32px; }
+    .greeting { font-size: 16px; margin-bottom: 20px; }
+    .card { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 20px 24px; margin-bottom: 24px; }
+    .card-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #EDF2F7; font-size: 14px; }
+    .card-row:last-child { border-bottom: none; }
+    .card-row .label { color: #718096; }
+    .card-row .value { font-weight: 600; color: #1A2332; }
+    .value-amount { font-size: 22px; font-weight: 700; color: #1976D2; }
+    .section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: #718096; margin: 24px 0 12px; }
+    .btn { display: inline-block; background: #1976D2; color: #FFFFFF !important; text-decoration: none; padding: 12px 28px; border-radius: 6px; font-weight: 600; font-size: 14px; margin-top: 4px; }
+    .codebar { background: #F8FAFC; border: 1px dashed #CBD5E0; border-radius: 6px; padding: 12px 16px; font-family: 'Courier New', monospace; font-size: 13px; word-break: break-all; color: #2D3748; margin-top: 8px; }
+    .pix-block { text-align: center; margin-top: 8px; }
+    .pix-block img { max-width: 200px; border: 1px solid #E2E8F0; border-radius: 4px; padding: 4px; }
+    .pix-copia { background: #F8FAFC; border: 1px dashed #CBD5E0; border-radius: 6px; padding: 12px 16px; font-family: 'Courier New', monospace; font-size: 11px; word-break: break-all; color: #4A5568; margin-top: 8px; }
+    .footer { background: #F8FAFC; border-top: 1px solid #E2E8F0; padding: 20px 32px; text-align: center; font-size: 12px; color: #A0AEC0; }
+    .footer a { color: #1976D2; text-decoration: none; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <!-- Header -->
+  <div class="header">
+    <h1>&#127970; CondoGest</h1>
+    <p>${condominioNome}</p>
+  </div>
+
+  <!-- Body -->
+  <div class="body">
+    <p class="greeting">Olá, <strong>${moradorNome}</strong>!</p>
+    <p style="font-size:14px;color:#555;margin-bottom:24px;">
+      Sua taxa condominial referente ao apartamento <strong>${apartamentoDesc}</strong> foi emitida. Confira os detalhes abaixo e escolha a forma de pagamento mais conveniente.
+    </p>
+
+    <!-- Resumo -->
+    <div class="card">
+      <div class="card-row">
+        <span class="label">Apartamento</span>
+        <span class="value">${apartamentoDesc}</span>
+      </div>
+      <div class="card-row">
+        <span class="label">Vencimento</span>
+        <span class="value">${vencimento}</span>
+      </div>
+      <div class="card-row">
+        <span class="label">Valor</span>
+        <span class="value value-amount">${valor}</span>
+      </div>
+    </div>
+
+    <!-- Boleto -->
+    <p class="section-title">&#128196; Boleto Bancário</p>
+    <a class="btn" href="${boletoUrl}" target="_blank">Baixar Boleto PDF</a>
+    <p style="font-size:13px;color:#718096;margin-top:12px;">Ou copie o código de barras:</p>
+    <div class="codebar">${boletoCodBarras}</div>
+
+    <!-- Pix -->
+    <p class="section-title">&#9889; Pagamento via Pix</p>
+    <div class="pix-block">
+      <img src="data:image/png;base64,${pixQrCodeBase64}" alt="QR Code Pix" />
+      <p style="font-size:12px;color:#718096;margin:8px 0 4px;">Ou copie o código Pix (copia e cola):</p>
+      <div class="pix-copia">${pixCopiaCola}</div>
+    </div>
+
+    <p style="font-size:12px;color:#A0AEC0;margin-top:24px;">
+      Em caso de dúvidas, entre em contato com a administração do condomínio.<br/>
+      Não responda a este e-mail — ele é gerado automaticamente.
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    &copy; ${anoCorrente} ${condominioNome} — Powered by CondoGest
+  </div>
+</div>
+</body>
+</html>
