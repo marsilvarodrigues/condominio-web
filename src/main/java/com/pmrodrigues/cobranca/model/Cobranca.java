@@ -107,8 +107,7 @@ public class Cobranca {
     private String boletoCodBarras;
 
     /** Base64-encoded PNG of the Pix QR Code. */
-    @Lob
-    @Column(name = "pix_qr_code_base64")
+    @Column(name = "pix_qr_code_base64", columnDefinition = "TEXT")
     private String pixQrCodeBase64;
 
     /** Pix copia-e-cola (EMV payload string). */

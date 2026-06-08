@@ -14,6 +14,7 @@ import com.pmrodrigues.financeiro.service.FundoReservaService;
 import com.pmrodrigues.financeiro.service.LancamentoBancarioService;
 import com.pmrodrigues.financeiro.service.OrcamentoAnualService;
 import com.pmrodrigues.financeiro.service.PlanoContasService;
+import com.pmrodrigues.cobranca.service.CobrancaService;
 import com.pmrodrigues.morador.service.PessoaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,7 @@ class CondominioServiceTest {
     @Mock ContaBancariaService contaBancariaService;
     @Mock LancamentoBancarioService lancamentoBancarioService;
     @Mock PessoaService pessoaService;
+    @Mock CobrancaService cobrancaService;
 
     CondominioService service;
 
@@ -51,7 +53,7 @@ class CondominioServiceTest {
     void setUp() {
         service = new CondominioService(repository, mapper, blocoRepository, apartamentoRepository,
                 planoContasService, fundoReservaService, orcamentoAnualService, contaBancariaService,
-                lancamentoBancarioService, pessoaService);
+                lancamentoBancarioService, pessoaService, cobrancaService);
 
         lenient().when(mapper.toEntity(any(CreateCondominioDTO.class))).thenAnswer(inv -> {
             CreateCondominioDTO d = inv.getArgument(0);
@@ -252,6 +254,16 @@ class CondominioServiceTest {
         service.delete(1L);
 
         verify(pessoaService).softDeleteByCondominioId(1L);
+    }
+
+    @Test
+    void delete_cascadesSoftDeleteToCobrancas() {
+        var entity = condominio(1L);
+        when(repository.findById(1L)).thenReturn(Optional.of(entity));
+
+        service.delete(1L);
+
+        verify(cobrancaService).softDeleteByCondominioId(1L);
     }
 
     @Test

@@ -13,6 +13,7 @@ import com.pmrodrigues.financeiro.service.FundoReservaService;
 import com.pmrodrigues.financeiro.service.LancamentoBancarioService;
 import com.pmrodrigues.financeiro.service.OrcamentoAnualService;
 import com.pmrodrigues.financeiro.service.PlanoContasService;
+import com.pmrodrigues.cobranca.service.CobrancaService;
 import com.pmrodrigues.morador.service.PessoaService;
 import io.micrometer.core.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,7 @@ public class CondominioService {
     private final ContaBancariaService contaBancariaService;
     private final LancamentoBancarioService lancamentoBancarioService;
     private final PessoaService pessoaService;
+    private final CobrancaService cobrancaService;
 
     public CondominioService(CondominioRepository repository,
                              CondominioMapper mapper,
@@ -56,9 +58,10 @@ public class CondominioService {
                              PlanoContasService planoContasService,
                              FundoReservaService fundoReservaService,
                              OrcamentoAnualService orcamentoAnualService,
-                             ContaBancariaService contaBancariaService,
+                                 ContaBancariaService contaBancariaService,
                              LancamentoBancarioService lancamentoBancarioService,
-                             @Lazy PessoaService pessoaService) {
+                             @Lazy PessoaService pessoaService,
+                             @Lazy CobrancaService cobrancaService) {
         this.repository = repository;
         this.mapper = mapper;
         this.blocoRepository = blocoRepository;
@@ -69,6 +72,7 @@ public class CondominioService {
         this.contaBancariaService = contaBancariaService;
         this.lancamentoBancarioService = lancamentoBancarioService;
         this.pessoaService = pessoaService;
+        this.cobrancaService = cobrancaService;
     }
 
     /**
@@ -203,6 +207,7 @@ public class CondominioService {
         contaBancariaService.softDeleteByCondominioId(id);
         lancamentoBancarioService.softDeleteByCondominioId(id);
         pessoaService.softDeleteByCondominioId(id);
+        cobrancaService.softDeleteByCondominioId(id);
         repository.delete(entity);
         log.info("Condominio soft-deleted successfully: {}", id);
     }

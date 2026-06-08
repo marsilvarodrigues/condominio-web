@@ -316,6 +316,19 @@ public class CobrancaService {
         }
     }
 
+    /**
+     * Soft-deletes all charges belonging to the given condominium.
+     * Called by {@code CondominioService.delete()} during cascade soft-delete.
+     *
+     * @param condominioId condominium primary key
+     */
+    @Transactional
+    @Timed(value = "cobranca.service.softDeleteByCondominioId", description = "Soft-delete cobrancas by condominio")
+    public void softDeleteByCondominioId(Long condominioId) {
+        log.info("softDeleteByCondominioId condominioId={}", condominioId);
+        cobrancaRepository.softDeleteByCondominioId(condominioId);
+    }
+
     private static boolean isPaymentEvent(String event) {
         return "PAYMENT_RECEIVED".equals(event) || "PAYMENT_CONFIRMED".equals(event);
     }

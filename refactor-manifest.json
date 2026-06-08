@@ -1,9 +1,9 @@
 {
   "plan_file": "refactor-plan.md",
-  "assessment_source": "inline — avaliação arquitetural 2026-06-05 (módulo morador: Pessoa, Proprietario)",
-  "created": "2026-06-05",
-  "total_chunks": 4,
-  "current_chunk": 4,
+  "assessment_source": "inline — avaliação arquitetural 2026-06-08 (módulos cobranca, gateway, financeiro.CotaRateio)",
+  "created": "2026-06-08",
+  "total_chunks": 5,
+  "current_chunk": 5,
   "status": "completed",
   "preflight_passed": true,
   "verification": {
@@ -16,43 +16,55 @@
   "chunks": [
     {
       "id": 1,
-      "name": "Mover EntityManager.getReference() dos services morador para os mappers",
+      "name": "CotaRateioServiceTest + AsaasGatewayServiceTest",
       "status": "completed",
       "depends_on": [],
-      "verification": "21 tests (PessoaServiceTest=11, ProprietarioServiceTest=10), 0 failures; ArchUnit 8/8 pass; BUILD SUCCESS",
+      "verification": "CotaRateioServiceTest=5, AsaasGatewayServiceTest=5; BUILD SUCCESS",
       "commit_sha": null,
-      "started_at": "2026-06-05",
-      "completed_at": "2026-06-05"
+      "started_at": "2026-06-08",
+      "completed_at": "2026-06-08"
     },
     {
       "id": 2,
-      "name": "CondominioService.delete() — cascade soft-delete para Pessoas",
+      "name": "CondominioService.delete() — cascade soft-delete para Cobrança",
       "status": "completed",
       "depends_on": [],
-      "verification": "PessoaServiceTest=12, CondominioServiceTest=17, CondominioServiceCacheTest=5; BUILD SUCCESS",
+      "verification": "CondominioServiceTest=18, CondominioServiceCacheTest=5; BUILD SUCCESS",
       "commit_sha": null,
-      "started_at": "2026-06-05",
-      "completed_at": "2026-06-05"
+      "started_at": "2026-06-08",
+      "completed_at": "2026-06-08"
     },
     {
       "id": 3,
-      "name": "PessoaMapperTest + ProprietarioMapperTest",
+      "name": "CobrancaServiceTest",
       "status": "completed",
-      "depends_on": [1],
-      "verification": "PessoaMapperTest=7, ProprietarioMapperTest=7; BUILD SUCCESS",
+      "depends_on": [
+        2
+      ],
+      "verification": "CobrancaServiceTest=17; BUILD SUCCESS",
       "commit_sha": null,
-      "started_at": "2026-06-05",
-      "completed_at": "2026-06-05"
+      "started_at": "2026-06-08",
+      "completed_at": "2026-06-08"
     },
     {
       "id": 4,
-      "name": "PessoaControllerTest + ProprietarioControllerTest + ProprietarioServiceTest.update",
+      "name": "CobrancaSpecificationTest",
       "status": "completed",
       "depends_on": [],
-      "verification": "PessoaControllerTest=11, ProprietarioControllerTest=12, ProprietarioServiceTest=12; also fixed @FilterDef duplicate bug in Pessoa.java unblocking all controller tests; BUILD SUCCESS",
+      "verification": "CobrancaSpecificationTest=7; BUILD SUCCESS",
       "commit_sha": null,
-      "started_at": "2026-06-05",
-      "completed_at": "2026-06-05"
+      "started_at": "2026-06-08",
+      "completed_at": "2026-06-08"
+    },
+    {
+      "id": 5,
+      "name": "CobrancaControllerTest",
+      "status": "completed",
+      "depends_on": [],
+      "verification": "CobrancaControllerTest=15; BUILD SUCCESS (1065 total)",
+      "commit_sha": null,
+      "started_at": "2026-06-08",
+      "completed_at": "2026-06-08"
     }
   ]
 }
