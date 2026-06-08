@@ -46,9 +46,9 @@ jobs:
           detailed_summary: true
           include_passed: true
   e2e-tests:
-      runs-on: ubuntu-latest
-      depends_on: unit-tests
-      steps:
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    steps:
         - name: Run unit tests
           run: mvn verify -Pe2e --no-transfer-progress
 
