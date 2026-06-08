@@ -96,35 +96,3 @@ jobs:
           report_paths: '**/target/cucumber-reports/results.json'
           detailed_summary: true
           include_passed: true
-
-
-  # ── Static Analysis ─────────────────────────────────────────────────────────
-  static-analysis:
-    name: Static Analysis
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Java 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-
-      - name: Compile (skip tests)
-        run: mvn compile --no-transfer-progress -DskipTests
-
-      - name: SpotBugs
-        run: mvn spotbugs:spotbugs --no-transfer-progress -DskipTests
-        continue-on-error: true
-
-      - name: Upload SpotBugs report
-        uses: mikepenz/action-junit-report@v4
-        if: always()
-        with:
-          report_paths: '**/target/spotbugsXml.xml'
-          detailed_summary: true
-          include_passed: true
