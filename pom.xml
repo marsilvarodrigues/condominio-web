@@ -377,6 +377,59 @@
                 </configuration>
             </plugin>
 
+            <!-- ── SpotBugs ─────────────────────────────────────────────────
+                 Fails on HIGH-priority bugs. Run: mvn spotbugs:spotbugs
+                 Report: target/spotbugsXml.xml
+            -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.8.6.4</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>High</threshold>
+                    <xmlOutput>true</xmlOutput>
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
+
+            <!-- ── PMD ──────────────────────────────────────────────────────
+                 Report-only (does not fail build). Run: mvn pmd:pmd
+                 Report: target/pmd.xml
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.25.0</version>
+                <configuration>
+                    <targetJdk>${java.version}</targetJdk>
+                    <failOnViolation>false</failOnViolation>
+                    <printFailingErrors>true</printFailingErrors>
+                    <excludes>
+                        <exclude>**/*DTO.java</exclude>
+                        <exclude>**/*Mapper.java</exclude>
+                        <exclude>**/*Config.java</exclude>
+                        <exclude>**/*Properties.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- ── Checkstyle (Google style) ────────────────────────────────
+                 Report-only (does not fail build). Run: mvn checkstyle:checkstyle
+                 Report: target/checkstyle-result.xml
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <configLocation>google_checks.xml</configLocation>
+                    <failOnViolation>false</failOnViolation>
+                    <logViolationsToConsole>true</logViolationsToConsole>
+                    <excludes>**/*DTO.java,**/*Mapper.java,**/*Config.java,**/*Properties.java</excludes>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -440,6 +493,39 @@
           mvn test -Pperformance -Dapp.host=192.168.1.10 -Dapp.pass=outrasenha
     -->
     <profiles>
+        <!--
+            ── Perfil: e2e ───────────────────────────────────────────────────
+            Reconfigura o Surefire para rodar APENAS os testes marcados com
+            @Tag("e2e") (full-stack via Testcontainers PG + Redis).
+
+            Uso:
+              mvn verify -Pe2e
+
+            A JUnit Platform Suite class que orquestra o Cucumber e2e deve
+            estar em src/test/java e anotada com @Tag("e2e").
+            O Surefire inclui todas as classes de teste e usa o seletor de
+            tags da JUnit Platform para filtrar somente as e2e.
+        -->
+        <profile>
+            <id>e2e</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration combine.self="override">
+                            <runOrder>alphabetical</runOrder>
+                            <groups>e2e</groups>
+                            <excludedGroups/>
+                            <reuseForks>true</reuseForks>
+                            <forkCount>1</forkCount>
+                            <argLine>@{argLine}</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <profile>
             <id>performance</id>
             <properties>
