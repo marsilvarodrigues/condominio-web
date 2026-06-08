@@ -10,63 +10,143 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
+  # ── Unit + Integration + BDD ────────────────────────────────────────────────
   unit-tests:
+    name: Unit / Integration / BDD
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Set up Java
-        uses: actions/setup-java@v2
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '21'
+          cache: maven
 
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-
-      - name: Build with Maven
-        run: mvn clean install --no-transfer-progress
-
-      - name: Run unit tests
-        run: mvn test --no-transfer-progress  # Isso força a execução dos testes se não forem executados com o package
+      - name: Run tests + coverage gate
+        run: mvn verify --no-transfer-progress
 
       - name: Test Report
         uses: mikepenz/action-junit-report@v4
-        if: success() || failure()
+        if: always()
         with:
           report_paths: '**/target/surefire-reports/TEST-*.xml'
           detailed_summary: true
           include_passed: true
+
+      - name: Upload JaCoCo report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
+
+      - name: Upload Cucumber BDD JSON
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cucumber-bdd-report
+          path: target/cucumber-reports/
+          if-no-files-found: ignore
+
+  # ── E2E ────────────────────────────────────────────────────────────────────
   e2e-tests:
+    name: E2E (full-stack)
     runs-on: ubuntu-latest
     needs: unit-tests
-    steps:
-        - name: Run unit tests
-          run: mvn verify -Pe2e --no-transfer-progress
 
-        - name: Test Report
-          uses: mikepenz/action-junit-report@v4
-          if: success() || failure()
-          with:
-            report_paths: '**/target/cucumber-reports/index.html'
-            detailed_summary: true
-            include_passed: true# Isso força a execução dos testes se não forem executados com o package
-  jacoco-report:
-    runs-on: ubuntu-latest
-    needs: [unit-tests, e2e-tests]
     steps:
-      - name: Upload Jacoco Report
-        uses: mikepenz/action-junit-report@v4
-        if: success() || failure()
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
         with:
-          report_paths: '**/target/site/jacoco-resources/jacoco.xml'
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Run E2E tests
+        run: mvn verify -Pe2e --no-transfer-progress
+
+      - name: Test Report
+        uses: mikepenz/action-junit-report@v4
+        if: always()
+        with:
+          report_paths: '**/target/surefire-reports/TEST-*.xml'
           detailed_summary: true
-          include_passed: true# Isso força a execução dos testes se não forem executados com o package
+          include_passed: true
+
+      - name: Upload JaCoCo e2e report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jacoco-e2e-report
+          path: target/site/jacoco/
+
+      - name: Upload Cucumber e2e JSON
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cucumber-e2e-report
+          path: target/cucumber-reports/
+          if-no-files-found: ignore
+
+  # ── Static Analysis ─────────────────────────────────────────────────────────
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Compile (skip tests)
+        run: mvn compile --no-transfer-progress -DskipTests
+
+      - name: SpotBugs
+        run: mvn spotbugs:spotbugs --no-transfer-progress -DskipTests
+        continue-on-error: true
+
+      - name: PMD
+        run: mvn pmd:pmd --no-transfer-progress -DskipTests
+        continue-on-error: true
+
+      - name: Checkstyle
+        run: mvn checkstyle:checkstyle --no-transfer-progress -DskipTests
+        continue-on-error: true
+
+      - name: Upload SpotBugs report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: spotbugs-report
+          path: target/spotbugsXml.xml
+          if-no-files-found: ignore
+
+      - name: Upload PMD report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pmd-report
+          path: target/pmd.xml
+          if-no-files-found: ignore
+
+      - name: Upload Checkstyle report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: checkstyle-report
+          path: target/checkstyle-result.xml
+          if-no-files-found: ignore
