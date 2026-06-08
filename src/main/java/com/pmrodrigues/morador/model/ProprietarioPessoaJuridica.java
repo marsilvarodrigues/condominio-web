@@ -1,6 +1,5 @@
 package com.pmrodrigues.morador.model;
 
-import com.pmrodrigues.commons.validation.Cnpj;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -10,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.validator.constraints.br.CNPJ;
 
 /**
  * Concrete JPA entity for a property owner that is a legal entity (pessoa jurídica). Stored as a
@@ -27,7 +27,7 @@ public class ProprietarioPessoaJuridica extends Proprietario {
 
   /** CNPJ — Brazilian legal-entity tax identifier (up to 18 chars including punctuation). */
   @Column(length = 18)
-  @Cnpj
+  @CNPJ
   private String cnpj;
 
   /** Corporate name (razão social). */
