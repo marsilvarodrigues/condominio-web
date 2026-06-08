@@ -522,6 +522,20 @@
                             <argLine>@{argLine}</argLine>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco.version}</version>
+                        <executions>
+                            <!-- Disable the 80% line-coverage gate for e2e runs.
+                                 E2E tests cover only happy-path flows; the gate is
+                                 enforced by the full unit+BDD suite in mvn verify. -->
+                            <execution>
+                                <id>check</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

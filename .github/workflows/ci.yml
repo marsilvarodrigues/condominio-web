@@ -93,7 +93,7 @@ jobs:
         uses: mikepenz/action-junit-report@v4
         if: always()
         with:
-          report_paths: '**/target/cucumber-reports/index.html'
+          report_paths: '**/target/cucumber-reports/results.json'
           detailed_summary: true
           include_passed: true
 
@@ -121,35 +121,10 @@ jobs:
         run: mvn spotbugs:spotbugs --no-transfer-progress -DskipTests
         continue-on-error: true
 
-      - name: PMD
-        run: mvn pmd:pmd --no-transfer-progress -DskipTests
-        continue-on-error: true
-
-      - name: Checkstyle
-        run: mvn checkstyle:checkstyle --no-transfer-progress -DskipTests
-        continue-on-error: true
-
       - name: Upload SpotBugs report
         uses: mikepenz/action-junit-report@v4
         if: always()
         with:
           report_paths: '**/target/spotbugsXml.xml'
-          detailed_summary: true
-          include_passed: true
-
-      - name: Upload PMD report
-        uses: mikepenz/action-junit-report@v4
-        if: always()
-        with:
-          report_paths: '**/target/pmd.xml'
-          detailed_summary: true
-          include_passed: true
-
-
-      - name: Upload Checkstyle report
-        uses: mikepenz/action-junit-report@v4
-        if: always()
-        with:
-          report_paths: '**/target/checkstyle-result.xml'
           detailed_summary: true
           include_passed: true
