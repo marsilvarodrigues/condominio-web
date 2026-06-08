@@ -82,19 +82,21 @@ jobs:
           include_passed: true
 
       - name: Upload JaCoCo e2e report
-        uses: actions/upload-artifact@v4
+        uses: mikepenz/action-junit-report@v4
         if: always()
         with:
-          name: jacoco-e2e-report
-          path: target/site/jacoco/
+          report_paths: '**/target/site/jacoco/jacoco.xml'
+          detailed_summary: true
+          include_passed: true
 
       - name: Upload Cucumber e2e JSON
-        uses: actions/upload-artifact@v4
+        uses: mikepenz/action-junit-report@v4
         if: always()
         with:
-          name: cucumber-e2e-report
-          path: target/cucumber-reports/
-          if-no-files-found: ignore
+          report_paths: '**/target/cucumber-reports/index.html'
+          detailed_summary: true
+          include_passed: true
+
 
   # ── Static Analysis ─────────────────────────────────────────────────────────
   static-analysis:
@@ -128,25 +130,26 @@ jobs:
         continue-on-error: true
 
       - name: Upload SpotBugs report
-        uses: actions/upload-artifact@v4
+        uses: mikepenz/action-junit-report@v4
         if: always()
         with:
-          name: spotbugs-report
-          path: target/spotbugsXml.xml
-          if-no-files-found: ignore
+          report_paths: '**/target/spotbugsXml.xml'
+          detailed_summary: true
+          include_passed: true
 
       - name: Upload PMD report
-        uses: actions/upload-artifact@v4
+        uses: mikepenz/action-junit-report@v4
         if: always()
         with:
-          name: pmd-report
-          path: target/pmd.xml
-          if-no-files-found: ignore
+          report_paths: '**/target/pmd.xml'
+          detailed_summary: true
+          include_passed: true
+
 
       - name: Upload Checkstyle report
-        uses: actions/upload-artifact@v4
+        uses: mikepenz/action-junit-report@v4
         if: always()
         with:
-          name: checkstyle-report
-          path: target/checkstyle-result.xml
-          if-no-files-found: ignore
+          report_paths: '**/target/checkstyle-result.xml'
+          detailed_summary: true
+          include_passed: true
