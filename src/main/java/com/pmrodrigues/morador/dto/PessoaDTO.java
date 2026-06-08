@@ -7,16 +7,15 @@ import java.time.LocalDateTime;
  * discriminator value: {@code MORADOR}, {@code PROP_PF}, or {@code PROP_PJ}.
  */
 public record PessoaDTO(
-        Long id,
-        String nome,
-        /** Discriminator: MORADOR | PROP_PF | PROP_PJ */
-        String tipo,
-        String cpf,
-        String email,
-        String telefone,
-        Long apartamentoId,
-        String apartamentoNumero,
-        Long userId,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
-) {}
+    Long id,
+    String nome,
+    /** Discriminator: MORADOR | PROP_PF | PROP_PJ */
+    String tipo,
+    String cpf,
+    String email,
+    String telefone,
+    Long apartamentoId,
+    String apartamentoNumero,
+    Long userId,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt) {}

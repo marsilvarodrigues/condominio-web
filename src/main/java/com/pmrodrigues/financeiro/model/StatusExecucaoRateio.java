@@ -1,10 +1,8 @@
 package com.pmrodrigues.financeiro.model;
 
-/**
- * Result status of a single {@link RateioExecucao}.
- */
+/** Result status of a single {@link RateioExecucao}. */
 public enum StatusExecucaoRateio {
-    SUCESSO,
-    ERRO,
-    PARCIAL
+  SUCESSO,
+  ERRO,
+  PARCIAL
 }

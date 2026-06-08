@@ -7,9 +7,4 @@ import com.pmrodrigues.financeiro.model.TipoContaBancaria;
  * All fields are optional; absent values are ignored.
  */
 public record ContaBancariaFilterDTO(
-        TipoContaBancaria tipo,
-        Boolean ativa,
-        String agencia,
-        String conta
-) {
-}
+    TipoContaBancaria tipo, Boolean ativa, String agencia, String conta) {}

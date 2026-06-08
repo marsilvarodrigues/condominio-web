@@ -20,7 +20,17 @@ import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
@@ -28,16 +38,9 @@ import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
 /**
- * JPA entity representing an application user with soft-delete support and an email-based activation flow.
- * Subclasses (e.g. {@code Pessoa}) use JOINED inheritance to extend this entity.
+ * JPA entity representing an application user with soft-delete support and an email-based
+ * activation flow. Subclasses (e.g. {@code Pessoa}) use JOINED inheritance to extend this entity.
  */
 @Getter
 @Setter
@@ -52,78 +55,79 @@ import java.util.UUID;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+  private static final BCryptPasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
-    @Column(nullable = false, unique = true)
-    @Email
-    @NotBlank
-    private String email;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false)
-    private String password;
+  @Column(nullable = false, unique = true)
+  @Email
+  @NotBlank
+  private String email;
 
-    @Column(nullable = false)
-    @NotBlank
-    @NotNull
-    private String name;
+  @Column(nullable = false)
+  private String password;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private boolean enabled = true;
+  @Column(nullable = false)
+  @NotBlank
+  @NotNull
+  private String name;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private boolean deleted = false;
+  @Column(nullable = false)
+  @Builder.Default
+  private boolean enabled = true;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "role")
-    @Builder.Default
-    private Set<String> roles = new HashSet<>(Set.of("ROLE_USER"));
+  @Column(nullable = false)
+  @Builder.Default
+  private boolean deleted = false;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_condominios",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "condominio_id")
-    )
-    @Builder.Default
-    private Set<Condominio> condominios = new HashSet<>();
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+  @Column(name = "role")
+  @Builder.Default
+  private Set<String> roles = new HashSet<>(Set.of("ROLE_USER"));
 
-    @Column(name = "activation_token")
-    private String activationToken;
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+      name = "user_condominios",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "condominio_id"))
+  @Builder.Default
+  private Set<Condominio> condominios = new HashSet<>();
 
-    @Column(name = "activation_token_expiry")
-    private LocalDateTime activationTokenExpiry;
+  @Column(name = "activation_token")
+  private String activationToken;
 
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+  @Column(name = "activation_token_expiry")
+  private LocalDateTime activationTokenExpiry;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+  @CreationTimestamp
+  @Column(name = "created_at", updatable = false)
+  private LocalDateTime createdAt;
 
-    @Transient
-    private String rawPassword;
+  @UpdateTimestamp
+  @Column(name = "updated_at")
+  private LocalDateTime updatedAt;
 
-    /**
-     * Generates a temporary password, a UUID activation token valid for 24 hours, and disables the account until it is activated; runs only when no password has been set yet.
-     */
-    @PrePersist
-    public void prePersist() {
-        if (this.password == null || this.password.isBlank()) {
-            var random = new SecureRandom();
-            var bytes = new byte[18]; // 18 random bytes → 24 Base64 URL-safe chars (144 bits of entropy)
-            random.nextBytes(bytes);
-            String tempPassword = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
-            this.rawPassword = tempPassword;
-            this.password = new BCryptPasswordEncoder().encode(tempPassword);
-            this.activationToken = UUID.randomUUID().toString();
-            this.activationTokenExpiry = LocalDateTime.now().plusHours(24);
-            this.enabled = false;
-        }
+  @Transient private String rawPassword;
+
+  /**
+   * Generates a temporary password, a UUID activation token valid for 24 hours, and disables the
+   * account until it is activated; runs only when no password has been set yet.
+   */
+  @PrePersist
+  public void prePersist() {
+    if (this.password == null || this.password.isBlank()) {
+      var bytes = new byte[18]; // 18 random bytes → 24 Base64 URL-safe chars (144 bits of entropy)
+      SECURE_RANDOM.nextBytes(bytes);
+      String tempPassword = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+      this.rawPassword = tempPassword;
+      this.password = PASSWORD_ENCODER.encode(tempPassword);
+      this.activationToken = UUID.randomUUID().toString();
+      this.activationTokenExpiry = LocalDateTime.now().plusHours(24);
+      this.enabled = false;
     }
+  }
 }

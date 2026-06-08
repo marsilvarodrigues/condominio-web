@@ -6,17 +6,14 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-/**
- * MapStruct mapper for {@link RateioExecucao} read-only conversions.
- */
-@Mapper(componentModel = "spring",
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+/** MapStruct mapper for {@link RateioExecucao} read-only conversions. */
+@Mapper(
+    componentModel = "spring",
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface RateioExecucaoMapper {
 
-    /**
-     * Maps a {@link RateioExecucao} entity to its DTO representation.
-     */
-    @Mapping(target = "despesaId", source = "despesa.id")
-    @Mapping(target = "despesaDescricao", source = "despesa.descricao")
-    RateioExecucaoDTO toDTO(RateioExecucao entity);
+  /** Maps a {@link RateioExecucao} entity to its DTO representation. */
+  @Mapping(target = "despesaId", source = "despesa.id")
+  @Mapping(target = "despesaDescricao", source = "despesa.descricao")
+  RateioExecucaoDTO toDTO(RateioExecucao entity);
 }

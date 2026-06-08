@@ -7,9 +7,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * <p>Bound to the {@code app.cobranca.asaas} prefix from {@code application.yaml}.
  *
- * @param baseUrl   Asaas REST API base URL (sandbox or production)
- * @param apiKey    Asaas account API key (access_token header value)
- * @param walletId  Asaas wallet identifier for split payment routing (optional)
+ * @param baseUrl Asaas REST API base URL (sandbox or production)
+ * @param apiKey Asaas account API key (access_token header value)
+ * @param walletId Asaas wallet identifier for split payment routing (optional)
  */
 @ConfigurationProperties(prefix = "app.cobranca.asaas")
 public record AsaasProperties(String baseUrl, String apiKey, String walletId) {}

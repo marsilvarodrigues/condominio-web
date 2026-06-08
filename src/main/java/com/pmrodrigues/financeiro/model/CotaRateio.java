@@ -4,18 +4,32 @@ import com.pmrodrigues.commons.config.TenantFilterAspect;
 import com.pmrodrigues.commons.tenant.TenantContext;
 import com.pmrodrigues.condominio.model.Apartamento;
 import com.pmrodrigues.condominio.model.Condominio;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import java.math.BigDecimal;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Filter;
-
-import java.math.BigDecimal;
 
 /**
  * Stores the calculated quota assigned to a single apartment unit for a given {@link Despesa}.
  *
- * <p>This entity has no soft delete and no auditing — it is replaced wholesale whenever
- * a recalculation runs (old records for the same {@code despesa} are deleted before inserting new ones).
+ * <p>This entity has no soft delete and no auditing — it is replaced wholesale whenever a
+ * recalculation runs (old records for the same {@code despesa} are deleted before inserting new
+ * ones).
  */
 @Getter
 @Setter
@@ -28,41 +42,41 @@ import java.math.BigDecimal;
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 public class CotaRateio {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "condominio_id", nullable = false)
-    private Condominio condominio;
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "condominio_id", nullable = false)
+  private Condominio condominio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "despesa_id", nullable = false)
-    private Despesa despesa;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "despesa_id", nullable = false)
+  private Despesa despesa;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "apartamento_id", nullable = false)
-    private Apartamento apartamento;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "apartamento_id", nullable = false)
+  private Apartamento apartamento;
 
-    @Column(nullable = false, precision = 15, scale = 2)
-    private BigDecimal valor;
+  @Column(nullable = false, precision = 15, scale = 2)
+  private BigDecimal valor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rateio_execucao_id", nullable = false)
-    private RateioExecucao rateioExecucao;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "rateio_execucao_id", nullable = false)
+  private RateioExecucao rateioExecucao;
 
-    /**
-     * Sets the {@code condominio} from {@link TenantContext} before the entity is first persisted.
-     */
-    @PrePersist
-    protected void prePersist() {
-        Long condominioId = TenantContext.getCondominioId();
-        if (condominioId != null) {
-            var c = new Condominio();
-            c.setId(condominioId);
-            this.condominio = c;
-        }
+  /**
+   * Sets the {@code condominio} from {@link TenantContext} before the entity is first persisted.
+   */
+  @PrePersist
+  protected void prePersist() {
+    Long condominioId = TenantContext.getCondominioId();
+    if (condominioId != null) {
+      var c = new Condominio();
+      c.setId(condominioId);
+      this.condominio = c;
     }
+  }
 }

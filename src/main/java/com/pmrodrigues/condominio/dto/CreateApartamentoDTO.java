@@ -1,16 +1,9 @@
 package com.pmrodrigues.condominio.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
 import java.math.BigDecimal;
 
-/**
- * Payload for creating a new apartment unit, referencing the parent bloco by FK identifier.
- */
+/** Payload for creating a new apartment unit, referencing the parent bloco by FK identifier. */
 public record CreateApartamentoDTO(
-        @NotNull Long blocoId,
-        @NotBlank String numero,
-        @NotNull BigDecimal areaConstruida) {
-}
+    @NotNull Long blocoId, @NotBlank String numero, @NotNull BigDecimal areaConstruida) {}

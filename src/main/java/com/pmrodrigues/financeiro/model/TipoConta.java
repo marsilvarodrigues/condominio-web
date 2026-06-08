@@ -1,9 +1,7 @@
 package com.pmrodrigues.financeiro.model;
 
-/**
- * Discriminates whether a PlanoContas node represents a revenue or expense account.
- */
+/** Discriminates whether a PlanoContas node represents a revenue or expense account. */
 public enum TipoConta {
-    RECEITA,
-    DESPESA
+  RECEITA,
+  DESPESA
 }

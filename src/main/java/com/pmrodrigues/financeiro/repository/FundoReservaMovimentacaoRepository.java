@@ -10,20 +10,21 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data JPA repository for {@link FundoReservaMovimentacao} entities, supporting paginated listing.
+ * Spring Data JPA repository for {@link FundoReservaMovimentacao} entities, supporting paginated
+ * listing.
  */
 @Repository
-public interface FundoReservaMovimentacaoRepository extends JpaRepository<FundoReservaMovimentacao, Long> {
+public interface FundoReservaMovimentacaoRepository
+    extends JpaRepository<FundoReservaMovimentacao, Long> {
 
-    /**
-     * Returns paginated movements for a given fundo reserva, most recent first.
-     */
-    Page<FundoReservaMovimentacao> findByFundoReservaIdOrderByDataMovimentacaoDesc(Long fundoReservaId, Pageable pageable);
+  /** Returns paginated movements for a given fundo reserva, most recent first. */
+  Page<FundoReservaMovimentacao> findByFundoReservaIdOrderByDataMovimentacaoDesc(
+      Long fundoReservaId, Pageable pageable);
 
-    /**
-     * Soft-deletes all movements belonging to the given condominio.
-     */
-    @Modifying
-    @Query("UPDATE FundoReservaMovimentacao m SET m.deleted = true WHERE m.condominio.id = :condominioId")
-    void softDeleteByCondominioId(@Param("condominioId") Long condominioId);
+  /** Soft-deletes all movements belonging to the given condominio. */
+  @Modifying
+  @Query(
+      "UPDATE FundoReservaMovimentacao m SET m.deleted = true WHERE m.condominio.id ="
+          + " :condominioId")
+  void softDeleteByCondominioId(@Param("condominioId") Long condominioId);
 }

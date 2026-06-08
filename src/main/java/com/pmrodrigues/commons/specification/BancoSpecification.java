@@ -11,21 +11,25 @@ import org.springframework.data.jpa.domain.Specification;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BancoSpecification {
 
-    /**
-     * Returns a specification matching bancos whose code starts with the given prefix (case-insensitive).
-     */
-    public static Specification<Banco> hasCodigo(String codigo) {
-        if (codigo == null || codigo.isBlank()) return null;
-        return (root, query, cb) ->
-                cb.like(cb.lower(root.get("codigo")), codigo.toLowerCase() + "%");
+  /**
+   * Returns a specification matching bancos whose code starts with the given prefix
+   * (case-insensitive).
+   */
+  public static Specification<Banco> hasCodigo(String codigo) {
+    if (codigo == null || codigo.isBlank()) {
+      return null;
     }
+    return (root, query, cb) -> cb.like(cb.lower(root.get("codigo")), codigo.toLowerCase() + "%");
+  }
 
-    /**
-     * Returns a specification matching bancos whose name contains the given substring (case-insensitive).
-     */
-    public static Specification<Banco> hasNome(String nome) {
-        if (nome == null || nome.isBlank()) return null;
-        return (root, query, cb) ->
-                cb.like(cb.lower(root.get("nome")), "%" + nome.toLowerCase() + "%");
+  /**
+   * Returns a specification matching bancos whose name contains the given substring
+   * (case-insensitive).
+   */
+  public static Specification<Banco> hasNome(String nome) {
+    if (nome == null || nome.isBlank()) {
+      return null;
     }
+    return (root, query, cb) -> cb.like(cb.lower(root.get("nome")), "%" + nome.toLowerCase() + "%");
+  }
 }

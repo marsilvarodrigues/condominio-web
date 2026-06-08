@@ -2,7 +2,6 @@ package com.pmrodrigues.commons.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,18 +10,21 @@ import java.lang.annotation.Target;
 
 /**
  * Validates that the annotated string is a syntactically and algorithmically valid Brazilian CNPJ.
- * Accepts both formatted ({@code XX.XXX.XXX/XXXX-XX}) and unformatted (14-digit) values.
- * {@code null} and blank values are considered valid — combine with {@code @NotBlank} to reject them.
+ * Accepts both formatted ({@code XX.XXX.XXX/XXXX-XX}) and unformatted (14-digit) values. {@code
+ * null} and blank values are considered valid — combine with {@code @NotBlank} to reject them.
  */
 @Documented
 @Constraint(validatedBy = CnpjValidator.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CNPJ {
+public @interface Cnpj {
 
-    String message() default "CNPJ inválido";
+  /** Returns the constraint violation message. */
+  String message() default "CNPJ inválido";
 
-    Class<?>[] groups() default {};
+  /** Returns the groups this constraint belongs to. */
+  Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+  /** Returns the payload associated with this constraint. */
+  Class<? extends Payload>[] payload() default {};
 }

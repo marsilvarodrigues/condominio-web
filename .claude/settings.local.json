@@ -103,7 +103,17 @@
       "Bash(node -e ' *)",
       "Bash(grep -E \"^\\\\\\\\[INFO\\\\\\\\] Tests run:|^\\\\\\\\[INFO\\\\\\\\] BUILD|^\\\\\\\\[ERROR\\\\\\\\] Failures|^\\\\\\\\[ERROR\\\\\\\\]   Cobra\")",
       "Bash(grep -E \"^\\\\\\\\[INFO\\\\\\\\] Tests run:|^\\\\\\\\[INFO\\\\\\\\] BUILD|^\\\\\\\\[ERROR\\\\\\\\] Failures|^\\\\\\\\[ERROR\\\\\\\\]   \")",
-      "Bash(mvn dependency:tree -q)"
+      "Bash(mvn dependency:tree -q)",
+      "Bash(mvn spotbugs:check)",
+      "Bash(mvn spotbugs:check -q)",
+      "Bash(mvn checkstyle:check)",
+      "Bash(mvn checkstyle:checkstyle -q --no-transfer-progress)",
+      "Bash(mvn dependency:copy \"-Dartifact=com.google.googlejavaformat:google-java-format:1.24.0:jar:all-deps\" \"-DoutputDirectory=target\" --no-transfer-progress -q)",
+      "Bash(xargs java --add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED -jar target/google-java-format-1.24.0-all-deps.jar --replace)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(mvn checkstyle:checkstyle -q)",
+      "Bash(python -c ' *)",
+      "Bash(mvn checkstyle:checkstyle --no-transfer-progress)"
     ]
   }
 }

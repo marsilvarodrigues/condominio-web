@@ -6,10 +6,7 @@ import java.util.List;
 /**
  * Result of a non-persisted rateio simulation.
  *
- * @param cotas       one entry per unit with quota details
- * @param somaCotas   sum of all calculated quotas (should equal {@code despesaTotal})
+ * @param cotas one entry per unit with quota details
+ * @param somaCotas sum of all calculated quotas (should equal {@code despesaTotal})
  */
-public record SimularRateioResponse(
-        List<CotaUnidadeDTO> cotas,
-        BigDecimal somaCotas
-) {}
+public record SimularRateioResponse(List<CotaUnidadeDTO> cotas, BigDecimal somaCotas) {}

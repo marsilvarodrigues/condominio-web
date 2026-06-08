@@ -15,6 +15,7 @@ Usage:
 """
 
 import argparse
+import base64
 import os
 import re
 import subprocess
@@ -227,22 +228,57 @@ def generate_class_diagram(classes: list) -> str:
     return "\n".join(lines)
 
 
-def generate_activity_diagram(cls: ClassInfo, method: MethodInfo) -> str:
+def generate_sequence_diagram(cls: ClassInfo, method: MethodInfo) -> str:
+    # Collect unique participants in call order
+    seen: set = set()
+    participants: list = []
+    for call in method.calls:
+        target = call.split(".")[0]
+        if target not in seen:
+            seen.add(target)
+            participants.append(target)
+
     lines = [
         "@startuml",
-        f"title {cls.name}.{method.name}()",
-        "skinparam activityFontSize 11",
-        "start",
+        f'title {cls.name}.{method.name}()',
+        "skinparam sequenceFontSize 11",
+        "skinparam sequenceArrowThickness 1.5",
+        "skinparam responseMessageBelowArrow true",
+        "skinparam maxMessageSize 120",
+        "",
+        f'participant "{cls.name}" as self',
+    ]
+    for p in participants:
+        lines.append(f'participant "{p}"')
+
+    simplified_params = _simplify_params(method.params)
+    lines += [
+        "",
+        f"[-> self : {method.name}({simplified_params})",
+        "activate self",
         "",
     ]
 
-    if method.calls:
-        for call in method.calls:
-            lines.append(f":{call};")
-    else:
-        lines.append(":// no external layer calls;")
+    for call in method.calls:
+        target, _, meth_raw = call.partition(".")
+        meth = meth_raw.rstrip("()")
+        lines += [
+            f'self -> "{target}" : {meth}()',
+            f'activate "{target}"',
+            f'"{target}" --> self',
+            f'deactivate "{target}"',
+            "",
+        ]
 
-    lines += ["", "stop", "@enduml"]
+    if not method.calls:
+        lines.append("note over self : no external layer calls")
+        lines.append("")
+
+    lines += [
+        "[<-- self : return",
+        "deactivate self",
+        "@enduml",
+    ]
     return "\n".join(lines)
 
 
@@ -259,6 +295,22 @@ def render_plantuml(puml_path: Path, output_dir: Path) -> Optional[Path]:
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired, FileNotFoundError) as e:
         print(f"[WARN] plantuml render failed for {puml_path.name}: {e}", file=sys.stderr)
         return None
+
+
+# ── Inline image helpers ──────────────────────────────────────────────────────
+
+def svg_to_data_uri(svg_path: Path) -> Optional[str]:
+    """Base64-encode an SVG file for embedding as a data URI in GitHub step summary."""
+    try:
+        b64 = base64.b64encode(svg_path.read_bytes()).decode("ascii")
+        return f"data:image/svg+xml;base64,{b64}"
+    except Exception as e:
+        print(f"[WARN] Could not encode {svg_path}: {e}", file=sys.stderr)
+        return None
+
+
+def inline_img(uri: str, alt: str, width: int = 900) -> str:
+    return f'<img src="{uri}" alt="{alt}" width="{width}">\n'
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -307,16 +359,16 @@ def main() -> int:
     if class_svg:
         print(f"  → {class_svg}")
 
-    # ── Activity diagrams (one per public method) ──────────────────────────────
+    # ── Sequence diagrams (one per public method) ─────────────────────────────
     activity_results = []
     for cls in classes:
         for method in cls.methods:
-            stem = f"activity_{cls.name}_{method.name}"
+            stem = f"sequence_{cls.name}_{method.name}"
             puml_path = puml_dir / f"{stem}.puml"
-            puml_path.write_text(generate_activity_diagram(cls, method), encoding="utf-8")
+            puml_path.write_text(generate_sequence_diagram(cls, method), encoding="utf-8")
             svg = render_plantuml(puml_path, svg_dir)
             if svg:
-                activity_results.append((cls.name, method.name, svg.name))
+                activity_results.append((cls.name, method.name, svg))
                 print(f"  → {svg}")
 
     # ── Summary markdown ───────────────────────────────────────────────────────
@@ -331,15 +383,23 @@ def main() -> int:
         md.append(f"- **`{cls.package}.{cls.name}`** ({cls.kind}): {methods_str}")
 
     if class_svg:
-        md += [
-            "\n### Class Diagram\n",
-            "> Download the **`uml-diagrams`** artifact to view SVG files locally.\n",
-        ]
+        md.append("\n### Class Diagram\n")
+        uri = svg_to_data_uri(class_svg)
+        if uri:
+            md.append(inline_img(uri, "Class Diagram", width=900))
+        else:
+            md.append("> ⚠️ Could not embed class diagram.\n")
 
     if activity_results:
-        md += ["\n### Activity Diagrams (public methods)\n"]
-        for cls_name, method_name, svg_name in activity_results:
-            md.append(f"- `{cls_name}.{method_name}()` → `svg/{svg_name}`")
+        md.append("\n### Sequence Diagrams\n")
+        for cls_name, method_name, svg_path in activity_results:
+            uri = svg_to_data_uri(svg_path)
+            img_html = inline_img(uri, f"{cls_name}.{method_name}", width=600) if uri else "⚠️ render failed\n"
+            md += [
+                f"\n<details><summary><code>{cls_name}.{method_name}()</code></summary>\n",
+                f"\n{img_html}",
+                "\n</details>\n",
+            ]
 
     summary_path.write_text("\n".join(md), encoding="utf-8")
     print(f"\nSummary written to {summary_path}")

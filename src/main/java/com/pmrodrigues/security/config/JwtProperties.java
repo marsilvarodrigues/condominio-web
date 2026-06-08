@@ -16,21 +16,15 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "security.jwt")
 public class JwtProperties {
 
-    @Positive
-    private long accessTokenExpiration = 3600;
+  @Positive private long accessTokenExpiration = 3600;
 
-    @Positive
-    private long refreshTokenExpiration = 86400;
+  @Positive private long refreshTokenExpiration = 86400;
 
-    @NotBlank
-    private String issuer = "condominio";
+  @NotBlank private String issuer = "condominio";
 
-    @NotBlank
-    private String clientId;
+  @NotBlank private String clientId;
 
-    @NotBlank
-    private String clientSecret;
+  @NotBlank private String clientSecret;
 
-    @NotBlank
-    private String redirectUri = "http://localhost:8080/login/oauth2/code/condominio";
+  @NotBlank private String redirectUri = "http://localhost:8080/login/oauth2/code/condominio";
 }

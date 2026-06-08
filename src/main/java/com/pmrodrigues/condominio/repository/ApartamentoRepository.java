@@ -9,17 +9,20 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data JPA repository for {@link Apartamento} entities, supporting specification-based filtering.
+ * Spring Data JPA repository for {@link Apartamento} entities, supporting specification-based
+ * filtering.
  */
 @Repository
-public interface ApartamentoRepository extends JpaRepository<Apartamento, Long>, JpaSpecificationExecutor<Apartamento> {
+public interface ApartamentoRepository
+    extends JpaRepository<Apartamento, Long>, JpaSpecificationExecutor<Apartamento> {
 
-    /**
-     * Soft-deletes all apartamentos belonging to the given condominio by setting {@code deleted = true}.
-     *
-     * @param condominioId the condominio whose apartamentos should be soft-deleted
-     */
-    @Modifying
-    @Query("UPDATE Apartamento a SET a.deleted = true WHERE a.condominio.id = :condominioId")
-    void softDeleteByCondominioId(@Param("condominioId") Long condominioId);
+  /**
+   * Soft-deletes all apartamentos belonging to the given condominio by setting {@code deleted =
+   * true}.
+   *
+   * @param condominioId the condominio whose apartamentos should be soft-deleted
+   */
+  @Modifying
+  @Query("UPDATE Apartamento a SET a.deleted = true WHERE a.condominio.id = :condominioId")
+  void softDeleteByCondominioId(@Param("condominioId") Long condominioId);
 }
