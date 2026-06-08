@@ -1,4 +1,4 @@
-name: CI
+name: CICD Project
 
 on:
   push:
@@ -10,264 +10,63 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
-  # ─── Unit · Integration · BDD ──────────────────────────────────────────────
-  test:
-    name: Tests (unit · integration · BDD)
+  unit-tests:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - uses: actions/setup-java@v4
+      - name: Set up Java
+        uses: actions/setup-java@v2
         with:
-          java-version: '21'
           distribution: 'temurin'
-          cache: maven
-
-      - name: Run tests + coverage gate
-        run: mvn verify --no-transfer-progress
-
-      - name: Upload JaCoCo report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: jacoco-report
-          path: target/site/jacoco/
-
-      - name: Upload Cucumber JSON
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cucumber-bdd-report
-          path: target/cucumber-reports/
-          if-no-files-found: ignore
-
-      - name: Count lines of code
-        if: always()
-        run: |
-          sudo apt-get install -y --quiet cloc
-          echo "## Lines of Code" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          cloc --md src/main/java >> "$GITHUB_STEP_SUMMARY"
-
-      - name: JaCoCo coverage summary
-        if: always()
-        run: |
-          if [ -f target/site/jacoco/jacoco.csv ]; then
-            python3 - <<'PYEOF'
-          import csv, os, sys
-
-          try:
-            with open('target/site/jacoco/jacoco.csv') as f:
-              rows = list(csv.DictReader(f))
-
-            def total(col_missed, col_covered):
-              missed  = sum(int(r.get(col_missed,  0)) for r in rows)
-              covered = sum(int(r.get(col_covered, 0)) for r in rows)
-              pct     = covered / (missed + covered) * 100 if (missed + covered) else 0.0
-              return missed, covered, pct
-
-            l_miss, l_cov, l_pct = total('LINE_MISSED',       'LINE_COVERED')
-            b_miss, b_cov, b_pct = total('BRANCH_MISSED',     'BRANCH_COVERED')
-            m_miss, m_cov, m_pct = total('METHOD_MISSED',     'METHOD_COVERED')
-            c_miss, c_cov, c_pct = total('CLASS_MISSED',      'CLASS_COVERED')
-            i_miss, i_cov, i_pct = total('INSTRUCTION_MISSED','INSTRUCTION_COVERED')
-
-            gate = '✅ PASSED' if l_pct >= 80.0 else '❌ FAILED'
-
-            with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
-              out.write('\n## Test Coverage (JaCoCo)\n\n')
-              out.write(f'Coverage gate (80% lines): **{gate}**\n\n')
-              out.write('| Counter | Covered | Missed | Coverage |\n')
-              out.write('|---|---|---|---|\n')
-              out.write(f'| Lines       | {l_cov:,} | {l_miss:,} | **{l_pct:.1f}%** |\n')
-              out.write(f'| Branches    | {b_cov:,} | {b_miss:,} | {b_pct:.1f}% |\n')
-              out.write(f'| Methods     | {m_cov:,} | {m_miss:,} | {m_pct:.1f}% |\n')
-              out.write(f'| Classes     | {c_cov:,} | {c_miss:,} | {c_pct:.1f}% |\n')
-              out.write(f'| Instructions| {i_cov:,} | {i_miss:,} | {i_pct:.1f}% |\n')
-              out.write('\n> Full HTML report available in the **`jacoco-report`** artifact.\n')
-          except Exception as e:
-            print(f'JaCoCo summary failed: {e}', file=sys.stderr)
-          PYEOF
-          else
-            echo '> JaCoCo CSV not found — coverage summary unavailable.' >> "$GITHUB_STEP_SUMMARY"
-          fi
-
-  # ─── E2E ───────────────────────────────────────────────────────────────────
-  e2e:
-    name: E2E
-    runs-on: ubuntu-latest
-    needs: test
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-java@v4
-        with:
           java-version: '21'
-          distribution: 'temurin'
-          cache: maven
 
-      - name: Run e2e tests
-        run: mvn verify -Pe2e --no-transfer-progress
-
-      - name: Upload JaCoCo e2e report
-        if: always()
-        uses: actions/upload-artifact@v4
+      - name: Cache Maven packages
+        uses: actions/cache@v3
         with:
-          name: jacoco-e2e-report
-          path: target/site/jacoco/
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
-      - name: Upload Cucumber e2e JSON
-        if: always()
-        uses: actions/upload-artifact@v4
+
+      - name: Build with Maven
+        run: mvn clean install --no-transfer-progress
+
+      - name: Run unit tests
+        run: mvn test --no-transfer-progress  # Isso força a execução dos testes se não forem executados com o package
+
+      - name: Test Report
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure()
         with:
-          name: cucumber-e2e-report
-          path: target/cucumber-reports/
-          if-no-files-found: ignore
+          report_paths: '**/target/surefire-reports/TEST-*.xml'
+          detailed_summary: true
+          include_passed: true
+  e2e-tests:
+      runs-on: ubuntu-latest
+      depends_on: unit-tests
+      steps:
+        - name: Run unit tests
+          run: mvn verify -Pe2e --no-transfer-progress
 
-      - name: JaCoCo e2e coverage summary
-        if: always()
-        run: |
-          if [ -f target/site/jacoco/jacoco.csv ]; then
-            python3 - <<'PYEOF'
-          import csv, os, sys
-
-          try:
-            with open('target/site/jacoco/jacoco.csv') as f:
-              rows = list(csv.DictReader(f))
-
-            missed  = sum(int(r.get('LINE_MISSED',  0)) for r in rows)
-            covered = sum(int(r.get('LINE_COVERED', 0)) for r in rows)
-            pct     = covered / (missed + covered) * 100 if (missed + covered) else 0.0
-
-            with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
-              out.write('\n## E2E Coverage (JaCoCo)\n\n')
-              out.write('| Metric | Value |\n|---|---|\n')
-              out.write(f'| Lines covered | {covered:,} |\n')
-              out.write(f'| Lines missed  | {missed:,} |\n')
-              out.write(f'| **Coverage**  | **{pct:.1f}%** |\n')
-              out.write('\n> Full HTML report available in the **`jacoco-e2e-report`** artifact.\n')
-          except Exception as e:
-            print(f'JaCoCo e2e summary failed: {e}', file=sys.stderr)
-          PYEOF
-          fi
-
-  # ─── Static Analysis ───────────────────────────────────────────────────────
-  static-analysis:
-    name: Static Analysis
+        - name: Test Report
+          uses: mikepenz/action-junit-report@v4
+          if: success() || failure()
+          with:
+            report_paths: '**/target/cucumber-reports/index.html'
+            detailed_summary: true
+            include_passed: true# Isso força a execução dos testes se não forem executados com o package
+  jacoco-report:
     runs-on: ubuntu-latest
-
+    needs: [unit-tests, e2e-tests]
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-java@v4
+      - name: Upload Jacoco Report
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure()
         with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: maven
-
-      - name: Compile (skip tests)
-        run: mvn compile --no-transfer-progress -DskipTests
-
-      - name: SpotBugs
-        run: mvn spotbugs:spotbugs --no-transfer-progress -DskipTests
-        continue-on-error: true
-
-      - name: PMD
-        run: mvn pmd:pmd --no-transfer-progress -DskipTests
-        continue-on-error: true
-
-      - name: Checkstyle
-        run: mvn checkstyle:checkstyle --no-transfer-progress -DskipTests
-        continue-on-error: true
-
-      - name: Upload SpotBugs report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: spotbugs-report
-          path: target/spotbugsXml.xml
-          if-no-files-found: ignore
-
-      - name: Upload PMD report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: pmd-report
-          path: target/pmd.xml
-          if-no-files-found: ignore
-
-      - name: Upload Checkstyle report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: checkstyle-report
-          path: target/checkstyle-result.xml
-          if-no-files-found: ignore
-
-      - name: Static analysis summary
-        if: always()
-        run: |
-          python3 - <<'PYEOF'
-          import xml.etree.ElementTree as ET, os, sys
-
-          def count_violations(path, xpath):
-            try:
-              tree = ET.parse(path)
-              return len(tree.findall(xpath))
-            except Exception:
-              return None
-
-          spotbugs   = count_violations('target/spotbugsXml.xml',      './/BugInstance')
-          pmd        = count_violations('target/pmd.xml',               './/violation')
-          checkstyle = count_violations('target/checkstyle-result.xml', './/error')
-
-          def fmt(n):
-            return str(n) if n is not None else '—'
-
-          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
-            out.write('\n## Static Analysis\n\n')
-            out.write('| Tool | Violations |\n|---|---|\n')
-            out.write(f'| SpotBugs (HIGH) | {fmt(spotbugs)} |\n')
-            out.write(f'| PMD             | {fmt(pmd)} |\n')
-            out.write(f'| Checkstyle      | {fmt(checkstyle)} |\n')
-          PYEOF
-
-  # ─── UML Diagrams ──────────────────────────────────────────────────────────
-  diagrams:
-    name: UML Diagrams
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install PlantUML + Graphviz
-        run: |
-          sudo apt-get update -q
-          sudo apt-get install -y --quiet plantuml graphviz
-
-      - name: Generate diagrams for changed code
-        run: python3 scripts/gen_diagrams.py --base-ref origin/main
-        continue-on-error: true
-
-      - name: Upload diagrams artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: uml-diagrams
-          path: target/diagrams/
-          if-no-files-found: ignore
-
-      - name: Diagrams step summary
-        if: always()
-        run: |
-          if [ -f target/diagrams/summary.md ]; then
-            cat target/diagrams/summary.md >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo '## UML Diagrams' >> "$GITHUB_STEP_SUMMARY"
-            echo 'No changed Java files detected or diagram generation failed.' >> "$GITHUB_STEP_SUMMARY"
-          fi
+          report_paths: '**/target/site/jacoco-resources/jacoco.xml'
+          detailed_summary: true
+          include_passed: true# Isso força a execução dos testes se não forem executados com o package
