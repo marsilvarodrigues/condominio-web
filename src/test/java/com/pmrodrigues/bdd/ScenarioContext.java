@@ -52,4 +52,6 @@ public class ScenarioContext {
     private Long testProprietarioId;
     private Long testOcupacaoId;
     private Long secondTestPessoaId;
+    private Long testExecucaoId;
+    private Long testCobrancaId;
 }

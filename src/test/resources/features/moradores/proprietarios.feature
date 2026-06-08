@@ -5,7 +5,7 @@ Feature: Gestão de Proprietários
     Given estou autenticado como admin do condomínio
 
   Scenario: Admin cria proprietário pessoa física com sucesso
-    When eu crio um proprietário pessoa física com nome "Carlos Dono" e cpf "111.222.333-44"
+    When eu crio um proprietário pessoa física com nome "Carlos Dono" e cpf "529.982.247-25"
     Then o status da resposta é 201
     And a resposta tem o campo "$.data.tipo" com valor "PROP_PF"
 

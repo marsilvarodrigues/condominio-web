@@ -78,7 +78,7 @@ public class MoradorSteps {
         body.put("nome", "Proprietario Teste BDD");
         body.put("email", "prop.bdd@test.com");
         body.put("tipo", "PROP_PF");
-        body.put("cpf", "555.666.777-88");
+        body.put("cpf", "935.411.347-80");
         http.post("/proprietarios", objectMapper.writeValueAsString(body));
         ctx.setTestProprietarioId(ctx.getLastCreatedId());
     }
@@ -110,7 +110,7 @@ public class MoradorSteps {
         body.put("nome", "Proprietario Via Step");
         body.put("email", "prop.via.step@test.com");
         body.put("tipo", "PROP_PF");
-        body.put("cpf", "100.200.300-40");
+        body.put("cpf", "111.444.777-35");
         http.post("/proprietarios", objectMapper.writeValueAsString(body));
         Long propId = ctx.getLastCreatedId();
         ctx.setTestProprietarioId(propId);

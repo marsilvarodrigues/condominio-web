@@ -38,7 +38,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "pessoas")
 @PrimaryKeyJoinColumn(name = "id")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "pessoa_tipo", discriminatorType = DiscriminatorType.STRING)
 @SQLRestriction("deleted = false")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @EntityListeners(AuditingEntityListener.class)
@@ -53,6 +52,14 @@ public abstract class Pessoa extends User {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "condominio_id", nullable = false)
     private Condominio condominio;
+
+    /**
+     * Discriminator column — set in {@link #prePersist()} from the {@link DiscriminatorValue} annotation
+     * of the concrete subclass. Workaround for Hibernate 6 not inserting the value automatically
+     * for JOINED inheritance when the parent class is also a JOINED subtype.
+     */
+    @Column(name = "pessoa_tipo", nullable = false, updatable = false)
+    private String pessoaTipo;
 
     /**
      * Current apartment assignment (morador relationship).
@@ -83,8 +90,8 @@ public abstract class Pessoa extends User {
     private String updatedBy;
 
     /**
-     * Sets the {@code condominio} from {@link TenantContext} before the entity is first persisted,
-     * and adds the {@code ROLE_MORADOR} role to this user's role set.
+     * Sets {@code condominio} from {@link TenantContext} and populates {@code pessoaTipo}
+     * from the {@link DiscriminatorValue} annotation of the concrete subclass before first persistence.
      */
     @Override
     @PrePersist
@@ -95,6 +102,10 @@ public abstract class Pessoa extends User {
             var c = new Condominio();
             c.setId(condominioId);
             this.condominio = c;
+        }
+        DiscriminatorValue dv = this.getClass().getAnnotation(DiscriminatorValue.class);
+        if (dv != null) {
+            this.pessoaTipo = dv.value();
         }
     }
 }

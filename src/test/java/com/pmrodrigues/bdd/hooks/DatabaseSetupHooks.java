@@ -108,7 +108,13 @@ public class DatabaseSetupHooks {
     }
 
     private void limparTabelas() {
-        // morador: proprietario_apartamentos join table depends on pessoas and apartamentos
+        // cobrancas FK → apartamentos; must go before apartamentos
+        jdbc.update("DELETE FROM cobrancas");
+        // morador hierarchy: subtypes FK → pessoas; all must go before pessoas
+        jdbc.update("DELETE FROM moradores");
+        jdbc.update("DELETE FROM proprietario_pf");
+        jdbc.update("DELETE FROM proprietario_pj");
+        jdbc.update("DELETE FROM proprietarios");
         jdbc.update("DELETE FROM proprietario_apartamentos");
         jdbc.update("DELETE FROM pessoas");
         // itens_extrato FK → item_orcamento, extrato_importacoes, lancamentos_bancarios

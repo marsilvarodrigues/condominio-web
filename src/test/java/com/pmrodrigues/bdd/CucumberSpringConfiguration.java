@@ -1,6 +1,7 @@
 package com.pmrodrigues.bdd;
 
 import com.pmrodrigues.commons.service.MailService;
+import com.pmrodrigues.gateway.service.AsaasGatewayService;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -66,4 +67,7 @@ public class CucumberSpringConfiguration {
 
     @MockitoBean
     MailService mailService;
+
+    @MockitoBean
+    AsaasGatewayService asaasGatewayService;
 }

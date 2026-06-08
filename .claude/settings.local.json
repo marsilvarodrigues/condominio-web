@@ -102,7 +102,8 @@
       "Bash(mvn help:effective-pom --no-transfer-progress -q)",
       "Bash(node -e ' *)",
       "Bash(grep -E \"^\\\\\\\\[INFO\\\\\\\\] Tests run:|^\\\\\\\\[INFO\\\\\\\\] BUILD|^\\\\\\\\[ERROR\\\\\\\\] Failures|^\\\\\\\\[ERROR\\\\\\\\]   Cobra\")",
-      "Bash(grep -E \"^\\\\\\\\[INFO\\\\\\\\] Tests run:|^\\\\\\\\[INFO\\\\\\\\] BUILD|^\\\\\\\\[ERROR\\\\\\\\] Failures|^\\\\\\\\[ERROR\\\\\\\\]   \")"
+      "Bash(grep -E \"^\\\\\\\\[INFO\\\\\\\\] Tests run:|^\\\\\\\\[INFO\\\\\\\\] BUILD|^\\\\\\\\[ERROR\\\\\\\\] Failures|^\\\\\\\\[ERROR\\\\\\\\]   \")",
+      "Bash(mvn dependency:tree -q)"
     ]
   }
 }
