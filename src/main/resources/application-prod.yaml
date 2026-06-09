@@ -1,4 +1,4 @@
-# Otimizações adicionais ativas APENAS em produção (--spring.profiles.active=prod).
+# Otimizações e restrições ativas APENAS em produção (--spring.profiles.active=prod).
 #
 # auto-commit=false + connection.provider_disables_autocommit=true:
 #   Elimina 2 round-trips JDBC por transação (setAutoCommit false/true que o Hibernate
@@ -7,9 +7,21 @@
 #   explícita, como usado nos @BeforeEach dos testes de integração.
 spring:
   datasource:
+    # No fallback values — startup fails fast if env vars are absent in production.
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     hikari:
       auto-commit: false
   jpa:
     properties:
       hibernate:
         connection.provider_disables_autocommit: true
+
+security:
+  jwt:
+    # No fallback values — must be set explicitly in production.
+    issuer: ${JWT_ISSUER}
+    client-id: ${JWT_CLIENT_ID}
+    client-secret: ${JWT_CLIENT_SECRET}
+    rsa-private-key: ${RSA_PRIVATE_KEY}
+    rsa-public-key: ${RSA_PUBLIC_KEY}

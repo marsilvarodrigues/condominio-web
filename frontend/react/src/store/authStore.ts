@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import type { AuthUser } from '@/types'
 
 interface AuthState {
@@ -43,8 +43,11 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'condogest-auth',
+      // sessionStorage: scoped to the browser tab; cleared when the tab closes.
+      // accessToken is NOT persisted (memory only) — the 401 interceptor in client.ts
+      // will silently re-issue it from refreshToken on the next page load.
+      storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({
-        accessToken: state.accessToken,
         refreshToken: state.refreshToken,
         user: state.user,
         activeCondominioId: state.activeCondominioId,

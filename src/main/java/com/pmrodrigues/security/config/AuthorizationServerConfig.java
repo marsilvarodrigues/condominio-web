@@ -5,14 +5,19 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import java.security.KeyFactory;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +25,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
@@ -35,11 +41,13 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+import org.springframework.util.StringUtils;
 
 /**
  * Configures the Spring Authorization Server with OAuth2/OIDC support, RSA-signed JWTs, and a
  * single registered client.
  */
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 @EnableConfigurationProperties(JwtProperties.class)
@@ -80,10 +88,13 @@ public class AuthorizationServerConfig {
    */
   @Bean
   public RegisteredClientRepository registeredClientRepository() {
+    var encodedSecret =
+        PasswordEncoderFactories.createDelegatingPasswordEncoder()
+            .encode(jwtProperties.getClientSecret());
     var client =
         RegisteredClient.withId(UUID.randomUUID().toString())
             .clientId(jwtProperties.getClientId())
-            .clientSecret(jwtProperties.getClientSecret())
+            .clientSecret(encodedSecret)
             .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
             .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
@@ -127,11 +138,61 @@ public class AuthorizationServerConfig {
   /**
    * Exposes the RSA JWK set as a {@link JWKSource} for JWT signing and verification.
    *
-   * @return the JWK source backed by a generated RSA key pair
+   * <p>When {@code security.jwt.rsa-private-key} and {@code security.jwt.rsa-public-key} are set
+   * (via {@code RSA_PRIVATE_KEY} / {@code RSA_PUBLIC_KEY} env vars), the configured key pair is
+   * loaded. Otherwise an ephemeral key is generated — suitable only for local development, since
+   * tokens become invalid on restart and cannot be verified across instances.
+   *
+   * @return the JWK source backed by a persistent or ephemeral RSA key pair
    */
   @Bean
   public JWKSource<SecurityContext> jwkSource() {
-    return new ImmutableJWKSet<>(new JWKSet(generateRsaKey()));
+    return new ImmutableJWKSet<>(new JWKSet(loadOrGenerateRsaKey()));
+  }
+
+  private RSAKey loadOrGenerateRsaKey() {
+    var privateKeyPem = jwtProperties.getRsaPrivateKey();
+    var publicKeyPem = jwtProperties.getRsaPublicKey();
+    boolean hasPrivate = StringUtils.hasText(privateKeyPem);
+    boolean hasPublic = StringUtils.hasText(publicKeyPem);
+    if (hasPrivate != hasPublic) {
+      throw new IllegalStateException(
+          "Both security.jwt.rsa-private-key and security.jwt.rsa-public-key must be configured together");
+    }
+    if (hasPrivate) {
+      log.info("Loading RSA key pair from configuration");
+      return buildRsaKey(parsePrivateKey(privateKeyPem), parsePublicKey(publicKeyPem));
+    }
+    log.warn(
+        "RSA_PRIVATE_KEY / RSA_PUBLIC_KEY not set — generating ephemeral RSA key pair. "
+            + "Tokens will be invalid after restart. Do NOT use in production.");
+    return generateRsaKey();
+  }
+
+  private static RSAKey buildRsaKey(RSAPrivateKey privateKey, RSAPublicKey publicKey) {
+    return new RSAKey.Builder(publicKey).privateKey(privateKey).keyID("condominio-jwk").build();
+  }
+
+  private static RSAPrivateKey parsePrivateKey(String pem) {
+    try {
+      var stripped = pem.replaceAll("-----[^-]+-----", "").replaceAll("\\s+", "");
+      var bytes = Base64.getDecoder().decode(stripped);
+      return (RSAPrivateKey) KeyFactory.getInstance("RSA")
+          .generatePrivate(new PKCS8EncodedKeySpec(bytes));
+    } catch (Exception e) {
+      throw new IllegalStateException("Failed to parse RSA private key from configuration", e);
+    }
+  }
+
+  private static RSAPublicKey parsePublicKey(String pem) {
+    try {
+      var stripped = pem.replaceAll("-----[^-]+-----", "").replaceAll("\\s+", "");
+      var bytes = Base64.getDecoder().decode(stripped);
+      return (RSAPublicKey) KeyFactory.getInstance("RSA")
+          .generatePublic(new X509EncodedKeySpec(bytes));
+    } catch (Exception e) {
+      throw new IllegalStateException("Failed to parse RSA public key from configuration", e);
+    }
   }
 
   /**

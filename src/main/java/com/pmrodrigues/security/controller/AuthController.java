@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -50,6 +51,14 @@ public class AuthController {
   private final JwtProperties jwtProperties;
   private final UserService userService;
   private final RateLimitService rateLimitService;
+
+  /**
+   * IP address of the trusted reverse proxy (e.g. load balancer). When set, {@code
+   * X-Forwarded-For} is only trusted when the direct connection comes from this IP. Leave blank to
+   * always use the direct remote address (safest default).
+   */
+  @Value("${app.security.trusted-proxy:}")
+  private String trustedProxy;
 
   /**
    * Authenticates the user and returns a new access token and refresh token.
@@ -185,10 +194,13 @@ public class AuthController {
   }
 
   private String extractClientIp(HttpServletRequest request) {
-    String forwarded = request.getHeader("X-Forwarded-For");
-    if (forwarded != null && !forwarded.isBlank()) {
-      return forwarded.split(",")[0].trim();
+    String remoteAddr = request.getRemoteAddr();
+    if (trustedProxy != null && !trustedProxy.isBlank() && trustedProxy.equals(remoteAddr)) {
+      String forwarded = request.getHeader("X-Forwarded-For");
+      if (forwarded != null && !forwarded.isBlank()) {
+        return forwarded.split(",")[0].trim();
+      }
     }
-    return request.getRemoteAddr();
+    return remoteAddr;
   }
 }

@@ -125,7 +125,8 @@ public class UserService {
     }
     entity.setCondominios(condominios);
     var saved = userRepository.save(entity);
-    String activationUrl = frontendUrl + "/auth/activate?token=" + saved.getActivationToken();
+    // Fragment (#) is never sent to the server or included in Referer headers — safer than query param.
+    String activationUrl = frontendUrl + "/auth/activate#token=" + saved.getActivationToken();
     mailService.sendEmail(
         saved.getEmail(),
         new ActivationEmailTemplate(saved.getName(), saved.getRawPassword(), activationUrl));

@@ -27,4 +27,10 @@ public class JwtProperties {
   @NotBlank private String clientSecret;
 
   @NotBlank private String redirectUri = "http://localhost:8080/login/oauth2/code/condominio";
+
+  /** PEM-encoded PKCS#8 RSA private key. When blank, an ephemeral key is generated (dev only). */
+  private String rsaPrivateKey;
+
+  /** PEM-encoded X.509 RSA public key. Must be set together with {@code rsaPrivateKey}. */
+  private String rsaPublicKey;
 }

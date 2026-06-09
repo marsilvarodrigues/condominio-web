@@ -124,9 +124,12 @@ server:
     buffer-size: 16384
     direct-buffers: true
 
-# JWT — signing uses RSA 2048-bit key generated at startup (AuthorizationServerConfig.generateRsaKey).
-# No symmetric secret is needed; the key pair is ephemeral per instance.
-# To persist tokens across restarts, externalize the RSA key to an env-var or secrets store.
+# JWT — signing uses RSA 2048-bit key pair.
+# Production: set RSA_PRIVATE_KEY (PKCS#8 PEM) and RSA_PUBLIC_KEY (X.509 PEM) env vars.
+# Development: leave unset — an ephemeral key is generated with a WARNING log.
+# Generate a key pair: openssl genrsa -out private.pem 2048
+#                      openssl pkcs8 -topk8 -nocrypt -in private.pem -out private_pkcs8.pem
+#                      openssl rsa -pubout -in private.pem -out public.pem
 security:
   jwt:
     access-token-expiration: ${JWT_ACCESS_EXPIRATION:3600}
@@ -134,12 +137,18 @@ security:
     issuer: ${JWT_ISSUER:http://localhost:8080}
     client-id: ${JWT_CLIENT_ID:condominio}
     client-secret: ${JWT_CLIENT_SECRET:condominio-secret}
+    rsa-private-key: ${RSA_PRIVATE_KEY:}
+    rsa-public-key: ${RSA_PUBLIC_KEY:}
 
 # App
 app:
   base-url: ${APP_BASE_URL:http://localhost:8080/api}
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
   security:
+    # IP of the trusted reverse proxy. Only when remoteAddr matches this value will
+    # X-Forwarded-For be trusted for rate-limit key resolution. Leave blank (default)
+    # to always use the direct connection address — prevents IP spoofing by clients.
+    trusted-proxy: ${TRUSTED_PROXY:}
     password-history-count: ${PASSWORD_HISTORY_COUNT:3}
     rate-limit:
       login:
