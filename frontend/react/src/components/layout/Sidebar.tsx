@@ -45,7 +45,6 @@ const NAV_ITEMS: NavItem[] = [
   // ── Admin e Síndico ──────────────────────────────────────────────────────
   { label: 'Condomínios',  icon: <LocationCityIcon />, path: '/condominios',  adminOnly: true },
   { label: 'Hierarquia',   icon: <ApartmentIcon />,    path: '/hierarquia' },
-  { label: 'Pessoas',      icon: <PeopleIcon />,        path: '/pessoas',     adminOnly: true },
   { label: 'Usuários',     icon: <PeopleIcon />,        path: '/usuarios',    adminOnly: true },
   {
     label: 'Financeiro',

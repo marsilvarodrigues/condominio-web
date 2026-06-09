@@ -13,6 +13,8 @@ import com.pmrodrigues.security.model.PasswordHistory;
 import com.pmrodrigues.security.model.User;
 import com.pmrodrigues.security.repository.PasswordHistoryRepository;
 import com.pmrodrigues.security.repository.UserRepository;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -212,36 +214,39 @@ class UserServiceTest {
     @Test
     void filterBy_withNoFilters_returnsAll() {
         var users = List.of(userWithId(1L, "a@test.com"), userWithId(2L, "b@test.com"));
-        when(userRepository.findAll(any(Specification.class))).thenReturn(users);
+        when(userRepository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(users));
 
-        var result = userService.filterBy(new UserFilterDTO(null, null, null, null));
+        var result = userService.filterBy(new UserFilterDTO(null, null, null, null), Pageable.unpaged());
 
-        assertThat(result).hasSize(2);
-        verify(userRepository).findAll(any(Specification.class));
+        assertThat(result.getContent()).hasSize(2);
+        verify(userRepository).findAll(any(Specification.class), any(Pageable.class));
     }
 
     @Test
     void filterBy_withEnabledTrue_returnsOnlyActiveUsers() {
         var active = userWithId(1L, "active@test.com");
         active.setEnabled(true);
-        when(userRepository.findAll(any(Specification.class))).thenReturn(List.of(active));
+        when(userRepository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(active)));
 
-        var result = userService.filterBy(new UserFilterDTO(null, null, true, null));
+        var result = userService.filterBy(new UserFilterDTO(null, null, true, null), Pageable.unpaged());
 
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).enabled()).isTrue();
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).enabled()).isTrue();
     }
 
     @Test
     void filterBy_withRole_returnsMatchingUsers() {
         var admin = userWithId(1L, "admin@test.com");
         admin.setRoles(Set.of("ROLE_ADMIN"));
-        when(userRepository.findAll(any(Specification.class))).thenReturn(List.of(admin));
+        when(userRepository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(admin)));
 
-        var result = userService.filterBy(new UserFilterDTO(null, null, null, "ROLE_ADMIN"));
+        var result = userService.filterBy(new UserFilterDTO(null, null, null, "ROLE_ADMIN"), Pageable.unpaged());
 
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).roles()).contains("ROLE_ADMIN");
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).roles()).contains("ROLE_ADMIN");
     }
 
     // ── update ────────────────────────────────────────────────────────────

@@ -1,8 +1,11 @@
 import { apiClient, extractData } from './client'
-import type { UserDTO, CreateUserDTO } from '@/types'
+import type { UserDTO, CreateUserDTO, PageResponse } from '@/types'
 
 export const usuariosApi = {
-  list: () => apiClient.get<{ data: UserDTO[] }>('/users').then(extractData),
+  list: (params?: { page?: number; size?: number }) =>
+    apiClient
+      .get<{ data: PageResponse<UserDTO> }>('/users', { params: { page: params?.page ?? 0, size: params?.size ?? 20 } })
+      .then(extractData),
 
   getById: (id: number) =>
     apiClient.get<{ data: UserDTO }>(`/users/${id}`).then(extractData),

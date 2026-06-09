@@ -100,7 +100,7 @@ export const dashboardApi = {
 
   totalUsuarios: (): Promise<number> =>
     apiClientGlobal
-      .get<{ data: PageResponse<unknown> }>('/usuarios', { params: { page: 0, size: 1 } })
+      .get<{ data: PageResponse<unknown> }>('/users', { params: { page: 0, size: 1 } })
       .then((r) => r.data.data.totalElements)
       .catch(() => 0),
 

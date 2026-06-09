@@ -13,9 +13,11 @@ import com.pmrodrigues.security.service.UserService;
 import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -53,12 +55,14 @@ public class UserController {
    */
   @GetMapping
   @Timed(value = "user.controller.findAll", description = "Find all users")
-  public ResponseEntity<ApiResponse<List<UserDTO>>> findAll(
-      @ModelAttribute UserFilterDTO dto, HttpServletRequest request) {
+  public ResponseEntity<ApiResponse<Page<UserDTO>>> findAll(
+      @ModelAttribute UserFilterDTO dto,
+      @PageableDefault(size = 20) Pageable pageable,
+      HttpServletRequest request) {
     log.info("GET /users - filtering users");
-    var users = userService.filterBy(dto);
-    log.info("GET /users - returning {} users", users.size());
-    return ResponseEntity.ok(ApiResponse.of(requestId(request), users));
+    var page = userService.filterBy(dto, pageable);
+    log.info("GET /users - returning {} users", page.getNumberOfElements());
+    return ResponseEntity.ok(ApiResponse.of(requestId(request), page));
   }
 
   /**

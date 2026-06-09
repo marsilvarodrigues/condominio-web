@@ -28,6 +28,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -57,23 +60,22 @@ class UserControllerTest {
     @Test
     @WithMockUser
     void findAll_returnsListWith200() throws Exception {
-        when(userService.filterBy(any(UserFilterDTO.class))).thenReturn(List.of(
-                dto(1L, "a@test.com"),
-                dto(2L, "b@test.com")
-        ));
+        when(userService.filterBy(any(UserFilterDTO.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(dto(1L, "a@test.com"), dto(2L, "b@test.com"))));
 
         mockMvc.perform(get("/users").header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.data.length()").value(2))
-                .andExpect(jsonPath("$.data[0].email").value("a@test.com"))
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(jsonPath("$.data.content.length()").value(2))
+                .andExpect(jsonPath("$.data.content[0].email").value("a@test.com"))
                 .andExpect(jsonPath("$.timestamp").exists());
     }
 
     @Test
     @WithMockUser
     void findAll_includesRequestIdInResponse() throws Exception {
-        when(userService.filterBy(any(UserFilterDTO.class))).thenReturn(List.of());
+        when(userService.filterBy(any(UserFilterDTO.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of()));
         var fixedId = UUID.randomUUID().toString();
 
         mockMvc.perform(get("/users").header(RequestIdInterceptor.REQUEST_ID_HEADER, fixedId))

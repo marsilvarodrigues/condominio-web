@@ -15,10 +15,14 @@ export default function UsuariosPage() {
   const qc = useQueryClient()
   const invalidate = () => qc.invalidateQueries({ queryKey: ['users'] })
 
-  const { data: users = [], isLoading } = useQuery({
-    queryKey: ['users'],
-    queryFn: usuariosApi.list,
+  const [page, setPage] = useState(0)
+  const [pageSize, setPageSize] = useState(20)
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['users', page, pageSize],
+    queryFn: () => usuariosApi.list({ page, size: pageSize }),
   })
+  const users = data?.content ?? []
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<UserDTO | null>(null)
@@ -118,7 +122,7 @@ export default function UsuariosPage() {
     <Box>
       <PageHeader
         title="Usuários"
-        subtitle={`${users.length} usuário(s) cadastrado(s)`}
+        subtitle={`${data?.totalElements ?? 0} usuário(s) cadastrado(s)`}
         actions={
           <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>
             Novo Usuário
@@ -126,7 +130,18 @@ export default function UsuariosPage() {
         }
       />
 
-      <DataTable columns={columns} rows={users} keyField="id" loading={isLoading} emptyMessage="Nenhum usuário cadastrado." />
+      <DataTable
+        columns={columns}
+        rows={users}
+        keyField="id"
+        loading={isLoading}
+        emptyMessage="Nenhum usuário cadastrado."
+        page={page}
+        pageSize={pageSize}
+        totalCount={data?.totalElements}
+        onPageChange={setPage}
+        onPageSizeChange={(s) => { setPageSize(s); setPage(0) }}
+      />
 
       <FormDialog
         open={dialogOpen}

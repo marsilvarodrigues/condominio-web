@@ -32,7 +32,9 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -180,34 +182,38 @@ public class UserService {
   }
 
   /**
-   * Returns users matching the supplied filter criteria. All filter fields are optional; absent
-   * fields are ignored.
+   * Returns a page of users matching the supplied filter criteria. All filter fields are optional;
+   * absent fields are ignored.
    *
    * @param dto filter containing optional nome substring, email substring, enabled flag, and role
-   * @return matching user DTOs
+   * @param pageable page and sort parameters
+   * @return page of matching user DTOs
    */
   @Transactional(readOnly = true)
   @Timed(value = "user.service.filterBy", description = "Filter users")
-  public List<UserDTO> filterBy(UserFilterDTO dto) {
+  public Page<UserDTO> filterBy(UserFilterDTO dto, Pageable pageable) {
     log.info(
         "Filtering users: nome={}, email={}, enabled={}, role={}",
         dto.nome(),
         dto.email(),
         dto.enabled(),
         dto.role());
-    var users =
+    var page =
         userRepository
             .findAll(
                 Specification.allOf(
                     hasNome(dto.nome()),
                     hasEmail(dto.email()),
                     hasEnabled(dto.enabled()),
-                    hasRole(dto.role())))
-            .stream()
-            .map(userMapper::toDTO)
-            .toList();
-    log.info("Filter users: {} results", users.size());
-    return users;
+                    hasRole(dto.role())),
+                pageable)
+            .map(userMapper::toDTO);
+    log.info(
+        "Filter users: {} results (page {} of {})",
+        page.getNumberOfElements(),
+        page.getNumber(),
+        page.getTotalPages());
+    return page;
   }
 
   /**

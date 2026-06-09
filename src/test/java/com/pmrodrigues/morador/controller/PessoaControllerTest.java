@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pmrodrigues.commons.interceptor.RequestIdInterceptor;
 import com.pmrodrigues.morador.dto.CreatePessoaDTO;
 import com.pmrodrigues.morador.dto.PessoaDTO;
+import com.pmrodrigues.morador.dto.PessoaFilterDTO;
 import com.pmrodrigues.morador.dto.UpdatePessoaDTO;
 import com.pmrodrigues.morador.service.PessoaService;
 import com.pmrodrigues.security.service.TokenBlacklistService;
@@ -61,7 +62,7 @@ class PessoaControllerTest {
     @WithMockUser
     void filterBy_returns200() throws Exception {
         Page<PessoaDTO> page = new PageImpl<>(List.of(pessoaDTO()));
-        when(pessoaService.filterBy(any(), any(Pageable.class))).thenReturn(page);
+        when(pessoaService.filterBy(any(PessoaFilterDTO.class), any(Pageable.class))).thenReturn(page);
 
         mockMvc.perform(get("/pessoas").header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
                 .andExpect(status().isOk())

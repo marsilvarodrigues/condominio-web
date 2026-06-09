@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pmrodrigues.commons.interceptor.RequestIdInterceptor;
 import com.pmrodrigues.morador.dto.CreateProprietarioDTO;
 import com.pmrodrigues.morador.dto.ProprietarioDTO;
+import com.pmrodrigues.morador.dto.ProprietarioFilterDTO;
 import com.pmrodrigues.morador.dto.UpdateProprietarioDTO;
 import com.pmrodrigues.morador.service.ProprietarioService;
 import com.pmrodrigues.security.service.TokenBlacklistService;
@@ -63,7 +64,7 @@ class ProprietarioControllerTest {
     @WithMockUser
     void filterBy_returns200() throws Exception {
         Page<ProprietarioDTO> page = new PageImpl<>(List.of(proprietarioDTO()));
-        when(proprietarioService.filterBy(any(), any(Pageable.class))).thenReturn(page);
+        when(proprietarioService.filterBy(any(ProprietarioFilterDTO.class), any(Pageable.class))).thenReturn(page);
 
         mockMvc.perform(get("/proprietarios").header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
                 .andExpect(status().isOk())
