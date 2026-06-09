@@ -3,10 +3,10 @@ import type { LoginRequest, TokenResponse, RefreshRequest, ChangePasswordDTO } f
 
 export const authApi = {
   login: (body: LoginRequest) =>
-    apiClient.post<{ data: TokenResponse }>('/auth/login', body).then((r) => r.data.data),
+    apiClient.post<TokenResponse>('/auth/login', body).then((r) => r.data),
 
   refresh: (body: RefreshRequest) =>
-    apiClient.post<{ data: TokenResponse }>('/auth/refresh', body).then((r) => r.data.data),
+    apiClient.post<TokenResponse>('/auth/refresh', body).then((r) => r.data),
 
   logout: () => apiClient.post('/auth/logout'),
 
