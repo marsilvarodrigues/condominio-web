@@ -1,5 +1,6 @@
 import {
   Box,
+  Collapse,
   Divider,
   Drawer,
   List,
@@ -8,7 +9,6 @@ import {
   ListItemText,
   Toolbar,
   Typography,
-  Collapse,
 } from '@mui/material'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import ApartmentIcon from '@mui/icons-material/Apartment'
@@ -19,6 +19,10 @@ import CalculateIcon from '@mui/icons-material/Calculate'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import LocationCityIcon from '@mui/icons-material/LocationCity'
+import NotificationsIcon from '@mui/icons-material/Notifications'
+import EventIcon from '@mui/icons-material/Event'
+import BusinessIcon from '@mui/icons-material/Business'
+import CreditCardIcon from '@mui/icons-material/CreditCard'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useAuthStore } from '@/store/authStore'
@@ -31,34 +35,24 @@ interface NavItem {
   icon: React.ReactNode
   path?: string
   adminOnly?: boolean
+  roles?: string[]
   children?: NavItem[]
 }
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard', icon: <DashboardIcon />, path: '/' },
-  {
-    label: 'Condomínios',
-    icon: <LocationCityIcon />,
-    path: '/condominios',
-    adminOnly: true,
-  },
-  {
-    label: 'Hierarquia',
-    icon: <ApartmentIcon />,
-    path: '/hierarquia',
-  },
-  {
-    label: 'Usuários',
-    icon: <PeopleIcon />,
-    path: '/usuarios',
-    adminOnly: true,
-  },
+
+  // ── Admin e Síndico ──────────────────────────────────────────────────────
+  { label: 'Condomínios',  icon: <LocationCityIcon />, path: '/condominios',  adminOnly: true },
+  { label: 'Hierarquia',   icon: <ApartmentIcon />,    path: '/hierarquia' },
+  { label: 'Pessoas',      icon: <PeopleIcon />,        path: '/pessoas',     adminOnly: true },
+  { label: 'Usuários',     icon: <PeopleIcon />,        path: '/usuarios',    adminOnly: true },
   {
     label: 'Financeiro',
     icon: <AccountBalanceWalletIcon />,
     children: [
-      { label: 'Plano de Contas', icon: <AccountBalanceWalletIcon />, path: '/financeiro/plano-contas' },
-      { label: 'Orçamento Anual', icon: <AccountBalanceWalletIcon />, path: '/financeiro/orcamento' },
+      { label: 'Plano de Contas',  icon: <AccountBalanceWalletIcon />, path: '/financeiro/plano-contas' },
+      { label: 'Orçamento Anual',  icon: <AccountBalanceWalletIcon />, path: '/financeiro/orcamento' },
       { label: 'Fundo de Reserva', icon: <AccountBalanceWalletIcon />, path: '/financeiro/fundo-reserva' },
     ],
   },
@@ -66,21 +60,29 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Bancos',
     icon: <AccountBalanceIcon />,
     children: [
-      { label: 'Bancos', icon: <AccountBalanceIcon />, path: '/financeiro/bancos' },
+      { label: 'Bancos',           icon: <AccountBalanceIcon />, path: '/financeiro/bancos' },
       { label: 'Contas Bancárias', icon: <AccountBalanceIcon />, path: '/financeiro/contas' },
-      { label: 'Conciliação', icon: <AccountBalanceIcon />, path: '/financeiro/conciliacao' },
+      { label: 'Conciliação',      icon: <AccountBalanceIcon />, path: '/financeiro/conciliacao' },
     ],
   },
+  { label: 'Cobranças', icon: <CreditCardIcon />, path: '/cobrancas', adminOnly: true },
   {
     label: 'Rateio',
     icon: <CalculateIcon />,
     children: [
       { label: 'Grupos de Despesa', icon: <CalculateIcon />, path: '/rateio/grupos' },
-      { label: 'Coeficientes', icon: <CalculateIcon />, path: '/rateio/coeficientes' },
-      { label: 'Simulação', icon: <CalculateIcon />, path: '/rateio/simulacao' },
-      { label: 'Execuções', icon: <CalculateIcon />, path: '/rateio/execucoes' },
+      { label: 'Coeficientes',      icon: <CalculateIcon />, path: '/rateio/coeficientes' },
+      { label: 'Simulação',         icon: <CalculateIcon />, path: '/rateio/simulacao' },
+      { label: 'Execuções',         icon: <CalculateIcon />, path: '/rateio/execucoes' },
     ],
   },
+
+  // ── Morador ──────────────────────────────────────────────────────────────
+  { label: 'Comunicados', icon: <NotificationsIcon />, path: '/comunicados', roles: [ROLES.MORADOR] },
+  { label: 'Reservas',    icon: <EventIcon />,          path: '/reservas',    roles: [ROLES.MORADOR] },
+
+  // ── Proprietário ─────────────────────────────────────────────────────────
+  { label: 'Meus Imóveis', icon: <BusinessIcon />, path: '/proprietario/meus-imoveis', roles: [ROLES.PROPRIETARIO] },
 ]
 
 interface Props {
@@ -92,6 +94,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: Props) {
   const location = useLocation()
   const navigate = useNavigate()
   const isAdmin = useAuthStore((s) => s.hasRole(ROLES.ADMIN))
+  const hasRole = useAuthStore((s) => s.hasRole)
   const [expanded, setExpanded] = useState<string | null>(null)
 
   const toggle = (label: string) =>
@@ -102,6 +105,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: Props) {
 
   const renderItem = (item: NavItem, depth = 0) => {
     if (item.adminOnly && !isAdmin) return null
+    if (item.roles && !item.roles.some((r) => hasRole(r)) && !isAdmin) return null
 
     if (item.children) {
       const anyChildActive = item.children.some((c) => isActive(c.path))

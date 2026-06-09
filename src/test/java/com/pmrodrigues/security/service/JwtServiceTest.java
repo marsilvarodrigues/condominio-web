@@ -44,6 +44,9 @@ class JwtServiceTest {
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    ProprietarioClaimsProvider proprietarioClaimsProvider;
+
     @InjectMocks
     JwtService service;
 
@@ -59,8 +62,10 @@ class JwtServiceTest {
         var condominio = new Condominio();
         condominio.setId(42L);
         var user = new User();
+        user.setId(7L);
         user.setCondominios(Set.of(condominio));
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+        lenient().when(proprietarioClaimsProvider.findClaimsByEmail(anyString())).thenReturn(Optional.empty());
     }
 
     @Test
@@ -185,6 +190,51 @@ class JwtServiceTest {
         var captor = ArgumentCaptor.forClass(JwtEncoderParameters.class);
         verify(jwtEncoder).encode(captor.capture());
         assertThat((List<String>) captor.getValue().getClaims().getClaim("roles")).isEmpty();
+    }
+
+    @Test
+    void generateAccessToken_includesUserIdClaim() {
+        var auth = authWith("user@test.com", "ROLE_USER");
+
+        service.generateAccessToken(auth);
+
+        var captor = ArgumentCaptor.forClass(JwtEncoderParameters.class);
+        verify(jwtEncoder).encode(captor.capture());
+        Long claim = captor.getValue().getClaims().getClaim("user_id");
+        assertThat(claim).isEqualTo(7L);
+    }
+
+    @Test
+    void generateAccessToken_whenUserNotFound_userIdClaimAbsent() {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        var auth = authWith("user@test.com", "ROLE_USER");
+
+        service.generateAccessToken(auth);
+
+        var captor = ArgumentCaptor.forClass(JwtEncoderParameters.class);
+        verify(jwtEncoder).encode(captor.capture());
+        assertThat((Object) captor.getValue().getClaims().getClaim("user_id")).isNull();
+    }
+
+    @Test
+    void generateAccessToken_whenProprietario_userIdClaimPresent() {
+        var auth = authWith("owner@test.com", "ROLE_PROPRIETARIO");
+
+        service.generateAccessToken(auth);
+
+        var captor = ArgumentCaptor.forClass(JwtEncoderParameters.class);
+        verify(jwtEncoder).encode(captor.capture());
+        Long userId = captor.getValue().getClaims().getClaim("user_id");
+        assertThat(userId).isEqualTo(7L);
+    }
+
+    @Test
+    void generateAccessToken_whenNotProprietario_doesNotCallClaimsProvider() {
+        var auth = authWith("user@test.com", "ROLE_USER");
+
+        service.generateAccessToken(auth);
+
+        verify(proprietarioClaimsProvider, never()).findClaimsByEmail(anyString());
     }
 
     @Test

@@ -28,6 +28,7 @@ public class JwtService {
   private final JwtEncoder jwtEncoder;
   private final JwtProperties jwtProperties;
   private final UserRepository userRepository;
+  private final ProprietarioClaimsProvider proprietarioClaimsProvider;
 
   /**
    * Builds and signs an RS256 JWT access token containing the user's roles and their {@code
@@ -47,13 +48,24 @@ public class JwtService {
             .map(GrantedAuthority::getAuthority)
             .collect(Collectors.toList());
 
+    var user = userRepository.findByEmail(authentication.getName());
+    Long userId = user.map(u -> u.getId()).orElse(null);
     List<Long> condominioIds =
-        userRepository
-            .findByEmail(authentication.getName())
+        user
             .map(u -> u.getCondominios().stream().map(c -> c.getId()).collect(Collectors.toList()))
             .orElse(List.of());
 
-    var claims =
+    boolean isProprietario = roles.contains("ROLE_PROPRIETARIO");
+
+    List<Long> apartamentosIdsProprietario =
+        isProprietario
+            ? proprietarioClaimsProvider
+                .findClaimsByEmail(authentication.getName())
+                .map(c -> c.apartamentoIds())
+                .orElse(List.of())
+            : List.of();
+
+    var builder =
         JwtClaimsSet.builder()
             .issuer(jwtProperties.getIssuer())
             .issuedAt(now)
@@ -62,13 +74,18 @@ public class JwtService {
             .id(UUID.randomUUID().toString())
             .claim("roles", roles)
             .claim("condominio_ids", condominioIds)
-            .build();
+            .claim("apartamentos_ids_proprietario", apartamentosIdsProprietario);
+    if (userId != null) {
+      builder.claim("user_id", userId);
+    }
+    var claims = builder.build();
 
     var token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     log.info(
-        "Access token generated for user: {} condominioIds: {}",
+        "Access token generated for user: {} condominioIds: {} userId: {} ",
         authentication.getName(),
-        condominioIds);
+        condominioIds,
+        userId);
     return token;
   }
 

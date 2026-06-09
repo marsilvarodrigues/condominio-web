@@ -512,3 +512,46 @@ export interface DashboardStats {
   inadimplencia: number
   proximoRateio: string | null
 }
+
+export type DashboardPerfil = 'admin' | 'sindico' | 'proprietario' | 'morador' | 'usuario'
+
+export interface ResumoFinanceiro {
+  saldoTotal: number
+  quantidadeContas: number
+}
+
+export interface ResumoOrcamento {
+  exercicio: number
+  totalPrevisto: number
+  totalRealizado: number
+  percentualExecucao: number
+}
+
+export interface ResumoApartamentos {
+  total: number
+  ocupados: number
+  vagos: number
+  taxaOcupacao: number
+}
+
+export interface ResumoCobrancas {
+  totalPendente: number
+  quantidadePendente: number
+  totalVencido: number
+  quantidadeVencida: number
+}
+
+export interface MoradorJwtClaims {
+  sub: string
+  roles: string[]
+  condominio_ids: number[]
+  apartamento_id?: number
+}
+
+export interface ProprietarioJwtClaims {
+  sub: string
+  roles: string[]
+  condominio_ids: number[]
+  user_id?: number
+  apartamentos_ids_proprietario?: number[]
+}

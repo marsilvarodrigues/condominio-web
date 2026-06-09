@@ -21,6 +21,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -42,6 +44,34 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProprietarioController {
 
   private final ProprietarioService proprietarioService;
+
+  /**
+   * Returns the proprietario data for the authenticated user.
+   *
+   * <p>The {@code user_id} is read directly from the JWT claim — no URL parameter. Uses no
+   * tenant filter so the result is cross-tenant (a proprietario may own apartments in multiple
+   * condominiums). Accessible by {@code ROLE_PROPRIETARIO} and {@code ROLE_ADMIN}.
+   *
+   * @param jwt the JWT of the authenticated user
+   * @param request current HTTP request
+   * @return the proprietario DTO wrapped in an {@link ApiResponse}, or 404 if the claim is absent
+   */
+  @GetMapping("/proprietarios/meus-imoveis")
+  @Timed(value = "proprietario.controller.meusImoveis", description = "Get my properties")
+  @PreAuthorize("hasAnyRole('PROPRIETARIO','ADMIN')")
+  public ResponseEntity<ApiResponse<ProprietarioDTO>> meusImoveis(
+      @AuthenticationPrincipal Jwt jwt, HttpServletRequest request) {
+    log.info("GET /proprietarios/meus-imoveis - reading user_id from JWT");
+    Number userIdNum = jwt.getClaim("user_id");
+    if (userIdNum == null) {
+      log.warn("GET /proprietarios/meus-imoveis - user_id claim missing from JWT");
+      return ResponseEntity.notFound().build();
+    }
+    Long proprietarioId = userIdNum.longValue();
+    var dto = proprietarioService.findById(proprietarioId);
+    log.info("GET /proprietarios/meus-imoveis - found proprietario userId={}", proprietarioId);
+    return ResponseEntity.ok(ApiResponse.of(requestId(request), dto));
+  }
 
   /**
    * Returns a paginated list of proprietarios, optionally filtered.

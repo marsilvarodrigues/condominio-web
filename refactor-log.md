@@ -434,6 +434,74 @@ Scope: `com.pmrodrigues.condominio.service.*` public methods only.
 
 ---
 
+## 2026-06-09 — Ciclo 7: Assessment + Plano criado
+
+**Pre-flight:** `mvn test` → 1065 testes passando (após correções de startup desta sessão). BUILD SUCCESS.
+
+**Assessment base:** Inspeção do código do feature dashboard (JwtService, ProprietarioController.meusImoveis, UserService.create roles, ProprietarioClaimsProviderImpl).
+
+**Findings (3 gaps de cobertura):**
+
+1. `ProprietarioController.meusImoveis` — endpoint sem nenhum teste em `ProprietarioControllerTest`. CLAUDE.md exige 5 cenários por endpoint.
+2. `UserService.create` — validação `ROLES_PERMITIDOS` adicionada sem teste correspondente em `UserServiceTest`.
+3. `ProprietarioClaimsProviderImpl` — nova `@Service` sem classe de teste.
+
+**Plano:** 3 chunks independentes escritos, manifesto inicializado.
+
+---
+
+## 2026-06-09 — Chunk 1: ProprietarioClaimsProviderImplTest
+
+**Entry state:** 1065 testes passando.
+
+**Alterações:**
+1. Criado `src/test/java/com/pmrodrigues/morador/service/ProprietarioClaimsProviderImplTest.java` — 2 testes: `findClaimsByEmail_whenProprietarioExists_returnsClaims` (verifica id e apartamentoIds) e `findClaimsByEmail_whenNotProprietario_returnsEmpty`.
+
+**Outcome:** ProprietarioClaimsProviderImplTest=2; BUILD SUCCESS.
+
+---
+
+## 2026-06-09 — Chunk 2: UserServiceTest — create_withInvalidRole_throwsBadRequest
+
+**Entry state:** Chunk 1 completo.
+
+**Alterações:**
+1. `UserServiceTest.java` — adicionado `create_withInvalidRole_throwsBadRequest`: cria um DTO com `ROLE_DESCONHECIDO`, verifica `ResponseStatusException` com status 400, verifica que `userRepository.save` nunca é chamado.
+
+**Outcome:** UserServiceTest=27 (+1); BUILD SUCCESS.
+
+---
+
+## 2026-06-09 — Chunk 3: ProprietarioControllerTest — 4 testes para meusImoveis
+
+**Entry state:** Chunk 2 completo.
+
+**Alterações:**
+1. `ProprietarioControllerTest.java` — adicionados 4 testes para `GET /proprietarios/meus-imoveis`:
+   - `meusImoveis_asProprietario_returns200` — usa `jwt().jwt(...).authorities(ROLE_PROPRIETARIO)` com claim `proprietario_id=42`; verifica 200 e nome no JSON.
+   - `meusImoveis_claimMissing_returns404` — JWT sem `proprietario_id`; verifica 404.
+   - `meusImoveis_unauthenticated_returns401` — sem autenticação; verifica 401.
+   - `meusImoveis_asUser_returns403` — `@WithMockUser(roles="USER")`; verifica 403.
+
+**Nota técnica:** `@WithMockUser` gera um `UsernamePasswordAuthenticationToken` que não é um `Jwt`, então não pode ser usado com `@AuthenticationPrincipal Jwt`. Para testes que precisam do `Jwt` (200 e 404), usa-se `SecurityMockMvcRequestPostProcessors.jwt()` com `.authorities()` explícito, pois o `JwtAuthenticationConverter` não é executado pelo post-processor.
+
+**Outcome:** ProprietarioControllerTest=16 (+4); suite completa: 1072 testes, 0 falhas; BUILD SUCCESS.
+
+---
+
+## 2026-06-09 — Post-flight: Ciclo 7 completo
+
+**Estado final:** 1072 testes passando (+7 em relação ao baseline pré-Ciclo 7). Os 3 chunks foram entregues.
+
+**Post-flight checklist:**
+- [x] Full test suite passa (1072/1072, 0 failures, BUILD SUCCESS)
+- [x] Nenhum TODO/FIXME deixado
+- [x] `ProprietarioClaimsProviderImpl.findClaimsByEmail` coberto (2 testes)
+- [x] `UserService.create` com role inválido coberto (1 teste)
+- [x] `ProprietarioController.meusImoveis` coberto com 4 cenários obrigatórios (200, 404, 401, 403)
+
+---
+
 ## 2026-05-28 — Post-flight: Ciclo 2 completo
 
 **Estado final:** 545 testes passando. Os 4 chunks foram entregues.
@@ -446,5 +514,36 @@ Scope: `com.pmrodrigues.condominio.service.*` public methods only.
 - [x] `ApartamentoMapper` e `CondominioMapper` convertidos para abstract class com `EntityManager.getReference()`
 - [x] `CondominioService.delete()` propaga soft-delete para Blocos e Apartamentos filhos
 - [x] Caches `"blocos"` e `"apartamentos"` evictados junto com `"condominios"` no delete
+
+---
+
+## 2026-06-09 — Startup: correção de test suite pós-dashboard (Ciclo 6 → pré-Ciclo 7)
+
+**Contexto:** O skill `/architectural-refactor` foi invocado. Fase 3 startup verificou o estado do manifesto (Ciclo 6 completo) e rodou `mvn test`. O suite falhou com 185 erros.
+
+**Causa raiz (3 problemas encadeados):**
+
+1. **`JwtServiceTest` — NullPointerException:** `JwtService` recebeu novo campo `ProprietarioRepository` via `@RequiredArgsConstructor` (adicionado para os claims do dashboard). `JwtServiceTest` usa `@InjectMocks` mas não tinha `@Mock ProprietarioRepository`. Resultado: NPE ao chamar `proprietarioRepository.findByUserEmail()`.
+
+2. **`JwtService` — `IllegalArgumentException` ao setar claim nulo:** `JwtClaimsSet.Builder.claim()` não aceita valores nulos. Quando o usuário não é proprietário, `proprietarioId` é `null` — lançava `IllegalArgumentException`. Fix: builder condicional (`if (proprietarioId != null) builder.claim(...)`).
+
+3. **`JwtService` — violação ArchUnit:** `JwtService` (módulo `security`) injetava `ProprietarioRepository` (módulo `morador`), violando a regra ArchUnit "no @Service calls @Repository from another module". Como `morador` já depende de `security`, a inversão criaria dependência circular.
+
+**Solução — Dependency Inversion (DIP):**
+- Criado `ProprietarioClaimsProvider` interface em `security.service` (port)
+- Criado `ProprietarioClaims` record em `security.dto` (fora do pacote `service` para não violar regra `@Timed`)
+- Criado `ProprietarioClaimsProviderImpl` em `morador.service` (adapter), com `@Timed`
+- `JwtService` injetou `ProprietarioClaimsProvider` (não o repositório)
+- `ProprietarioRepository.findByUserEmail` alterado de native SQL para JPQL (`SELECT p FROM Proprietario p WHERE p.email = :email`) — o native SQL causava `clazz_` não encontrado no ResultSet porque Hibernate 6 não consegue hidratar entidade JOINED inheritance a partir de `SELECT pr.*` sem o discriminador
+
+**Arquivos alterados:**
+- `src/main/java/com/pmrodrigues/security/service/JwtService.java` — usa `ProprietarioClaimsProvider`; claim null-safe
+- `src/main/java/com/pmrodrigues/security/service/ProprietarioClaimsProvider.java` — nova interface (port)
+- `src/main/java/com/pmrodrigues/security/dto/ProprietarioClaims.java` — novo record
+- `src/main/java/com/pmrodrigues/morador/service/ProprietarioClaimsProviderImpl.java` — nova implementação
+- `src/main/java/com/pmrodrigues/morador/repository/ProprietarioRepository.java` — JPQL em vez de native SQL
+- `src/test/java/com/pmrodrigues/security/service/JwtServiceTest.java` — mock `ProprietarioClaimsProvider`
+
+**Outcome:** `mvn test` → 1065 testes, 0 falhas, 0 erros, BUILD SUCCESS.
 
 ---

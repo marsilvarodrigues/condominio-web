@@ -113,7 +113,8 @@
       "Bash(echo \"exit: $?\")",
       "Bash(mvn checkstyle:checkstyle -q)",
       "Bash(python -c ' *)",
-      "Bash(mvn checkstyle:checkstyle --no-transfer-progress)"
+      "Bash(mvn checkstyle:checkstyle --no-transfer-progress)",
+      "Bash(grep -v \"//\")"
     ]
   }
 }

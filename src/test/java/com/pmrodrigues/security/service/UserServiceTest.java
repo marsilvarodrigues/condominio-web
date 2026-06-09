@@ -173,6 +173,18 @@ class UserServiceTest {
         verify(userRepository, never()).save(any());
     }
 
+    @Test
+    void create_withInvalidRole_throwsBadRequest() {
+        var dto = new CreateUserDTO("user@test.com", "New User", Set.of("ROLE_DESCONHECIDO"), Set.of());
+
+        assertThatThrownBy(() -> userService.create(dto))
+                .isInstanceOf(ResponseStatusException.class)
+                .extracting(e -> ((ResponseStatusException) e).getStatusCode().value())
+                .isEqualTo(BAD_REQUEST.value());
+
+        verify(userRepository, never()).save(any());
+    }
+
     // ── findById ──────────────────────────────────────────────────────────
 
     @Test

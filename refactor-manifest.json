@@ -1,9 +1,9 @@
 {
   "plan_file": "refactor-plan.md",
-  "assessment_source": "inline — avaliação arquitetural 2026-06-08 (módulos cobranca, gateway, financeiro.CotaRateio)",
-  "created": "2026-06-08",
-  "total_chunks": 5,
-  "current_chunk": 5,
+  "assessment_source": "inline — avaliação arquitetural 2026-06-09 (dashboard feature: ProprietarioController.meusImoveis, UserService.create roles, ProprietarioClaimsProviderImpl)",
+  "created": "2026-06-09",
+  "total_chunks": 3,
+  "current_chunk": 3,
   "status": "completed",
   "preflight_passed": true,
   "verification": {
@@ -16,55 +16,33 @@
   "chunks": [
     {
       "id": 1,
-      "name": "CotaRateioServiceTest + AsaasGatewayServiceTest",
+      "name": "ProprietarioClaimsProviderImplTest — 2 unit tests",
       "status": "completed",
       "depends_on": [],
-      "verification": "CotaRateioServiceTest=5, AsaasGatewayServiceTest=5; BUILD SUCCESS",
+      "verification": "ProprietarioClaimsProviderImplTest=2; BUILD SUCCESS",
       "commit_sha": null,
-      "started_at": "2026-06-08",
-      "completed_at": "2026-06-08"
+      "started_at": "2026-06-09",
+      "completed_at": "2026-06-09"
     },
     {
       "id": 2,
-      "name": "CondominioService.delete() — cascade soft-delete para Cobrança",
+      "name": "UserServiceTest — create_withInvalidRole_throwsBadRequest",
       "status": "completed",
       "depends_on": [],
-      "verification": "CondominioServiceTest=18, CondominioServiceCacheTest=5; BUILD SUCCESS",
+      "verification": "UserServiceTest=27 (+1); BUILD SUCCESS",
       "commit_sha": null,
-      "started_at": "2026-06-08",
-      "completed_at": "2026-06-08"
+      "started_at": "2026-06-09",
+      "completed_at": "2026-06-09"
     },
     {
       "id": 3,
-      "name": "CobrancaServiceTest",
-      "status": "completed",
-      "depends_on": [
-        2
-      ],
-      "verification": "CobrancaServiceTest=17; BUILD SUCCESS",
-      "commit_sha": null,
-      "started_at": "2026-06-08",
-      "completed_at": "2026-06-08"
-    },
-    {
-      "id": 4,
-      "name": "CobrancaSpecificationTest",
+      "name": "ProprietarioControllerTest — 4 testes para meusImoveis",
       "status": "completed",
       "depends_on": [],
-      "verification": "CobrancaSpecificationTest=7; BUILD SUCCESS",
+      "verification": "ProprietarioControllerTest=16 (+4); full suite 1072; BUILD SUCCESS",
       "commit_sha": null,
-      "started_at": "2026-06-08",
-      "completed_at": "2026-06-08"
-    },
-    {
-      "id": 5,
-      "name": "CobrancaControllerTest",
-      "status": "completed",
-      "depends_on": [],
-      "verification": "CobrancaControllerTest=15; BUILD SUCCESS (1065 total)",
-      "commit_sha": null,
-      "started_at": "2026-06-08",
-      "completed_at": "2026-06-08"
+      "started_at": "2026-06-09",
+      "completed_at": "2026-06-09"
     }
   ]
 }

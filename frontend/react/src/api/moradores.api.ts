@@ -1,4 +1,4 @@
-import { apiClient, extractData } from './client'
+import { apiClient, apiClientGlobal, extractData } from './client'
 import type {
   PessoaDTO,
   CreatePessoaDTO,
@@ -69,5 +69,15 @@ export const proprietariosApi = {
   listByApartamento: (aptId: number) =>
     apiClient
       .get<{ data: ProprietarioDTO[] }>(`/apartamentos/${aptId}/proprietarios`)
+      .then(extractData),
+
+  /**
+   * Retorna os dados do proprietário autenticado com todos os seus imóveis.
+   * O backend extrai o proprietario_id do JWT — nenhum parâmetro enviado.
+   * Usa apiClientGlobal (sem X-Condominio-Id) — acesso cross-tenant.
+   */
+  meusImoveis: (): Promise<ProprietarioDTO> =>
+    apiClientGlobal
+      .get<{ data: ProprietarioDTO }>('/proprietarios/meus-imoveis')
       .then(extractData),
 }

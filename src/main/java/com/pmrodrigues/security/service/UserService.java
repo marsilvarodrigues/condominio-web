@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -49,6 +50,14 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 @Primary
 public class UserService {
+
+  private static final Set<String> ROLES_PERMITIDOS =
+      Set.of(
+          "ROLE_ADMIN",
+          "ROLE_SINDICO",
+          "ROLE_USER",
+          "ROLE_MORADOR",
+          "ROLE_PROPRIETARIO");
 
   protected final UserRepository userRepository;
   protected final MailService mailService;
@@ -140,6 +149,15 @@ public class UserService {
   @Timed(value = "user.service.create", description = "Create user")
   public UserDTO create(CreateUserDTO dto) {
     log.info("Creating new user with email: {}", dto.email());
+    var invalidRoles =
+        dto.roles().stream()
+            .filter(r -> !ROLES_PERMITIDOS.contains(r))
+            .collect(Collectors.toSet());
+    if (!invalidRoles.isEmpty()) {
+      log.error("Invalid roles in create request: {}", invalidRoles);
+      throw new org.springframework.web.server.ResponseStatusException(
+          BAD_REQUEST, "Roles inválidos: " + invalidRoles);
+    }
     var user = userMapper.toEntity(dto);
     var saved = persistUser(user, dto.email(), dto.condominioIds());
     log.info("User created successfully with id: {}", saved.getId());

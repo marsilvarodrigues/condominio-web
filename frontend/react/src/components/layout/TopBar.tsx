@@ -18,7 +18,16 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { authApi } from '@/api/auth.api'
+import { ROLES, ROLE_PRECEDENCIA } from '@/utils/constants'
 import { DRAWER_WIDTH } from './Sidebar'
+
+const ROLE_LABELS: Record<string, string> = {
+  [ROLES.ADMIN]:        'Administrador',
+  [ROLES.SINDICO]:      'Síndico',
+  [ROLES.PROPRIETARIO]: 'Proprietário',
+  [ROLES.MORADOR]:      'Morador',
+  [ROLES.USER]:         'Usuário',
+}
 
 interface Props {
   onMenuClick: () => void
@@ -96,7 +105,9 @@ export function TopBar({ onMenuClick }: Props) {
           <Box sx={{ px: 2, py: 1, minWidth: 180 }}>
             <Typography variant="subtitle2">{user?.email}</Typography>
             <Typography variant="caption" color="text.secondary">
-              {user?.roles.includes('ROLE_ADMIN') ? 'Administrador' : 'Usuário'}
+              {ROLE_LABELS[
+                ROLE_PRECEDENCIA.find((r) => user?.roles.includes(r)) ?? ROLES.USER
+              ] ?? 'Usuário'}
             </Typography>
           </Box>
           <MenuItem

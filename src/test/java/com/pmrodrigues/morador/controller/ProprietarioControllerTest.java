@@ -26,11 +26,14 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -203,5 +206,42 @@ class ProprietarioControllerTest {
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isArray());
+    }
+
+    // ── meusImoveis ───────────────────────────────────────────────────────
+
+    @Test
+    void meusImoveis_asProprietario_returns200() throws Exception {
+        when(proprietarioService.findById(42L)).thenReturn(proprietarioDTO());
+
+        mockMvc.perform(get("/proprietarios/meus-imoveis")
+                        .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
+                        .with(jwt()
+                                .jwt(j -> j.claim("user_id", 42))
+                                .authorities(new SimpleGrantedAuthority("ROLE_PROPRIETARIO"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.nome").value("João Silva"));
+    }
+
+    @Test
+    void meusImoveis_claimMissing_returns404() throws Exception {
+        mockMvc.perform(get("/proprietarios/meus-imoveis")
+                        .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_PROPRIETARIO"))))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void meusImoveis_unauthenticated_returns401() throws Exception {
+        mockMvc.perform(get("/proprietarios/meus-imoveis"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void meusImoveis_asUser_returns403() throws Exception {
+        mockMvc.perform(get("/proprietarios/meus-imoveis")
+                        .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
+                .andExpect(status().isForbidden());
     }
 }

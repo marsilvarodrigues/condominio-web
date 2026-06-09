@@ -55,6 +55,20 @@ export const STATUS_CONCILIACAO_LABELS: Record<string, string> = {
 }
 
 export const ROLES = {
-  ADMIN: 'ROLE_ADMIN',
-  USER: 'ROLE_USER',
+  ADMIN:        'ROLE_ADMIN',
+  SINDICO:      'ROLE_SINDICO',
+  USER:         'ROLE_USER',
+  MORADOR:      'ROLE_MORADOR',
+  PROPRIETARIO: 'ROLE_PROPRIETARIO',
 } as const
+
+export type RoleValue = typeof ROLES[keyof typeof ROLES]
+
+/** Precedência para resolução de dashboard (maior índice = menor prioridade). */
+export const ROLE_PRECEDENCIA: RoleValue[] = [
+  ROLES.ADMIN,
+  ROLES.SINDICO,
+  ROLES.PROPRIETARIO,
+  ROLES.MORADOR,
+  ROLES.USER,
+]
