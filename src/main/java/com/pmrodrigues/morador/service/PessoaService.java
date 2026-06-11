@@ -21,6 +21,7 @@ import com.pmrodrigues.security.repository.PasswordHistoryRepository;
 import com.pmrodrigues.security.repository.UserRepository;
 import com.pmrodrigues.security.service.UserService;
 import io.micrometer.core.annotation.Timed;
+import java.time.LocalDate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +44,7 @@ public class PessoaService extends UserService {
   private final PessoaRepository pessoaRepository;
   private final PessoaMapper pessoaMapper;
   private final ProprietarioRepository proprietarioRepository;
+  private final HistoricoOcupacaoService historicoOcupacaoService;
 
   /**
    * Constructs a {@code PessoaService} with all required collaborators.
@@ -56,6 +58,7 @@ public class PessoaService extends UserService {
    * @param pessoaRepository repository for {@code Pessoa} persistence
    * @param pessoaMapper MapStruct mapper for pessoa DTO conversions
    * @param proprietarioRepository repository for proprietario lookups
+   * @param historicoOcupacaoService service for recording occupancy history
    */
   public PessoaService(
       UserRepository userRepository,
@@ -66,7 +69,8 @@ public class PessoaService extends UserService {
       PasswordEncoder passwordEncoder,
       PessoaRepository pessoaRepository,
       PessoaMapper pessoaMapper,
-      ProprietarioRepository proprietarioRepository) {
+      ProprietarioRepository proprietarioRepository,
+      HistoricoOcupacaoService historicoOcupacaoService) {
     super(
         userRepository,
         mailService,
@@ -77,6 +81,7 @@ public class PessoaService extends UserService {
     this.pessoaRepository = pessoaRepository;
     this.pessoaMapper = pessoaMapper;
     this.proprietarioRepository = proprietarioRepository;
+    this.historicoOcupacaoService = historicoOcupacaoService;
   }
 
   /**
@@ -234,6 +239,16 @@ public class PessoaService extends UserService {
     log.info("Assigning pessoa {} to apartamento {}", pessoaId, apartamentoId);
     var entity =
         pessoaRepository.findById(pessoaId).orElseThrow(() -> notFound("Pessoa", pessoaId));
+
+    var anteriores = pessoaRepository.findByApartamentoId(apartamentoId);
+    for (Pessoa anterior : anteriores) {
+      if (!anterior.getId().equals(pessoaId)) {
+        historicoOcupacaoService.registrar(anterior, LocalDate.now());
+        anterior.setApartamento(null);
+        pessoaRepository.save(anterior);
+      }
+    }
+
     entity.setApartamento(pessoaMapper.apartamentoFromId(apartamentoId));
     var saved = pessoaRepository.save(entity);
     log.info("Pessoa {} assigned to apartamento {}", pessoaId, apartamentoId);
@@ -275,6 +290,11 @@ public class PessoaService extends UserService {
     log.info("Removing pessoa {} from apartamento", pessoaId);
     var entity =
         pessoaRepository.findById(pessoaId).orElseThrow(() -> notFound("Pessoa", pessoaId));
+
+    if (entity.getApartamento() != null) {
+      historicoOcupacaoService.registrar(entity, LocalDate.now());
+    }
+
     entity.setApartamento(null);
     var saved = pessoaRepository.save(entity);
     log.info("Pessoa {} removed from apartamento", pessoaId);

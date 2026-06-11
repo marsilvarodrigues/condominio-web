@@ -417,6 +417,18 @@ export interface CreatePessoaDTO {
   apartamentoId?: number
 }
 
+export interface HistoricoOcupacaoDTO {
+  id: number
+  apartamentoId: number
+  pessoaId: number
+  nomeMorador: string
+  emailMorador: string | null
+  cpfMorador: string | null
+  dataEntrada: string  // ISO date "yyyy-MM-dd"
+  dataSaida: string    // ISO date "yyyy-MM-dd"
+  criadoEm: string     // ISO datetime
+}
+
 export interface UpdatePessoaDTO {
   nome?: string
   email?: string

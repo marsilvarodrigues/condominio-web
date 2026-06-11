@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="920" font-family="Roboto, Arial, sans-serif">
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-opacity="0.08"/>
+    </filter>
+    <filter id="shadow-sm">
+      <feDropShadow dx="0" dy="1" stdDeviation="3" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="920" fill="#F0F2F5"/>
+
+  <!-- ── Sidebar ── -->
+  <rect x="0" y="0" width="240" height="920" fill="#1A2332"/>
+  <rect x="0" y="0" width="240" height="60" fill="#151D2B"/>
+  <text x="20" y="35" fill="white" font-size="18" font-weight="700">CondoGest</text>
+  <text x="20" y="52" fill="rgba(255,255,255,0.5)" font-size="11">Gestão de Condomínios</text>
+
+  <text x="20" y="94"  fill="rgba(255,255,255,0.55)" font-size="13">🏠  Dashboard</text>
+  <text x="20" y="130" fill="rgba(255,255,255,0.55)" font-size="13">🏢  Condomínio</text>
+  <!-- Hierarquia active -->
+  <rect x="0" y="142" width="240" height="36" fill="#162840" rx="0"/>
+  <text x="20" y="165" fill="rgba(255,255,255,0.85)" font-size="13" font-weight="500">🏗️  Hierarquia</text>
+  <text x="20" y="202" fill="rgba(255,255,255,0.55)" font-size="13">👥  Moradores</text>
+  <text x="20" y="238" fill="rgba(255,255,255,0.55)" font-size="13">💰  Financeiro</text>
+  <text x="20" y="274" fill="rgba(255,255,255,0.55)" font-size="13">📊  Rateio</text>
+  <text x="20" y="310" fill="rgba(255,255,255,0.55)" font-size="13">💳  Cobranças</text>
+  <text x="20" y="346" fill="rgba(255,255,255,0.55)" font-size="13">⚙️  Configurações</text>
+
+  <!-- ── Top bar ── -->
+  <rect x="240" y="0" width="1040" height="56" fill="white" filter="url(#shadow-sm)"/>
+  <text x="264" y="32" fill="#546E7A" font-size="12">Hierarquia /</text>
+  <text x="348" y="32" fill="#546E7A" font-size="12">Bloco A /</text>
+  <text x="406" y="32" fill="#1A2332" font-size="12" font-weight="600">Apartamento 101</text>
+  <circle cx="1240" cy="28" r="18" fill="#1565C0"/>
+  <text x="1240" y="33" fill="white" font-size="13" font-weight="700" text-anchor="middle">A</text>
+
+  <!-- ── Page header ── -->
+  <text x="264" y="92" fill="#1A2332" font-size="22" font-weight="700">Apartamento 101 — Bloco A</text>
+  <!-- Back button -->
+  <rect x="1148" y="68" width="132" height="36" rx="6" fill="white" stroke="#E3E8EF" stroke-width="1.5"/>
+  <text x="1214" y="91" fill="#546E7A" font-size="13" text-anchor="middle">← Voltar</text>
+
+  <!-- ── Apt info bar ── -->
+  <rect x="264" y="108" width="1064" height="52" rx="8" fill="white" filter="url(#shadow-sm)"/>
+  <text x="284" y="132" fill="#78909C" font-size="11">APARTAMENTO</text>
+  <text x="284" y="148" fill="#1A2332" font-size="14" font-weight="700">101</text>
+  <line x1="360" y1="116" x2="360" y2="152" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="376" y="132" fill="#78909C" font-size="11">BLOCO</text>
+  <text x="376" y="148" fill="#1A2332" font-size="14">A</text>
+  <line x1="440" y1="116" x2="440" y2="152" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="456" y="132" fill="#78909C" font-size="11">ANDAR</text>
+  <text x="456" y="148" fill="#1A2332" font-size="14">1º</text>
+  <line x1="520" y1="116" x2="520" y2="152" stroke="#E3E8EF" stroke-width="1"/>
+  <text x="536" y="132" fill="#78909C" font-size="11">ÁREA</text>
+  <text x="536" y="148" fill="#1A2332" font-size="14">65 m²</text>
+  <line x1="616" y1="116" x2="616" y2="152" stroke="#E3E8EF" stroke-width="1"/>
+  <rect x="632" y="122" width="68" height="22" rx="11" fill="#E8F5E9"/>
+  <text x="666" y="137" fill="#2E7D32" font-size="11" font-weight="600" text-anchor="middle">OCUPADO</text>
+
+  <!-- ── Tabs ── -->
+  <rect x="264" y="176" width="1064" height="48" fill="white" filter="url(#shadow-sm)"/>
+  <text x="300" y="205" fill="#78909C" font-size="13">🏠  Moradores</text>
+  <text x="452" y="205" fill="#78909C" font-size="13">👤  Proprietários</text>
+  <text x="632" y="205" fill="#78909C" font-size="13">💳  Cobranças</text>
+  <!-- Active tab: Histórico -->
+  <text x="800" y="205" fill="#1565C0" font-size="13" font-weight="600">🕐  Histórico</text>
+  <rect x="794" y="220" width="96" height="4" rx="2" fill="#1565C0"/>
+
+  <!-- ── Section header ── -->
+  <text x="264" y="252" fill="#1A2332" font-size="16" font-weight="600">Histórico de Ocupação</text>
+  <text x="264" y="270" fill="#78909C" font-size="12">Moradores anteriores · ordenado por saída mais recente</text>
+
+  <!-- Access chip (top-right of table area) -->
+  <rect x="1148" y="240" width="180" height="24" rx="12" fill="#E3F2FD"/>
+  <text x="1238" y="256" fill="#1565C0" font-size="11" font-weight="500" text-anchor="middle">🔒 Síndico e Proprietário apenas</text>
+
+  <!-- ── History table card ── -->
+  <rect x="264" y="280" width="1064" height="540" rx="8" fill="white" filter="url(#shadow)"/>
+
+  <!-- Table header row -->
+  <rect x="264" y="280" width="1064" height="40" rx="8" fill="#F8FAFC"/>
+  <rect x="264" y="300" width="1064" height="20" fill="#F8FAFC"/>
+  <line x1="264" y1="320" x2="1328" y2="320" stroke="#E3E8EF" stroke-width="1"/>
+
+  <text x="284" y="305" fill="#546E7A" font-size="11" font-weight="700">MORADOR</text>
+  <text x="560" y="305" fill="#546E7A" font-size="11" font-weight="700">CPF</text>
+  <text x="720" y="305" fill="#546E7A" font-size="11" font-weight="700">ENTRADA</text>
+  <text x="860" y="305" fill="#546E7A" font-size="11" font-weight="700">SAÍDA</text>
+  <text x="1000" y="305" fill="#546E7A" font-size="11" font-weight="700">DURAÇÃO</text>
+
+  <!-- Row 1 — hover bg -->
+  <rect x="264" y="320" width="1064" height="64" fill="#F5F8FF"/>
+  <text x="284" y="346" fill="#1A2332" font-size="13" font-weight="500">Maria A. Ferreira</text>
+  <text x="284" y="362" fill="#78909C" font-size="11">maria.ferreira@email.com</text>
+  <text x="560" y="350" fill="#546E7A" font-size="13">123.456.789-09</text>
+  <text x="720" y="350" fill="#546E7A" font-size="13">01/01/2024</text>
+  <text x="860" y="350" fill="#546E7A" font-size="13">10/06/2026</text>
+  <text x="1000" y="350" fill="#1A2332" font-size="13">2 anos e 5 meses</text>
+  <line x1="264" y1="384" x2="1328" y2="384" stroke="#F0F2F5" stroke-width="1"/>
+
+  <!-- Row 2 -->
+  <rect x="264" y="384" width="1064" height="64" fill="white"/>
+  <text x="284" y="410" fill="#1A2332" font-size="13" font-weight="500">Carlos E. Santos</text>
+  <text x="284" y="426" fill="#78909C" font-size="11">carlos.santos@email.com</text>
+  <text x="560" y="414" fill="#546E7A" font-size="13">987.654.321-00</text>
+  <text x="720" y="414" fill="#546E7A" font-size="13">15/03/2021</text>
+  <text x="860" y="414" fill="#546E7A" font-size="13">31/12/2023</text>
+  <text x="1000" y="414" fill="#1A2332" font-size="13">2 anos e 9 meses</text>
+  <line x1="264" y1="448" x2="1328" y2="448" stroke="#F0F2F5" stroke-width="1"/>
+
+  <!-- Row 3 -->
+  <rect x="264" y="448" width="1064" height="64" fill="white"/>
+  <text x="284" y="474" fill="#1A2332" font-size="13" font-weight="500">Fernanda O. Costa</text>
+  <text x="284" y="490" fill="#78909C" font-size="11">fernanda.costa@email.com</text>
+  <text x="560" y="478" fill="#546E7A" font-size="13">456.789.123-87</text>
+  <text x="720" y="478" fill="#546E7A" font-size="13">01/01/2019</text>
+  <text x="860" y="478" fill="#546E7A" font-size="13">14/03/2021</text>
+  <text x="1000" y="478" fill="#1A2332" font-size="13">2 anos e 2 meses</text>
+  <line x1="264" y1="512" x2="1328" y2="512" stroke="#F0F2F5" stroke-width="1"/>
+
+  <!-- Row 4 -->
+  <rect x="264" y="512" width="1064" height="64" fill="white"/>
+  <text x="284" y="538" fill="#1A2332" font-size="13" font-weight="500">Roberto C. Lima</text>
+  <text x="284" y="554" fill="#78909C" font-size="11">roberto.lima@email.com</text>
+  <text x="560" y="542" fill="#546E7A" font-size="13">321.654.987-55</text>
+  <text x="720" y="542" fill="#546E7A" font-size="13">01/06/2016</text>
+  <text x="860" y="542" fill="#546E7A" font-size="13">31/12/2018</text>
+  <text x="1000" y="542" fill="#1A2332" font-size="13">2 anos e 6 meses</text>
+  <line x1="264" y1="576" x2="1328" y2="576" stroke="#F0F2F5" stroke-width="1"/>
+
+  <!-- Row 5 -->
+  <rect x="264" y="576" width="1064" height="64" fill="white"/>
+  <text x="284" y="602" fill="#1A2332" font-size="13" font-weight="500">Ana Paula Mendes</text>
+  <text x="284" y="618" fill="#78909C" font-size="11">ana.mendes@email.com</text>
+  <text x="560" y="606" fill="#546E7A" font-size="13">654.321.098-34</text>
+  <text x="720" y="606" fill="#546E7A" font-size="13">01/03/2014</text>
+  <text x="860" y="606" fill="#546E7A" font-size="13">31/05/2016</text>
+  <text x="1000" y="606" fill="#1A2332" font-size="13">2 anos e 2 meses</text>
+  <line x1="264" y1="640" x2="1328" y2="640" stroke="#F0F2F5" stroke-width="1"/>
+
+  <!-- Row 6 -->
+  <rect x="264" y="640" width="1064" height="64" fill="white"/>
+  <text x="284" y="666" fill="#1A2332" font-size="13" font-weight="500">Pedro H. Alves</text>
+  <text x="284" y="682" fill="#78909C" font-size="11">pedro.alves@email.com</text>
+  <text x="560" y="670" fill="#546E7A" font-size="13">789.012.345-12</text>
+  <text x="720" y="670" fill="#546E7A" font-size="13">01/07/2012</text>
+  <text x="860" y="670" fill="#546E7A" font-size="13">28/02/2014</text>
+  <text x="1000" y="670" fill="#1A2332" font-size="13">1 ano e 7 meses</text>
+  <line x1="264" y1="704" x2="1328" y2="704" stroke="#F0F2F5" stroke-width="1"/>
+
+  <!-- Table footer -->
+  <rect x="264" y="780" width="1064" height="40" rx="8" fill="#F8FAFC"/>
+  <text x="284" y="805" fill="#78909C" font-size="12">Mostrando 1–6 de 6 registros · Este histórico é imutável</text>
+
+  <!-- Footer note — access block chip -->
+  <rect x="900" y="791" width="408" height="22" rx="11" fill="#FFF3E0"/>
+  <text x="1104" y="806" fill="#E65100" font-size="11" text-anchor="middle">🔒 Moradores removidos perdem acesso automaticamente, salvo se forem Proprietário ou Síndico</text>
+</svg>

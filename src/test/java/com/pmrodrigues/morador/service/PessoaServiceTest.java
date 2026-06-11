@@ -3,6 +3,7 @@ package com.pmrodrigues.morador.service;
 import com.pmrodrigues.commons.service.MailService;
 import com.pmrodrigues.condominio.service.CondominioService;
 import com.pmrodrigues.morador.dto.CreatePessoaDTO;
+import com.pmrodrigues.morador.dto.HistoricoOcupacaoDTO;
 import com.pmrodrigues.morador.dto.PessoaDTO;
 import com.pmrodrigues.morador.dto.PessoaFilterDTO;
 import com.pmrodrigues.morador.dto.UpdatePessoaDTO;
@@ -15,6 +16,7 @@ import com.pmrodrigues.morador.repository.ProprietarioRepository;
 import com.pmrodrigues.security.mapper.UserMapper;
 import com.pmrodrigues.security.repository.PasswordHistoryRepository;
 import com.pmrodrigues.security.repository.UserRepository;
+import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +35,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,6 +50,7 @@ class PessoaServiceTest {
     @Mock PasswordHistoryRepository passwordHistoryRepository;
     @Mock CondominioService condominioService;
     @Mock PasswordEncoder passwordEncoder;
+    @Mock HistoricoOcupacaoService historicoOcupacaoService;
 
     PessoaService service;
 
@@ -55,7 +59,8 @@ class PessoaServiceTest {
         service = new PessoaService(
                 userRepository, mailService, userMapper,
                 passwordHistoryRepository, condominioService, passwordEncoder,
-                pessoaRepository, pessoaMapper, proprietarioRepository);
+                pessoaRepository, pessoaMapper, proprietarioRepository,
+                historicoOcupacaoService);
 
         lenient().when(pessoaMapper.toEntity(any(CreatePessoaDTO.class))).thenAnswer(inv -> {
             CreatePessoaDTO d = inv.getArgument(0);
@@ -249,5 +254,83 @@ class PessoaServiceTest {
 
         assertThat(entity.getApartamento()).isNull();
         verify(pessoaRepository).save(entity);
+    }
+
+    @Test
+    void removeFromApartamento_deveRegistrarHistorico_quandoPossuiApartamento() {
+        var entity = morador(5L, "Fulano");
+        entity.setApartamento(apt(10L));
+        when(pessoaRepository.findById(5L)).thenReturn(Optional.of(entity));
+        when(pessoaRepository.save(entity)).thenReturn(entity);
+        var dto = new HistoricoOcupacaoDTO(1L, 10L, 5L, "Fulano", null, null,
+            LocalDate.now(), LocalDate.now(), null);
+        when(historicoOcupacaoService.registrar(eq(entity), any(LocalDate.class))).thenReturn(dto);
+
+        service.removeFromApartamento(5L);
+
+        verify(historicoOcupacaoService).registrar(eq(entity), any(LocalDate.class));
+        assertThat(entity.getApartamento()).isNull();
+    }
+
+    @Test
+    void removeFromApartamento_naoDeveRegistrarHistorico_quandoSemApartamento() {
+        var entity = morador(5L, "Fulano");
+        // apartamento já é null
+        when(pessoaRepository.findById(5L)).thenReturn(Optional.of(entity));
+        when(pessoaRepository.save(entity)).thenReturn(entity);
+
+        service.removeFromApartamento(5L);
+
+        verify(historicoOcupacaoService, never()).registrar(any(), any());
+    }
+
+    // ── assignToApartamento com histórico ─────────────────────────────────────
+
+    @Test
+    void assignToApartamento_deveRegistrarHistoricoDosAnteriores_quandoApartamentoOcupado() {
+        var novaPessoa = morador(10L, "Nova Pessoa");
+        var anterior1  = morador(1L, "Anterior Um");
+        anterior1.setApartamento(apt(20L));
+        var anterior2  = morador(2L, "Anterior Dois");
+        anterior2.setApartamento(apt(20L));
+
+        when(pessoaRepository.findById(10L)).thenReturn(Optional.of(novaPessoa));
+        when(pessoaRepository.findByApartamentoId(20L)).thenReturn(List.of(anterior1, anterior2));
+        when(pessoaMapper.apartamentoFromId(20L)).thenReturn(apt(20L));
+        when(pessoaRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.assignToApartamento(10L, 20L);
+
+        verify(historicoOcupacaoService).registrar(eq(anterior1), any(LocalDate.class));
+        verify(historicoOcupacaoService).registrar(eq(anterior2), any(LocalDate.class));
+        assertThat(anterior1.getApartamento()).isNull();
+        assertThat(anterior2.getApartamento()).isNull();
+    }
+
+    @Test
+    void assignToApartamento_naoDeveRegistrarHistorico_quandoApartamentoVazio() {
+        var novaPessoa = morador(10L, "Nova Pessoa");
+        when(pessoaRepository.findById(10L)).thenReturn(Optional.of(novaPessoa));
+        when(pessoaRepository.findByApartamentoId(20L)).thenReturn(List.of());
+        when(pessoaMapper.apartamentoFromId(20L)).thenReturn(apt(20L));
+        when(pessoaRepository.save(novaPessoa)).thenReturn(novaPessoa);
+
+        service.assignToApartamento(10L, 20L);
+
+        verify(historicoOcupacaoService, never()).registrar(any(), any());
+    }
+
+    @Test
+    void assignToApartamento_naoDeveRegistrarHistoricoDaPropriaPessoa_quandoJaEstaNoApartamento() {
+        var pessoa = morador(10L, "Fulano");
+        pessoa.setApartamento(apt(20L));
+        when(pessoaRepository.findById(10L)).thenReturn(Optional.of(pessoa));
+        when(pessoaRepository.findByApartamentoId(20L)).thenReturn(List.of(pessoa));
+        when(pessoaMapper.apartamentoFromId(20L)).thenReturn(apt(20L));
+        when(pessoaRepository.save(pessoa)).thenReturn(pessoa);
+
+        service.assignToApartamento(10L, 20L);
+
+        verify(historicoOcupacaoService, never()).registrar(any(), any());
     }
 }

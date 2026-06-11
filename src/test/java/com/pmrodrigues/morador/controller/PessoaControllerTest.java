@@ -6,6 +6,8 @@ import com.pmrodrigues.morador.dto.CreatePessoaDTO;
 import com.pmrodrigues.morador.dto.PessoaDTO;
 import com.pmrodrigues.morador.dto.PessoaFilterDTO;
 import com.pmrodrigues.morador.dto.UpdatePessoaDTO;
+import com.pmrodrigues.morador.dto.HistoricoOcupacaoDTO;
+import com.pmrodrigues.morador.service.HistoricoOcupacaoService;
 import com.pmrodrigues.morador.service.PessoaService;
 import com.pmrodrigues.security.service.TokenBlacklistService;
 import com.pmrodrigues.security.service.UserDetailsServiceImpl;
@@ -24,11 +26,14 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -45,6 +50,7 @@ class PessoaControllerTest {
     @Autowired ObjectMapper objectMapper;
 
     @MockitoBean PessoaService pessoaService;
+    @MockitoBean HistoricoOcupacaoService historicoOcupacaoService;
     @MockitoBean JwtDecoder jwtDecoder;
     @MockitoBean TokenBlacklistService tokenBlacklistService;
     @MockitoBean UserDetailsServiceImpl userDetailsService;
@@ -192,5 +198,51 @@ class PessoaControllerTest {
         mockMvc.perform(delete("/pessoas/1/apartamento")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
                 .andExpect(status().isOk());
+    }
+
+    // ── historicoOcupacao ─────────────────────────────────────────────────
+
+    private HistoricoOcupacaoDTO historicoDTO() {
+        return new HistoricoOcupacaoDTO(1L, 1L, 1L, "Carlos Pereira",
+            "carlos@test.com", "111.111.111-11",
+            LocalDate.of(2023, 1, 1), LocalDate.of(2024, 6, 30),
+            LocalDateTime.of(2024, 6, 30, 12, 0));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getHistoricoOcupacao_deveRetornar200_quandoAutenticadoComoAdmin() throws Exception {
+        when(historicoOcupacaoService.listarPorApartamento(anyLong(), nullable(Long.class), any(Pageable.class)))
+            .thenReturn(new PageImpl<>(List.of(historicoDTO())));
+
+        mockMvc.perform(get("/pessoas/apartamentos/1/historico-ocupacao")
+                        .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isNotEmpty());
+    }
+
+    @Test
+    @WithMockUser(roles = "PROPRIETARIO")
+    void getHistoricoOcupacao_deveRetornar200_quandoAutenticadoComoProprietario() throws Exception {
+        when(historicoOcupacaoService.listarPorApartamento(anyLong(), nullable(Long.class), any(Pageable.class)))
+            .thenReturn(Page.empty());
+
+        mockMvc.perform(get("/pessoas/apartamentos/1/historico-ocupacao")
+                        .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "MORADOR")
+    void getHistoricoOcupacao_deveRetornar403_quandoAutenticadoComoMorador() throws Exception {
+        mockMvc.perform(get("/pessoas/apartamentos/1/historico-ocupacao")
+                        .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getHistoricoOcupacao_deveRetornar401_semAutenticacao() throws Exception {
+        mockMvc.perform(get("/pessoas/apartamentos/1/historico-ocupacao"))
+                .andExpect(status().isUnauthorized());
     }
 }

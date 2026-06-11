@@ -100,8 +100,8 @@ class UserIntegrationTest extends AbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, UUID.randomUUID().toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.data.length()").value(3));
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(jsonPath("$.data.content.length()").value(3));
     }
 
     @Test

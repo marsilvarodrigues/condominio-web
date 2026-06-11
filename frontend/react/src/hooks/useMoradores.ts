@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { pessoasApi, proprietariosApi } from '@/api/moradores.api'
+import { useAuthStore } from '@/store/authStore'
+import { ROLES } from '@/utils/constants'
 import type {
   CreatePessoaDTO,
   UpdatePessoaDTO,
@@ -119,5 +121,22 @@ export function useProprietarios(filter?: ProprietarioFilterDTO) {
   return useQuery({
     queryKey: [...PROPRIETARIOS_KEY, filter],
     queryFn: () => proprietariosApi.list(filter),
+  })
+}
+
+/**
+ * Fetches the occupancy history of an apartment.
+ * Enabled only when aptId > 0 and user has ADMIN, SINDICO or PROPRIETARIO role.
+ */
+export function useHistoricoOcupacao(aptId: number) {
+  const hasRole = useAuthStore((s) => s.hasRole)
+  const canView =
+    hasRole(ROLES.ADMIN) || hasRole(ROLES.SINDICO) || hasRole(ROLES.PROPRIETARIO)
+
+  return useQuery({
+    queryKey: ['historico-ocupacao', aptId],
+    queryFn: () => pessoasApi.historicoOcupacao(aptId),
+    enabled: aptId > 0 && canView,
+    staleTime: 5 * 60_000,
   })
 }

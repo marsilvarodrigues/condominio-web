@@ -108,6 +108,8 @@ public class DatabaseSetupHooks {
     }
 
     private void limparTabelas() {
+        // historico_ocupacao has no FK constraints but must be cleared with moradores
+        jdbc.update("DELETE FROM historico_ocupacao");
         // cobrancas FK → apartamentos; must go before apartamentos
         jdbc.update("DELETE FROM cobrancas");
         // morador hierarchy: subtypes FK → pessoas; all must go before pessoas

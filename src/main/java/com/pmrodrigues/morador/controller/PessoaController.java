@@ -3,15 +3,19 @@ package com.pmrodrigues.morador.controller;
 import static com.pmrodrigues.commons.util.RequestContextHelper.requestId;
 
 import com.pmrodrigues.commons.dto.ApiResponse;
+import com.pmrodrigues.commons.tenant.TenantContext;
 import com.pmrodrigues.commons.versioning.ApiVersion;
 import com.pmrodrigues.morador.dto.CreatePessoaDTO;
+import com.pmrodrigues.morador.dto.HistoricoOcupacaoDTO;
 import com.pmrodrigues.morador.dto.PessoaDTO;
 import com.pmrodrigues.morador.dto.PessoaFilterDTO;
 import com.pmrodrigues.morador.dto.UpdatePessoaDTO;
+import com.pmrodrigues.morador.service.HistoricoOcupacaoService;
 import com.pmrodrigues.morador.service.PessoaService;
 import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -43,6 +47,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PessoaController {
 
   private final PessoaService pessoaService;
+  private final HistoricoOcupacaoService historicoOcupacaoService;
 
   /**
    * Returns a paginated list of pessoas matching the given filter criteria.
@@ -175,5 +180,30 @@ public class PessoaController {
     var updated = pessoaService.removeFromApartamento(id);
     log.info("DELETE /pessoas/{}/apartamento - removed", id);
     return ResponseEntity.ok(ApiResponse.of(requestId(request), updated));
+  }
+
+  /**
+   * Returns the occupancy history of the given apartment, ordered by most recent departure first.
+   *
+   * <p>Access control: ADMIN, SINDICO and PROPRIETARIO roles may view the history. The caller must
+   * have a valid {@code X-Condominio-Id} header so {@link TenantContext} is populated.
+   *
+   * @param apartamentoId apartment primary key
+   * @param request current HTTP request
+   * @return list of occupancy records wrapped in {@link ApiResponse}
+   */
+  @GetMapping("/apartamentos/{apartamentoId}/historico-ocupacao")
+  @Timed(value = "pessoa.controller.historicoOcupacao")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO','PROPRIETARIO')")
+  public ResponseEntity<ApiResponse<Page<HistoricoOcupacaoDTO>>> historicoOcupacao(
+      @PathVariable Long apartamentoId, Pageable pageable, HttpServletRequest request) {
+    log.info("GET /pessoas/apartamentos/{}/historico-ocupacao", apartamentoId);
+    var condominioId = TenantContext.getCondominioId();
+    var result = historicoOcupacaoService.listarPorApartamento(apartamentoId, condominioId,pageable);
+    log.info(
+        "GET /pessoas/apartamentos/{}/historico-ocupacao - returning {} records",
+        apartamentoId,
+        result.getTotalElements());
+    return ResponseEntity.ok(ApiResponse.of(requestId(request), result));
   }
 }

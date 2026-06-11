@@ -6,7 +6,7 @@ Feature: Gerenciamento de Usuários
   Scenario: Listar todos os usuários retorna lista
     When eu faço GET para "/users"
     Then o status da resposta é 200
-    And a resposta contém uma lista em "$.data"
+    And a resposta contém uma lista em "$.data.content"
 
   Scenario: Admin cria usuário com condominioIds retorna 201
     When eu crio um usuário com email "novo@bdd.com" no condomínio de teste

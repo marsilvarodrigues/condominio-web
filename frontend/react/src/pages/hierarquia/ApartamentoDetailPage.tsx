@@ -5,6 +5,7 @@ import {
   CardContent,
   Chip,
   IconButton,
+  LinearProgress,
   MenuItem,
   Paper,
   Tab,
@@ -21,22 +22,32 @@ import LinkOffIcon from '@mui/icons-material/LinkOff'
 import EmailIcon from '@mui/icons-material/Email'
 import CancelIcon from '@mui/icons-material/Cancel'
 import CreditCardIcon from '@mui/icons-material/CreditCard'
+import HistoryIcon from '@mui/icons-material/History'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { format } from 'date-fns'
+import { differenceInDays, differenceInMonths, format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { PageHeader, DataTable, ConfirmDialog, FormDialog, type Column } from '@/components/common'
 import { apartamentosApi } from '@/api/apartamentos.api'
 import {
   useMoradoresDeApartamento,
   useProprietariosDeApartamento,
+  useHistoricoOcupacao,
 } from '@/hooks/useMoradores'
 import { useCobrancasDoApartamento, useCobrancaMutations } from '@/hooks/useCobrancas'
-import type { PessoaDTO, ProprietarioDTO, CreateProprietarioDTO, CobrancaResumoDTO } from '@/types'
+import { useAuthStore } from '@/store/authStore'
+import { ROLES } from '@/utils/constants'
+import type {
+  PessoaDTO,
+  ProprietarioDTO,
+  CreateProprietarioDTO,
+  CobrancaResumoDTO,
+  HistoricoOcupacaoDTO,
+} from '@/types'
 
 const moradorSchema = z.object({
   nome: z.string().min(2, 'Nome obrigatório'),
@@ -69,11 +80,86 @@ function TabPanel({ children, value, index }: TabPanelProps) {
   return value === index ? <Box sx={{ pt: 3 }}>{children}</Box> : null
 }
 
+function HistoricoOcupacaoTab({ aptId }: { aptId: number }) {
+  const { data: historico = [], isLoading } = useHistoricoOcupacao(aptId)
+
+  const columns: Column<HistoricoOcupacaoDTO>[] = [
+    {
+      key: 'nomeMorador',
+      header: 'Morador',
+      render: (r) => (
+        <Box>
+          <Typography variant="body2" fontWeight={500}>{r.nomeMorador}</Typography>
+          {r.emailMorador && (
+            <Typography variant="caption" color="text.secondary">{r.emailMorador}</Typography>
+          )}
+        </Box>
+      ),
+    },
+    {
+      key: 'cpfMorador',
+      header: 'CPF',
+      render: (r) => r.cpfMorador ?? '—',
+    },
+    {
+      key: 'dataEntrada',
+      header: 'Entrada',
+      render: (r) =>
+        format(new Date(r.dataEntrada + 'T00:00:00'), 'dd/MM/yyyy', { locale: ptBR }),
+    },
+    {
+      key: 'dataSaida',
+      header: 'Saída',
+      render: (r) =>
+        format(new Date(r.dataSaida + 'T00:00:00'), 'dd/MM/yyyy', { locale: ptBR }),
+    },
+    {
+      key: 'duracao',
+      header: 'Duração',
+      render: (r) => {
+        const entrada = new Date(r.dataEntrada + 'T00:00:00')
+        const saida = new Date(r.dataSaida + 'T00:00:00')
+        const meses = differenceInMonths(saida, entrada)
+        if (meses >= 12)
+          return `${Math.floor(meses / 12)} ano(s) e ${meses % 12} mês(es)`
+        if (meses > 0)
+          return `${meses} mês(es)`
+        const dias = differenceInDays(saida, entrada)
+        return `${dias} dia(s)`
+      },
+    },
+  ]
+
+  if (isLoading) return <LinearProgress />
+
+  if (historico.length === 0) {
+    return (
+      <Box sx={{ py: 6, textAlign: 'center' }}>
+        <Typography color="text.secondary">
+          Nenhum morador anterior registrado neste apartamento.
+        </Typography>
+      </Box>
+    )
+  }
+
+  return (
+    <DataTable
+      columns={columns}
+      rows={historico}
+      keyField="id"
+      emptyMessage="Sem histórico de ocupação."
+    />
+  )
+}
+
 export default function ApartamentoDetailPage() {
   const { id } = useParams<{ id: string }>()
   const aptId = Number(id)
   const navigate = useNavigate()
   const [tab, setTab] = useState(0)
+  const hasRole = useAuthStore((s) => s.hasRole)
+  const canViewHistory =
+    hasRole(ROLES.ADMIN) || hasRole(ROLES.SINDICO) || hasRole(ROLES.PROPRIETARIO)
 
   const [moradorDialog, setMoradorDialog] = useState<{ open: boolean; editing: PessoaDTO | null }>({
     open: false, editing: null,
@@ -306,6 +392,9 @@ export default function ApartamentoDetailPage() {
           <Tab label="Moradores" />
           <Tab label="Proprietários" />
           <Tab icon={<CreditCardIcon />} iconPosition="start" label="Cobranças" />
+          {canViewHistory && (
+            <Tab icon={<HistoryIcon />} iconPosition="start" label="Histórico" />
+          )}
         </Tabs>
       </Paper>
 
@@ -389,6 +478,19 @@ export default function ApartamentoDetailPage() {
           />
         )}
       </TabPanel>
+
+      {/* Tab 3 — Histórico de Ocupação */}
+      {canViewHistory && (
+        <TabPanel value={tab} index={3}>
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="h6">Histórico de Ocupação</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Moradores anteriores · ordenado por saída mais recente
+            </Typography>
+          </Box>
+          <HistoricoOcupacaoTab aptId={aptId} />
+        </TabPanel>
+      )}
 
       {/* Dialog Morador — criar ou editar */}
       <FormDialog

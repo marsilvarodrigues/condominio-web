@@ -9,6 +9,7 @@ import type {
   UpdateProprietarioDTO,
   ProprietarioFilterDTO,
   PageResponse,
+  HistoricoOcupacaoDTO,
 } from '@/types'
 
 export const pessoasApi = {
@@ -35,6 +36,17 @@ export const pessoasApi = {
 
   removeFromApartamento: (id: number) =>
     apiClient.delete<{ data: PessoaDTO }>(`/pessoas/${id}/apartamento`).then(extractData),
+
+  /**
+   * GET /pessoas/apartamentos/{apartamentoId}/historico-ocupacao
+   * Acessível por ADMIN, SINDICO e PROPRIETARIO.
+   */
+  historicoOcupacao: (apartamentoId: number): Promise<HistoricoOcupacaoDTO[]> =>
+    apiClient
+      .get<{ data: HistoricoOcupacaoDTO[] }>(
+        `/pessoas/apartamentos/${apartamentoId}/historico-ocupacao`,
+      )
+      .then((r) => r.data.data),
 }
 
 export const proprietariosApi = {
