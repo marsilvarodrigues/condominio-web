@@ -547,3 +547,27 @@ Scope: `com.pmrodrigues.condominio.service.*` public methods only.
 **Outcome:** `mvn test` → 1065 testes, 0 falhas, 0 erros, BUILD SUCCESS.
 
 ---
+
+## 2026-06-11 — Ciclo 8: missing tests + ArchUnit fix
+
+**Assessment findings addressed:** 5 (CobrancaMapper test coverage, Cobrança/Pessoa/Proprietário repository tests, brittle ArchUnit UserService check).
+
+**Chunk 1 — PessoaSpecificationTest + ProprietarioSpecificationTest (13 tests):**
+- Production fix to `PessoaSpecification.hasTipo`: changed `root.type().as(String.class)` → `root.get("pessoaTipo")` (H2 can't compare DECFLOAT with String from CASE expression in JOINED inheritance).
+- Production fix to `PessoaSpecification.hasCpf`: changed `root.get("cpf")` → `cb.treat()` on each subclass (attribute name is ambiguous across Morador and ProprietarioPessoaFisica).
+- Used valid Brazilian CPFs `"529.982.247-25"` / `"111.444.777-35"` in ProprietarioSpecificationTest (`@CPF` validation is active in @DataJpaTest).
+
+**Chunk 2 — CobrancaMapperTest (4 tests):**
+- Added `.status(StatusCobranca.PENDENTE)` to builder in test helper (`@PrePersist` does not fire in non-persistence mapper tests).
+
+**Chunk 3 — CobrancaRepositoryTest (8) + PessoaRepositoryTest (2) + ProprietarioRepositoryTest (4):**
+- `softDeleteByCondominioId` test removed from `PessoaRepositoryTest`: Hibernate 6 generates PostgreSQL-specific `WITH ... AS MATERIALIZED` CTE + `RETURNING` for bulk UPDATE across JOINED inheritance (the `deleted` column is in `users`, not `pessoas`). H2 does not support this syntax. Functionality covered by BDD integration tests on real PostgreSQL.
+- `Apartamento.getCondominio()` / `getBloco()` do not exist (getters suppressed); stored `condominio` and `bloco` as test class fields instead.
+
+**Chunk 4 — ArchUnit UserService constant:**
+- Introduced `USER_SERVICE_FQCN = "com.pmrodrigues.security.service.UserService"` static constant.
+- Cross-module check now explicitly gates on `"security".equals(depModule) && clazz.isAssignableTo(USER_SERVICE_FQCN)`, replacing the brittle `"com.pmrodrigues." + depModule + ".service.UserService"` string that happened to work only because depModule equalled "security" for UserRepository.
+
+**Post-flight:** `mvn test` → 1136 testes, 0 falhas, 0 erros, BUILD SUCCESS.
+
+---

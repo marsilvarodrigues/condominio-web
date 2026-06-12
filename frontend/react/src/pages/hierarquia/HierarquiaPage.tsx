@@ -74,25 +74,18 @@ export default function HierarquiaPage() {
 
   const aptColumns: Column<ApartamentoDTO>[] = [
     { key: 'numero', header: 'Número', render: (r) => r.numero },
-    { key: 'andar', header: 'Andar', render: (r) => r.andar },
-    { key: 'fracaoIdeal', header: 'Fração Ideal', align: 'right', render: (r) => `${r.fracaoIdeal}%` },
-    { key: 'metragem', header: 'Metragem', align: 'right', render: (r) => `${r.metragem} m²` },
+    { key: 'andar', header: 'Andar', render: (r) => r.andar ?? '—' },
+    { key: 'fracaoIdeal', header: 'Fração Ideal', align: 'right', render: (r) => r.fracaoIdeal != null ? `${r.fracaoIdeal}%` : '—' },
+    { key: 'areaConstruida', header: 'Metragem', align: 'right', render: (r) => `${r.areaConstruida} m²` },
     {
-      key: 'proprietario',
-      header: 'Proprietário',
+      key: 'ocupacao',
+      header: 'Ocupação',
       render: (r) =>
-        r.proprietarioNome ? (
-          <Chip label={r.proprietarioNome} size="small" />
+        r.quantidadeMoradores > 0 ? (
+          <Chip label={`${r.quantidadeMoradores} morador(es)`} size="small" color="success" />
         ) : (
           <Chip label="Vago" size="small" variant="outlined" />
         ),
-    },
-    {
-      key: 'moradores',
-      header: 'Moradores',
-      render: () => (
-        <Chip label="Ver detalhes" size="small" variant="outlined" />
-      ),
     },
     {
       key: 'actions',
@@ -243,7 +236,7 @@ export default function HierarquiaPage() {
           <TextField label="Número" fullWidth {...aptForm.register('numero')} />
           <Box sx={{ display: 'flex', gap: 2 }}>
             <TextField label="Andar" type="number" sx={{ flex: 1 }} {...aptForm.register('andar', { valueAsNumber: true })} />
-            <TextField label="Metragem (m²)" type="number" sx={{ flex: 1 }} {...aptForm.register('metragem', { valueAsNumber: true })} />
+            <TextField label="Área Construída (m²)" type="number" sx={{ flex: 1 }} {...aptForm.register('areaConstruida', { valueAsNumber: true })} />
             <TextField label="Fração Ideal (%)" type="number" sx={{ flex: 1 }} {...aptForm.register('fracaoIdeal', { valueAsNumber: true })} />
           </Box>
         </Box>

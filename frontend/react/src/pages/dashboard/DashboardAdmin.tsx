@@ -57,6 +57,7 @@ export default function DashboardAdmin() {
             icon={<CreditCardIcon />}
             color="#E65100"
             loading={cobrancas.isLoading}
+            onClick={() => navigate('/cobrancas')}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>

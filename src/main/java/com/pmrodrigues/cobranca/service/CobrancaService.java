@@ -180,7 +180,13 @@ public class CobrancaService {
         "Charge created and email sent: cobrancaId={} moradorId={}",
         cobranca.getId(),
         morador.id());
-    return mapper.toDTO(cobranca);
+    var dto = mapper.toDTO(cobranca);
+    return new CobrancaDTO(
+        dto.id(), dto.apartamentoId(), dto.apartamentoNumero(), dto.blocoNome(),
+        dto.moradorId(), morador.nome(), morador.email(),
+        dto.valor(), dto.vencimento(), dto.status(),
+        dto.boletoUrl(), dto.boletoCodBarras(), dto.pixQrCodeBase64(), dto.pixCopiaCola(),
+        dto.emailEnviado(), dto.emailEnviadoEm(), dto.pagoEm(), dto.criadaEm());
   }
 
   /**
@@ -203,7 +209,8 @@ public class CobrancaService {
                 CobrancaSpecification.vencimentoTo(filter.vencimentoAte()),
                 CobrancaSpecification.emailEnviado(filter.emailEnviado())),
             pageable)
-        .map(mapper::toDTO);
+        .map(mapper::toDTO)
+        .map(this::enriquecerMorador);
   }
 
   /**
@@ -217,8 +224,9 @@ public class CobrancaService {
   @Timed(value = "cobranca.service.findById", description = "Find charge by ID")
   public CobrancaDTO findById(Long id) {
     log.info("findById id={}", id);
-    return mapper.toDTO(
-        cobrancaRepository.findById(id).orElseThrow(() -> notFound("Cobranca", id)));
+    return enriquecerMorador(
+        mapper.toDTO(
+            cobrancaRepository.findById(id).orElseThrow(() -> notFound("Cobranca", id))));
   }
 
   /**
@@ -255,7 +263,7 @@ public class CobrancaService {
       gatewayService.cancelar(cobranca.getAsaasId());
     }
     cobranca.setStatus(StatusCobranca.CANCELADA);
-    return mapper.toDTO(cobrancaRepository.save(cobranca));
+    return enriquecerMorador(mapper.toDTO(cobrancaRepository.save(cobranca)));
   }
 
   /**
@@ -376,6 +384,27 @@ public class CobrancaService {
   public void softDeleteByCondominioId(Long condominioId) {
     log.info("softDeleteByCondominioId condominioId={}", condominioId);
     cobrancaRepository.softDeleteByCondominioId(condominioId);
+  }
+
+  /**
+   * Creates a new {@link CobrancaDTO} with {@code moradorNome} and {@code moradorEmail} populated
+   * from the pessoa record. Returns the original DTO unchanged when {@code moradorId} is null or the
+   * lookup fails (e.g. soft-deleted resident).
+   */
+  private CobrancaDTO enriquecerMorador(CobrancaDTO dto) {
+    if (dto.moradorId() == null) return dto;
+    try {
+      var pessoa = pessoaService.findById(dto.moradorId());
+      return new CobrancaDTO(
+          dto.id(), dto.apartamentoId(), dto.apartamentoNumero(), dto.blocoNome(),
+          dto.moradorId(), pessoa.nome(), pessoa.email(),
+          dto.valor(), dto.vencimento(), dto.status(),
+          dto.boletoUrl(), dto.boletoCodBarras(), dto.pixQrCodeBase64(), dto.pixCopiaCola(),
+          dto.emailEnviado(), dto.emailEnviadoEm(), dto.pagoEm(), dto.criadaEm());
+    } catch (Exception e) {
+      log.warn("Could not enrich moradorNome for cobrancaId={}: {}", dto.id(), e.getMessage());
+      return dto;
+    }
   }
 
   private static boolean isPaymentEvent(String event) {

@@ -71,19 +71,26 @@ export interface ChangePasswordDTO {
 
 // ── Endereço ──────────────────────────────────────────────────────────────────
 
-export interface EnderecoDTO {
-  logradouro: string
-  cep: string
-  cidade: string
-  estadoId: number
-  estadoNome?: string
-  estadoUf?: string
-}
-
 export interface EstadoDTO {
   id: number
   nome: string
   uf: string
+}
+
+/** Read-side address DTO: estado is a full nested object as returned by the API. */
+export interface EnderecoDTO {
+  logradouro: string
+  cep: string
+  cidade: string
+  estado: EstadoDTO
+}
+
+/** Write-side address DTO: estado is just the numeric FK, matching CreateCondominioEnderecoDTO on the backend. */
+export interface CreateEnderecoDTO {
+  logradouro: string
+  cep: string
+  cidade: string
+  estado: number
 }
 
 // ── Condomínio ────────────────────────────────────────────────────────────────
@@ -100,7 +107,7 @@ export interface CreateCondominioDTO {
   nome: string
   cnpj: string
   email: string
-  endereco: EnderecoDTO
+  endereco: CreateEnderecoDTO
 }
 
 // ── Bloco / Apartamento ───────────────────────────────────────────────────────
@@ -119,23 +126,23 @@ export interface CreateBlocoDTO {
 
 export interface ApartamentoDTO {
   id: number
-  numero: string
-  andar: number
   blocoId: number
-  blocoNome: string
-  fracaoIdeal: number
-  metragem: number
-  proprietarioId: number | null
-  proprietarioNome: string | null
+  blocoNome: string | null
+  numero: string
+  createdAt: string | null
+  updatedAt: string | null
+  areaConstruida: number
+  fracaoIdeal: number | null
+  andar: number | null
+  quantidadeMoradores: number
 }
 
 export interface CreateApartamentoDTO {
-  numero: string
-  andar: number
   blocoId: number
-  fracaoIdeal: number
-  metragem: number
-  proprietarioId?: number
+  numero: string
+  areaConstruida: number
+  fracaoIdeal?: number
+  andar?: number
 }
 
 // ── Plano de Contas ───────────────────────────────────────────────────────────
@@ -512,6 +519,19 @@ export interface CobrancaDTO extends CobrancaResumoDTO {
   pixQrCodeBase64: string | null
   pixCopiaCola: string | null
   emailEnviadoEm: string | null
+}
+
+export interface GerarCobrancasDTO {
+  execucaoId: number
+  vencimento: string
+}
+
+export interface CobrancaFilterDTO {
+  apartamentoId?: number
+  status?: StatusCobranca
+  vencimentoDe?: string
+  vencimentoAte?: string
+  emailEnviado?: boolean
 }
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────

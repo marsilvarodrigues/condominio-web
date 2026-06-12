@@ -1,9 +1,9 @@
 {
   "plan_file": "refactor-plan.md",
-  "assessment_source": "inline — avaliação arquitetural 2026-06-09 (dashboard feature: ProprietarioController.meusImoveis, UserService.create roles, ProprietarioClaimsProviderImpl)",
-  "created": "2026-06-09",
-  "total_chunks": 3,
-  "current_chunk": 3,
+  "assessment_source": "inline — avaliação arquitetural 2026-06-11 (cobranca mapper/repo, morador specs/repos, ArchUnit)",
+  "created": "2026-06-11",
+  "total_chunks": 4,
+  "current_chunk": 4,
   "status": "completed",
   "preflight_passed": true,
   "verification": {
@@ -16,33 +16,43 @@
   "chunks": [
     {
       "id": 1,
-      "name": "ProprietarioClaimsProviderImplTest — 2 unit tests",
+      "name": "PessoaSpecificationTest + ProprietarioSpecificationTest",
       "status": "completed",
       "depends_on": [],
-      "verification": "ProprietarioClaimsProviderImplTest=2; BUILD SUCCESS",
+      "verification": null,
       "commit_sha": null,
-      "started_at": "2026-06-09",
-      "completed_at": "2026-06-09"
+      "started_at": null,
+      "completed_at": null
     },
     {
       "id": 2,
-      "name": "UserServiceTest — create_withInvalidRole_throwsBadRequest",
+      "name": "CobrancaMapperTest",
       "status": "completed",
       "depends_on": [],
-      "verification": "UserServiceTest=27 (+1); BUILD SUCCESS",
+      "verification": null,
       "commit_sha": null,
-      "started_at": "2026-06-09",
-      "completed_at": "2026-06-09"
+      "started_at": null,
+      "completed_at": null
     },
     {
       "id": 3,
-      "name": "ProprietarioControllerTest — 4 testes para meusImoveis",
+      "name": "CobrancaRepositoryTest + PessoaRepositoryTest + ProprietarioRepositoryTest",
       "status": "completed",
       "depends_on": [],
-      "verification": "ProprietarioControllerTest=16 (+4); full suite 1072; BUILD SUCCESS",
+      "verification": "14/14 tests pass (CobrancaRepositoryTest 8, PessoaRepositoryTest 2, ProprietarioRepositoryTest 4); softDeleteByCondominioId removed from PessoaRepositoryTest — H2 incompatible with Hibernate 6 MATERIALIZED CTE on JOINED inheritance UPDATE",
       "commit_sha": null,
-      "started_at": "2026-06-09",
-      "completed_at": "2026-06-09"
+      "started_at": null,
+      "completed_at": "2026-06-11"
+    },
+    {
+      "id": 4,
+      "name": "ArchUnit — substituir check brittle de UserService por constante nomeada",
+      "status": "completed",
+      "depends_on": [],
+      "verification": "8/8 ArchUnit tests pass; USER_SERVICE_FQCN constant introduced; check now explicitly gates on security module",
+      "commit_sha": null,
+      "started_at": null,
+      "completed_at": "2026-06-11"
     }
   ]
 }

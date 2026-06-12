@@ -21,7 +21,7 @@ import {
   type Column,
 } from '@/components/common'
 import { useCondominios, useCondominioMutations } from '@/hooks/useCondominios'
-import type { CondominioDTO, CreateCondominioDTO, EstadoDTO } from '@/types'
+import type { CondominioDTO, CreateCondominioDTO, EstadoDTO, CreateEnderecoDTO } from '@/types'
 import { formatCnpj } from '@/utils/formatters'
 
 const estadoSchema = z.object({ id: z.number(), nome: z.string(), uf: z.string() })
@@ -64,10 +64,6 @@ export default function CondominiosPage() {
 
   const openEdit = (row: CondominioDTO) => {
     setEditTarget(row)
-    const estadoObj: EstadoDTO | null =
-      row.endereco.estadoId
-        ? { id: row.endereco.estadoId, nome: row.endereco.estadoNome ?? '', uf: row.endereco.estadoUf ?? '' }
-        : null
     reset({
       nome: row.nome,
       cnpj: row.cnpj,
@@ -76,23 +72,24 @@ export default function CondominiosPage() {
         logradouro: row.endereco.logradouro,
         cep: row.endereco.cep,
         cidade: row.endereco.cidade,
-        estado: estadoObj ?? undefined,
+        estado: row.endereco.estado ?? undefined,
       },
     })
     setDialogOpen(true)
   }
 
   const onSubmit = (values: FormValues) => {
+    const endereco: CreateEnderecoDTO = {
+      logradouro: values.endereco.logradouro,
+      cep: values.endereco.cep,
+      cidade: values.endereco.cidade,
+      estado: values.endereco.estado!.id,
+    }
     const body: CreateCondominioDTO = {
       nome: values.nome,
       cnpj: values.cnpj,
       email: values.email,
-      endereco: {
-        logradouro: values.endereco.logradouro,
-        cep: values.endereco.cep,
-        cidade: values.endereco.cidade,
-        estadoId: values.endereco.estado!.id,
-      },
+      endereco,
     }
     if (editTarget) {
       update.mutate({ id: editTarget.id, body }, { onSuccess: () => setDialogOpen(false) })
@@ -108,7 +105,7 @@ export default function CondominiosPage() {
     {
       key: 'cidade',
       header: 'Cidade / UF',
-      render: (r) => `${r.endereco.cidade} / ${r.endereco.estadoUf ?? ''}`,
+      render: (r) => `${r.endereco.cidade} / ${r.endereco.estado?.uf ?? ''}`,
     },
     {
       key: 'actions',

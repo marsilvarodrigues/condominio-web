@@ -160,7 +160,7 @@ class ApartamentoIntegrationTest extends AbstractIntegrationTest {
     @Test
     void create_asAdmin_returns201AndNewApartamento() throws Exception {
         var token = loginAndGetToken(ADMIN_EMAIL, ADMIN_PASSWORD);
-        var dto = new CreateApartamentoDTO(savedBloco.getId(), "201", BigDecimal.TEN);
+        var dto = new CreateApartamentoDTO(savedBloco.getId(), "201", BigDecimal.TEN, null, null);
 
         mockMvc.perform(post("/apartamentos")
                         .header("Authorization", "Bearer " + token)
@@ -180,7 +180,7 @@ class ApartamentoIntegrationTest extends AbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(savedBloco.getId(), "201", BigDecimal.TEN))))
+                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(savedBloco.getId(), "201", BigDecimal.TEN, null, null))))
                 .andExpect(status().isForbidden());
     }
 
@@ -189,7 +189,7 @@ class ApartamentoIntegrationTest extends AbstractIntegrationTest {
         mockMvc.perform(post("/apartamentos")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(savedBloco.getId(), "201", BigDecimal.TEN))))
+                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(savedBloco.getId(), "201", BigDecimal.TEN, null, null))))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -198,7 +198,7 @@ class ApartamentoIntegrationTest extends AbstractIntegrationTest {
     @Test
     void update_asAdmin_returns200() throws Exception {
         var token = loginAndGetToken(ADMIN_EMAIL, ADMIN_PASSWORD);
-        var dto = new ApartamentoDTO(null, null, "101-A", null, null, BigDecimal.TEN);
+        var dto = new ApartamentoDTO(null, null, null, "101-A", null, null, BigDecimal.TEN, null, null, 0);
 
         mockMvc.perform(put("/apartamentos/" + apt101Id)
                         .header("Authorization", "Bearer " + token)
@@ -212,7 +212,7 @@ class ApartamentoIntegrationTest extends AbstractIntegrationTest {
     @Test
     void update_asUser_returns403() throws Exception {
         var token = loginAndGetToken(USER_EMAIL, USER_PASSWORD);
-        var dto = new ApartamentoDTO(null, null, "101-A", null, null, BigDecimal.TEN);
+        var dto = new ApartamentoDTO(null, null, null, "101-A", null, null, BigDecimal.TEN, null, null, 0);
 
         mockMvc.perform(put("/apartamentos/" + apt101Id)
                         .header("Authorization", "Bearer " + token)

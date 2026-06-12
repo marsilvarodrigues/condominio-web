@@ -37,13 +37,15 @@ export default function ChangePasswordPage() {
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
-  const onSubmit = (values: FormValues) =>
+  const onSubmit = (values: FormValues) => {
+    mutation.reset()
     mutation.mutate(values, {
       onSuccess: () => {
         reset()
         navigate('/')
       },
     })
+  }
 
   return (
     <Box maxWidth={480}>

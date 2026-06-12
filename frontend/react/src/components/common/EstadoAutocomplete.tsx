@@ -27,9 +27,14 @@ export function EstadoAutocomplete({
   label = 'Estado',
   sx,
 }: EstadoAutocompleteProps) {
-  const [inputValue, setInputValue] = useState('')
+  // searchInput tracks what the user typed for API queries only.
+  // We intentionally do NOT pass this as inputValue to Autocomplete so that
+  // MUI can manage the displayed text itself — otherwise, when the form is
+  // reset with an existing estado (edit mode), the field stays blank because
+  // the 'reset' reason from onInputChange was being suppressed.
+  const [searchInput, setSearchInput] = useState('')
 
-  const { data: results = [], isFetching } = useEstadosSearch(inputValue)
+  const { data: results = [], isFetching } = useEstadosSearch(searchInput)
 
   // Always keep the current value in the option list so the label renders
   // correctly on initial display (e.g. when opening an edit dialog).
@@ -44,19 +49,24 @@ export function EstadoAutocomplete({
     <Autocomplete<EstadoDTO>
       options={options}
       value={value}
-      inputValue={inputValue}
       loading={isFetching}
       getOptionLabel={(opt) => `${opt.uf} – ${opt.nome}`}
       isOptionEqualToValue={(opt, val) => opt.id === val.id}
       noOptionsText={
-        inputValue.trim().length < 2
+        searchInput.trim().length < 2
           ? 'Digite ao menos 2 caracteres'
           : 'Nenhum estado encontrado'
       }
       onChange={(_, opt) => onChange(opt)}
       onInputChange={(_, newInput, reason) => {
-        // Avoid re-triggering search when MUI resets the input after a selection.
-        if (reason !== 'reset') setInputValue(newInput)
+        // Only update the search term when the user is actually typing.
+        // On 'reset' (option selected / value changed externally) or 'clear',
+        // reset the search so stale results don't linger in the dropdown.
+        if (reason === 'input') {
+          setSearchInput(newInput)
+        } else {
+          setSearchInput('')
+        }
       }}
       renderInput={(params) => (
         <TextField

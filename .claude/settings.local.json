@@ -115,7 +115,11 @@
       "Bash(python -c ' *)",
       "Bash(mvn checkstyle:checkstyle --no-transfer-progress)",
       "Bash(grep -v \"//\")",
-      "Bash(xargs grep -l \"SecurityHeaders\\\\|HttpSecurity\\\\|HeaderWriter\\\\|CacheControl\")"
+      "Bash(xargs grep -l \"SecurityHeaders\\\\|HttpSecurity\\\\|HeaderWriter\\\\|CacheControl\")",
+      "Bash(xargs dirname)",
+      "Bash(npm install *)",
+      "Bash(Select-Object Name)",
+      "Bash(grep -E '\\\\.\\(java|kt\\)$')"
     ]
   }
 }

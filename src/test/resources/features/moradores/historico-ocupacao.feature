@@ -1,4 +1,3 @@
-# language: pt
 @e2e
 Feature: Histórico de Ocupação do Apartamento
 

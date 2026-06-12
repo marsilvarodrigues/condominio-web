@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
  * @param emailEnviado whether the billing email was dispatched
  * @param emailEnviadoEm timestamp of last email send (may be null)
  * @param pagoEm payment confirmation timestamp (may be null)
- * @param createdAt charge creation timestamp
+ * @param criadaEm charge creation timestamp
  */
 public record CobrancaDTO(
     Long id,
@@ -45,4 +45,4 @@ public record CobrancaDTO(
     boolean emailEnviado,
     LocalDateTime emailEnviadoEm,
     LocalDateTime pagoEm,
-    LocalDateTime createdAt) {}
+    LocalDateTime criadaEm) {}

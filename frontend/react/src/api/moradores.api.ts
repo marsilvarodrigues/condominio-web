@@ -40,13 +40,14 @@ export const pessoasApi = {
   /**
    * GET /pessoas/apartamentos/{apartamentoId}/historico-ocupacao
    * Acessível por ADMIN, SINDICO e PROPRIETARIO.
+   * Backend returns Page<HistoricoOcupacaoDTO> — extract content array.
    */
   historicoOcupacao: (apartamentoId: number): Promise<HistoricoOcupacaoDTO[]> =>
     apiClient
-      .get<{ data: HistoricoOcupacaoDTO[] }>(
+      .get<{ data: { content: HistoricoOcupacaoDTO[] } }>(
         `/pessoas/apartamentos/${apartamentoId}/historico-ocupacao`,
       )
-      .then((r) => r.data.data),
+      .then((r) => r.data.data?.content ?? []),
 }
 
 export const proprietariosApi = {

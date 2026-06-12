@@ -1,6 +1,7 @@
 import { apiClient, apiClientGlobal } from './client'
 import type {
   ContaBancariaDTO,
+  CondominioDTO,
   FundoReservaDTO,
   OrcamentoItemDTO,
   ApartamentoDTO,
@@ -61,7 +62,7 @@ export const dashboardApi = {
       .get<{ data: ApartamentoDTO[] }>('/apartamentos')
       .then((r) => r.data.data)
       .catch(() => [])
-    const ocupados = apts.filter((a) => a.proprietarioId != null).length
+    const ocupados = apts.filter((a) => a.quantidadeMoradores > 0).length
     return {
       total: apts.length,
       ocupados,
@@ -77,7 +78,7 @@ export const dashboardApi = {
           params: { page: 0, size: 200 },
         })
         .then((r) => r.data.data)
-      const pend = page.content.filter((c) => c.status === 'PENDENTE')
+      const pend = page.content.filter((c) => c.status === 'PENDENTE' || c.status === 'ENVIADA')
       const venc = page.content.filter((c) => c.status === 'VENCIDA')
       return {
         totalPendente: pend.reduce((s, c) => s + Number(c.valor), 0),
@@ -94,8 +95,8 @@ export const dashboardApi = {
 
   totalCondominios: (): Promise<number> =>
     apiClientGlobal
-      .get<{ data: PageResponse<unknown> }>('/condominios', { params: { page: 0, size: 1 } })
-      .then((r) => r.data.data.totalElements)
+      .get<{ data: CondominioDTO[] }>('/condominios')
+      .then((r) => r.data.data.length)
       .catch(() => 0),
 
   totalUsuarios: (): Promise<number> =>

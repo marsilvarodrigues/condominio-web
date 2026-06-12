@@ -77,6 +77,12 @@ public class Apartamento {
   @Column(nullable = false)
   private BigDecimal areaConstruida;
 
+  @Column(precision = 10, scale = 6)
+  private BigDecimal fracaoIdeal;
+
+  @Column
+  private Integer andar;
+
   @OneToMany(mappedBy = "apartamento", fetch = FetchType.LAZY)
   @Builder.Default
   private List<Pessoa> moradores = new ArrayList<>();

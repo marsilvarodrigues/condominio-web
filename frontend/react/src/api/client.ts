@@ -1,5 +1,6 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios'
 import { useAuthStore } from '@/store/authStore'
+import { useNotificationStore } from '@/store/notificationStore'
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? '/api'
 
@@ -25,11 +26,16 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config
 })
 
-// Tenta renovar o token quando recebe 401
+// Tenta renovar o token quando recebe 401; exibe aviso em 403
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const original = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
+
+    if (error.response?.status === 403) {
+      useNotificationStore.getState().notifyError('Acesso negado: você não tem permissão para esta operação.')
+      return Promise.reject(error)
+    }
 
     if (error.response?.status === 401 && !original._retry) {
       original._retry = true
@@ -82,6 +88,12 @@ apiClientGlobal.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const original = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
+
+    if (error.response?.status === 403) {
+      useNotificationStore.getState().notifyError('Acesso negado: você não tem permissão para esta operação.')
+      return Promise.reject(error)
+    }
+
     if (error.response?.status === 401 && !original._retry) {
       original._retry = true
       const refreshToken = useAuthStore.getState().refreshToken

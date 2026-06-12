@@ -23,6 +23,8 @@ const SimulacaoRateioPage = lazy(() => import('@/pages/financeiro/SimulacaoRatei
 const ExecucoesRateioPage = lazy(() => import('@/pages/financeiro/ExecucoesRateioPage'))
 const ApartamentoDetailPage = lazy(() => import('@/pages/hierarquia/ApartamentoDetailPage'))
 const PlaceholderPage = lazy(() => import('@/pages/dashboard/PlaceholderPage'))
+const CobrancasPage = lazy(() => import('@/pages/cobrancas/CobrancasPage'))
+const PrestacaoContasPage = lazy(() => import('@/pages/relatorio/PrestacaoContasPage'))
 
 function Loader() {
   return (
@@ -83,10 +85,11 @@ export function AppRouter() {
               path="cobrancas"
               element={
                 <ProtectedRoute requiredRole={ROLES.ADMIN}>
-                  <PlaceholderPage titulo="Cobranças" />
+                  <CobrancasPage />
                 </ProtectedRoute>
               }
             />
+            <Route path="relatorio/prestacao-contas" element={<PrestacaoContasPage />} />
             <Route path="comunicados" element={<PlaceholderPage titulo="Comunicados" />} />
             <Route path="reservas" element={<PlaceholderPage titulo="Reservas de Áreas Comuns" />} />
             <Route path="proprietario/meus-imoveis" element={<PlaceholderPage titulo="Meus Imóveis" />} />

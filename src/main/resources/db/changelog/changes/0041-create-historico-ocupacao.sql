@@ -1,8 +1,10 @@
 -- liquibase formatted sql
 -- changeset pmrodrigues:0041-create-historico-ocupacao dbms:postgresql
 
+CREATE SEQUENCE historico_ocupacao_id_seq;
+
 CREATE TABLE historico_ocupacao (
-    id              BIGSERIAL       PRIMARY KEY,
+    id              BIGINT          NOT NULL DEFAULT nextval('historico_ocupacao_id_seq'),
     condominio_id   BIGINT          NOT NULL,
     apartamento_id  BIGINT          NOT NULL,
     pessoa_id       BIGINT          NOT NULL,
@@ -11,8 +13,9 @@ CREATE TABLE historico_ocupacao (
     cpf_morador     VARCHAR(14),
     data_entrada    DATE            NOT NULL,
     data_saida      DATE            NOT NULL,
-    criado_em       TIMESTAMP       NOT NULL DEFAULT NOW()
-)PARTITION BY HASH (condominio_id);
+    criado_em       TIMESTAMP       NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id, condominio_id)
+) PARTITION BY HASH (condominio_id);
 
 CREATE TABLE historico_ocupacao_p0 PARTITION OF historico_ocupacao FOR VALUES WITH (MODULUS 4, REMAINDER 0);
 CREATE TABLE historico_ocupacao_p1 PARTITION OF historico_ocupacao FOR VALUES WITH (MODULUS 4, REMAINDER 1);
@@ -23,4 +26,4 @@ CREATE INDEX idx_hist_ocupacao_apartamento ON historico_ocupacao (apartamento_id
 CREATE INDEX idx_hist_ocupacao_pessoa      ON historico_ocupacao (pessoa_id);
 CREATE INDEX idx_hist_ocupacao_data_saida  ON historico_ocupacao (data_saida DESC);
 
--- rollback DROP TABLE historico_ocupacao;
+-- rollback DROP TABLE historico_ocupacao; DROP SEQUENCE historico_ocupacao_id_seq;

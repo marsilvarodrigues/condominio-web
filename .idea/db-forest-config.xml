@@ -2,11 +2,9 @@
 <project version="4">
   <component name="db-forest-configuration">
     <data version="2">.
-	1:0:228e09ae-024d-4faf-89d4-6dfbd7e559e5:​CondominiApplication
 	----------------------------------------
-	2:1:9e2b0de2-670e-491e-b722-80ffb14b879a
-	3:0:c661c4da-298a-49b9-bfc5-2c22c0c13241
-	4:0:7fb8692d-e574-45db-b22d-218547748d3e
+	1:0:c661c4da-298a-49b9-bfc5-2c22c0c13241
+	2:0:7fb8692d-e574-45db-b22d-218547748d3e
 		.</data>
   </component>
 </project>

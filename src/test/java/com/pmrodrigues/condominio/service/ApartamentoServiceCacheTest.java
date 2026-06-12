@@ -62,7 +62,7 @@ class ApartamentoServiceCacheTest {
     @Autowired CacheManager cacheManager;
 
     private final Apartamento entity = Apartamento.builder().id(1L).numero("101").build();
-    private final ApartamentoDTO dto = new ApartamentoDTO(1L, null, "101", null, null, BigDecimal.TEN);
+    private final ApartamentoDTO dto = new ApartamentoDTO(1L, null, null, "101", null, null, BigDecimal.TEN, null, null, 0);
     private final ApartamentoFilterDTO allFilter = new ApartamentoFilterDTO(null, null);
 
     @BeforeEach
@@ -108,7 +108,7 @@ class ApartamentoServiceCacheTest {
         when(mapper.toDTO(entity)).thenReturn(dto);
         service.filterBy(allFilter);
 
-        var createDto = new CreateApartamentoDTO(1L, "102", BigDecimal.TEN);
+        var createDto = new CreateApartamentoDTO(1L, "102", BigDecimal.TEN, null, null);
         when(mapper.toEntity(createDto)).thenReturn(entity);
         when(repository.save(entity)).thenReturn(entity);
         service.create(createDto);

@@ -49,7 +49,7 @@ class ApartamentoServiceTest {
         lenient().when(mapper.toDTO(any(Apartamento.class))).thenAnswer(inv -> {
             Apartamento a = inv.getArgument(0);
             Long blocoId = a.getBloco() != null ? a.getBloco().getId() : null;
-            return new ApartamentoDTO(a.getId(), blocoId, a.getNumero(), a.getCreatedAt(), a.getUpdatedAt(), a.getAreaConstruida());
+            return new ApartamentoDTO(a.getId(), blocoId, null, a.getNumero(), a.getCreatedAt(), a.getUpdatedAt(), a.getAreaConstruida(), null, null, 0);
         });
         lenient().doAnswer(inv -> {
             Apartamento a = inv.getArgument(0);
@@ -136,7 +136,7 @@ class ApartamentoServiceTest {
 
     @Test
     void create_savesAndReturnsDTO() {
-        var dto = new CreateApartamentoDTO(5L, "202", BigDecimal.TEN);
+        var dto = new CreateApartamentoDTO(5L, "202", BigDecimal.TEN, null, null);
         when(repository.save(any(Apartamento.class))).thenAnswer(inv -> {
             Apartamento a = inv.getArgument(0);
             a.setId(7L);
@@ -158,7 +158,7 @@ class ApartamentoServiceTest {
         when(repository.findById(1L)).thenReturn(Optional.of(entity));
         when(repository.save(entity)).thenReturn(entity);
 
-        var result = service.update(new ApartamentoDTO(1L, null, "303", null, null, BigDecimal.TEN));
+        var result = service.update(new ApartamentoDTO(1L, null, null, "303", null, null, BigDecimal.TEN, null, null, 0));
 
         assertThat(result.numero()).isEqualTo("303");
     }
@@ -167,7 +167,7 @@ class ApartamentoServiceTest {
     void update_whenNotFound_throwsNotFound() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.update(new ApartamentoDTO(99L, null, "101", null, null, BigDecimal.TEN)))
+        assertThatThrownBy(() -> service.update(new ApartamentoDTO(99L, null, null, "101", null, null, BigDecimal.TEN, null, null, 0)))
                 .isInstanceOf(ResponseStatusException.class)
                 .satisfies(e -> assertThat(((ResponseStatusException) e).getStatusCode().value()).isEqualTo(404));
     }

@@ -20,6 +20,10 @@ import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 @AnalyzeClasses(packages = "com.pmrodrigues", importOptions = ImportOption.DoNotIncludeTests.class)
 class ArchitectureTest {
 
+    // Services that extend this class are allowed to inject UserRepository directly
+    // (inherited via super-constructor). Anything else must call security's service instead.
+    private static final String USER_SERVICE_FQCN = "com.pmrodrigues.security.service.UserService";
+
     private static final ArchCondition<JavaClass> BE_A_RECORD =
         new ArchCondition<>("be a Java record") {
             @Override
@@ -105,10 +109,10 @@ class ArchitectureTest {
                     if (depPkg.contains(".repository")) {
                         String depModule = moduleOf(depPkg);
                         if (depModule != null && !depModule.equals(ownModule)) {
-                            // Allow if the class extends a service in the same module as the repository —
-                            // this means the repository dependency is inherited via super constructor.
-                            boolean inheritedViaParent = clazz.isAssignableTo(
-                                "com.pmrodrigues." + depModule + ".service.UserService");
+                            // Allow cross-module access only when the accessing class extends
+                            // security's UserService — the UserRepository dep is inherited via super().
+                            boolean inheritedViaParent = "security".equals(depModule)
+                                && clazz.isAssignableTo(USER_SERVICE_FQCN);
                             if (!inheritedViaParent) {
                                 events.add(SimpleConditionEvent.violated(clazz,
                                     "%s (module '%s') must not depend on %s (module '%s'); use the target module's service instead"

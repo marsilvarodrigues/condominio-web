@@ -1,0 +1,156 @@
+OFXHEADER:100
+DATA:OFXSGML
+VERSION:102
+SECURITY:NONE
+ENCODING:UTF-8
+CHARSET:1252
+COMPRESSION:NONE
+OLDFILEUID:NONE
+NEWFILEUID:NONE
+
+<OFX>
+  <SIGNONMSGSRSV1>
+    <SONRS>
+      <STATUS>
+        <CODE>0
+        <SEVERITY>INFO
+      </STATUS>
+      <DTSERVER>20260601120000[-3:BRT]
+      <LANGUAGE>POR
+      <FI>
+        <ORG>Banco Itaú S.A.
+        <FID>341
+      </FI>
+    </SONRS>
+  </SIGNONMSGSRSV1>
+  <BANKMSGSRSV1>
+    <STMTTRNRS>
+      <TRNUID>2026050001
+      <STATUS>
+        <CODE>0
+        <SEVERITY>INFO
+      </STATUS>
+      <STMTRS>
+        <CURDEF>BRL
+        <BANKACCTFROM>
+          <BANKID>341
+          <BRANCHID>1234
+          <ACCTID>56789-0
+          <ACCTTYPE>CHECKING
+        </BANKACCTFROM>
+        <BANKTRANLIST>
+          <DTSTART>20260501000000[-3:BRT]
+          <DTEND>20260531000000[-3:BRT]
+
+          <!-- OFX001 — Cota limpeza Apto A101 (casa com lancamento CONCILIADO) -->
+          <STMTTRN>
+            <TRNTYPE>CREDIT
+            <DTPOSTED>20260502000000[-3:BRT]
+            <TRNAMT>200.00
+            <FITID>OFX001
+            <CHECKNUM>20260502001
+            <NAME>COND SOLAR PALMEIRAS
+            <MEMO>COB COND APT A101 LIMPEZA
+          </STMTTRN>
+
+          <!-- OFX002 — Cota limpeza Apto A102 (casa com lancamento CONCILIADO) -->
+          <STMTTRN>
+            <TRNTYPE>CREDIT
+            <DTPOSTED>20260503000000[-3:BRT]
+            <TRNAMT>200.00
+            <FITID>OFX002
+            <CHECKNUM>20260503001
+            <NAME>COND SOLAR PALMEIRAS
+            <MEMO>COB COND APT A102 LIMPEZA
+          </STMTTRN>
+
+          <!-- OFX003 — Cota limpeza Apto A201 (casa com lancamento CONCILIADO) -->
+          <STMTTRN>
+            <TRNTYPE>CREDIT
+            <DTPOSTED>20260505000000[-3:BRT]
+            <TRNAMT>200.00
+            <FITID>OFX003
+            <CHECKNUM>20260505001
+            <NAME>COND SOLAR PALMEIRAS
+            <MEMO>COB COND APT A201 LIMPEZA
+          </STMTTRN>
+
+          <!-- OFX004 — Cota limpeza Apto A202 (casa com lancamento CONCILIADO) -->
+          <STMTTRN>
+            <TRNTYPE>CREDIT
+            <DTPOSTED>20260507000000[-3:BRT]
+            <TRNAMT>200.00
+            <FITID>OFX004
+            <CHECKNUM>20260507001
+            <NAME>COND SOLAR PALMEIRAS
+            <MEMO>COB COND APT A202 LIMPEZA
+          </STMTTRN>
+
+          <!-- OFX005 — Pagamento empresa limpeza SERVLIMPO (casa com lancamento CONCILIADO) -->
+          <STMTTRN>
+            <TRNTYPE>DEBIT
+            <DTPOSTED>20260510000000[-3:BRT]
+            <TRNAMT>-2000.00
+            <FITID>OFX005
+            <CHECKNUM>20260510001
+            <NAME>SERVLIMPO LTDA
+            <MEMO>PAG SERVLIMPO LTDA
+          </STMTTRN>
+
+          <!-- OFX006 — Cota segurança Apto A101 (casa com lancamento CONCILIADO) -->
+          <STMTTRN>
+            <TRNTYPE>CREDIT
+            <DTPOSTED>20260502000000[-3:BRT]
+            <TRNAMT>300.00
+            <FITID>OFX006
+            <CHECKNUM>20260502002
+            <NAME>COND SOLAR PALMEIRAS
+            <MEMO>COB COND APT A101 SEGURANCA
+          </STMTTRN>
+
+          <!-- OFX007 — TED recebida sem correspondência no sistema (PENDENTE) -->
+          <STMTTRN>
+            <TRNTYPE>CREDIT
+            <DTPOSTED>20260515000000[-3:BRT]
+            <TRNAMT>1500.00
+            <FITID>OFX007
+            <CHECKNUM>7823901
+            <NAME>PESSOA DESCONHECIDA
+            <MEMO>TED RECEBIDA DOC 7823901
+          </STMTTRN>
+
+          <!-- OFX008 — Manutenção portão sem lancamento no sistema (PENDENTE) -->
+          <STMTTRN>
+            <TRNTYPE>DEBIT
+            <DTPOSTED>20260518000000[-3:BRT]
+            <TRNAMT>-350.00
+            <FITID>OFX008
+            <CHECKNUM>20260518001
+            <NAME>MANUTENCAO EXPRESS LTDA
+            <MEMO>MANUT PORTAO ELETRONICO
+          </STMTTRN>
+
+          <!-- OFX009 — Tarifa bancária (deve ser marcado IGNORADO) -->
+          <STMTTRN>
+            <TRNTYPE>DEBIT
+            <DTPOSTED>20260531000000[-3:BRT]
+            <TRNAMT>-80.00
+            <FITID>OFX009
+            <CHECKNUM>20260531001
+            <NAME>ITAU UNIBANCO S.A.
+            <MEMO>TARIFA BANCARIA MENSAL MAIO/2026
+          </STMTTRN>
+
+        </BANKTRANLIST>
+        <LEDGERBAL>
+          <BALAMT>15750.00
+          <DTASOF>20260531000000[-3:BRT]
+        </LEDGERBAL>
+        <AVAILBAL>
+          <BALAMT>15750.00
+          <DTASOF>20260531000000[-3:BRT]
+        </AVAILBAL>
+      </STMTRS>
+    </STMTTRNRS>
+  </BANKMSGSRSV1>
+</OFX>

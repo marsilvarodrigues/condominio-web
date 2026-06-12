@@ -9,7 +9,11 @@ import java.time.LocalDateTime;
 public record ApartamentoDTO(
     Long id,
     Long blocoId,
+    String blocoNome,
     @NotBlank String numero,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
-    @NotNull BigDecimal areaConstruida) {}
+    @NotNull BigDecimal areaConstruida,
+    BigDecimal fracaoIdeal,
+    Integer andar,
+    int quantidadeMoradores) {}

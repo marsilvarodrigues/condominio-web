@@ -4,11 +4,15 @@ import com.pmrodrigues.condominio.dto.ApartamentoDTO;
 import com.pmrodrigues.condominio.dto.CreateApartamentoDTO;
 import com.pmrodrigues.condominio.model.Apartamento;
 import com.pmrodrigues.condominio.model.Bloco;
+import com.pmrodrigues.morador.model.Pessoa;
 import jakarta.persistence.EntityManager;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -17,7 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Mapper(
     componentModel = "spring",
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public abstract class ApartamentoMapper {
 
   protected EntityManager em;
@@ -33,6 +38,12 @@ public abstract class ApartamentoMapper {
    * @param apartamento source entity
    * @return mapped DTO
    */
+  @Mapping(target = "blocoNome", source = "bloco.bloco")
+  @Mapping(target = "blocoId", source = "bloco.id")
+  @Mapping(
+      target = "quantidadeMoradores",
+      source = "moradores",
+      qualifiedByName = "countMoradores")
   public abstract ApartamentoDTO toDTO(Apartamento apartamento);
 
   /**
@@ -49,6 +60,9 @@ public abstract class ApartamentoMapper {
   @Mapping(target = "updatedAt", ignore = true)
   @Mapping(target = "createdBy", ignore = true)
   @Mapping(target = "updatedBy", ignore = true)
+  @Mapping(target = "moradores", ignore = true)
+  @Mapping(target = "proprietarios", ignore = true)
+  @Mapping(target = "condominio", ignore = true)
   public abstract Apartamento toEntity(CreateApartamentoDTO dto);
 
   /**
@@ -60,12 +74,26 @@ public abstract class ApartamentoMapper {
    */
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "bloco", ignore = true)
+  @Mapping(target = "condominio", ignore = true)
+  @Mapping(target = "moradores", ignore = true)
+  @Mapping(target = "proprietarios", ignore = true)
   @Mapping(target = "deleted", ignore = true)
   @Mapping(target = "createdAt", ignore = true)
   @Mapping(target = "updatedAt", ignore = true)
   @Mapping(target = "createdBy", ignore = true)
   @Mapping(target = "updatedBy", ignore = true)
   public abstract void updateEntity(@MappingTarget Apartamento apartamento, ApartamentoDTO dto);
+
+  /**
+   * Returns the number of moradores in the list; null-safe.
+   *
+   * @param moradores morador list from the entity
+   * @return count, 0 if null
+   */
+  @Named("countMoradores")
+  protected int countMoradores(List<Pessoa> moradores) {
+    return moradores == null ? 0 : moradores.size();
+  }
 
   /**
    * Resolves a {@link Bloco} JPA reference by id; returns a Hibernate proxy managed within the

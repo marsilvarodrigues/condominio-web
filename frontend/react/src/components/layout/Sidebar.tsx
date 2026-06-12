@@ -23,6 +23,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 import EventIcon from '@mui/icons-material/Event'
 import BusinessIcon from '@mui/icons-material/Business'
 import CreditCardIcon from '@mui/icons-material/CreditCard'
+import AssignmentIcon from '@mui/icons-material/Assignment'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useAuthStore } from '@/store/authStore'
@@ -65,6 +66,18 @@ const NAV_ITEMS: NavItem[] = [
     ],
   },
   { label: 'Cobranças', icon: <CreditCardIcon />, path: '/cobrancas', adminOnly: true },
+  {
+    label: 'Relatórios',
+    icon: <AssignmentIcon />,
+    children: [
+      {
+        label: 'Prestação de Contas',
+        icon: <AssignmentIcon />,
+        path: '/relatorio/prestacao-contas',
+        roles: [ROLES.ADMIN, ROLES.SINDICO],
+      },
+    ],
+  },
   {
     label: 'Rateio',
     icon: <CalculateIcon />,

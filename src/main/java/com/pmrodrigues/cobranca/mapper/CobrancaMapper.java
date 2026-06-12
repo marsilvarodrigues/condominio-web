@@ -20,14 +20,15 @@ public interface CobrancaMapper {
 
   /**
    * Maps a {@link Cobranca} entity to its full {@link CobrancaDTO}. Resident name and email fields
-   * are left null — the service enriches them separately.
+   * are left null — the service enriches them separately via {@code enriquecerMorador}.
    *
    * @param cobranca source entity
-   * @return full DTO
+   * @return full DTO with moradorNome/moradorEmail null
    */
   @Mapping(source = "apartamento.id", target = "apartamentoId")
   @Mapping(source = "apartamento.numero", target = "apartamentoNumero")
   @Mapping(source = "apartamento.bloco.bloco", target = "blocoNome")
+  @Mapping(source = "createdAt", target = "criadaEm")
   @Mapping(target = "moradorNome", ignore = true)
   @Mapping(target = "moradorEmail", ignore = true)
   CobrancaDTO toDTO(Cobranca cobranca);

@@ -141,7 +141,7 @@ class ApartamentoControllerTest {
         mockMvc.perform(post("/apartamentos")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(1L, "101", BigDecimal.TEN))))
+                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(1L, "101", BigDecimal.TEN, null, null))))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.numero").value("101"));
     }
@@ -166,7 +166,7 @@ class ApartamentoControllerTest {
         mockMvc.perform(post("/apartamentos")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(1L, "101", BigDecimal.TEN))))
+                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(1L, "101", BigDecimal.TEN, null, null))))
                 .andExpect(status().isForbidden());
     }
 
@@ -175,7 +175,7 @@ class ApartamentoControllerTest {
         mockMvc.perform(post("/apartamentos")
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(1L, "101", BigDecimal.TEN))))
+                        .content(objectMapper.writeValueAsString(new CreateApartamentoDTO(1L, "101", BigDecimal.TEN, null, null))))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -254,6 +254,6 @@ class ApartamentoControllerTest {
     // ── helper ────────────────────────────────────────────────────────────
 
     private ApartamentoDTO aptDto(Long id, String numero) {
-        return new ApartamentoDTO(id, null, numero, null, null, BigDecimal.TEN);
+        return new ApartamentoDTO(id, null, null, numero, null, null, BigDecimal.TEN, null, null, 0);
     }
 }

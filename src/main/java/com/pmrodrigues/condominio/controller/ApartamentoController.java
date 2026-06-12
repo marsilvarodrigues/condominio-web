@@ -119,10 +119,14 @@ public class ApartamentoController {
             new ApartamentoDTO(
                 id,
                 dto.blocoId(),
+                dto.blocoNome(),
                 dto.numero(),
                 dto.createdAt(),
                 dto.updatedAt(),
-                dto.areaConstruida()));
+                dto.areaConstruida(),
+                dto.fracaoIdeal(),
+                dto.andar(),
+                0));
     log.info("PUT /apartamentos/{} - apartamento updated", id);
     return ResponseEntity.ok(ApiResponse.of(requestId(request), updated));
   }
