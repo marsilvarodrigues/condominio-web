@@ -163,7 +163,10 @@ export default function DashboardSindico() {
           <Grid item xs={12}>
             <SectionCard title="Resumo de Cobranças">
               <Box sx={{ display: 'flex', gap: 4 }}>
-                <Box>
+                <Box
+                  onClick={() => navigate('/cobrancas')}
+                  sx={{ cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
+                >
                   <Typography variant="caption" color="text.secondary">
                     Pendentes
                   </Typography>
@@ -172,7 +175,10 @@ export default function DashboardSindico() {
                   </Typography>
                   <Typography variant="caption">{cobrancas.data.quantidadePendente} cobranças</Typography>
                 </Box>
-                <Box>
+                <Box
+                  onClick={() => navigate('/cobrancas')}
+                  sx={{ cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
+                >
                   <Typography variant="caption" color="text.secondary">
                     Vencidas
                   </Typography>

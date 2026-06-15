@@ -5,7 +5,6 @@ import type {
   FundoReservaDTO,
   OrcamentoItemDTO,
   ApartamentoDTO,
-  CobrancaDTO,
   RateioExecucaoDTO,
   PageResponse,
   ResumoFinanceiro,
@@ -71,25 +70,11 @@ export const dashboardApi = {
     }
   },
 
-  resumoCobrancas: async (): Promise<ResumoCobrancas | null> => {
-    try {
-      const page: PageResponse<CobrancaDTO> = await apiClient
-        .get<{ data: PageResponse<CobrancaDTO> }>('/cobrancas', {
-          params: { page: 0, size: 200 },
-        })
-        .then((r) => r.data.data)
-      const pend = page.content.filter((c) => c.status === 'PENDENTE' || c.status === 'ENVIADA')
-      const venc = page.content.filter((c) => c.status === 'VENCIDA')
-      return {
-        totalPendente: pend.reduce((s, c) => s + Number(c.valor), 0),
-        quantidadePendente: pend.length,
-        totalVencido: venc.reduce((s, c) => s + Number(c.valor), 0),
-        quantidadeVencida: venc.length,
-      }
-    } catch {
-      return null
-    }
-  },
+  resumoCobrancas: (): Promise<ResumoCobrancas | null> =>
+    apiClient
+      .get<{ data: ResumoCobrancas }>('/cobrancas/resumo')
+      .then((r) => r.data.data)
+      .catch(() => null),
 
   // ── exclusivo do Administrador (cross-tenant) ────────────────────────────
 

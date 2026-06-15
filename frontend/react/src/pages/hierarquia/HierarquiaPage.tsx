@@ -76,7 +76,7 @@ export default function HierarquiaPage() {
     { key: 'numero', header: 'Número', render: (r) => r.numero },
     { key: 'andar', header: 'Andar', render: (r) => r.andar ?? '—' },
     { key: 'fracaoIdeal', header: 'Fração Ideal', align: 'right', render: (r) => r.fracaoIdeal != null ? `${r.fracaoIdeal}%` : '—' },
-    { key: 'areaConstruida', header: 'Metragem', align: 'right', render: (r) => `${r.areaConstruida} m²` },
+    { key: 'areaConstruida', header: 'Metragem', align: 'right', render: (r) => r.areaConstruida != null ? `${r.areaConstruida} m²` : '—' },
     {
       key: 'ocupacao',
       header: 'Ocupação',

@@ -76,6 +76,20 @@ public class CobrancaController {
   }
 
   /**
+   * Returns aggregate totals of pending and overdue charges for the current tenant.
+   *
+   * @param request current HTTP request (for requestId)
+   * @return 200 OK with {@link com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO}
+   */
+  @GetMapping("/resumo")
+  @Timed(value = "cobranca.controller.resumo", description = "Aggregate pending/overdue charges")
+  public ResponseEntity<ApiResponse<com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO>> resumo(
+      HttpServletRequest request) {
+    log.info("GET /cobrancas/resumo");
+    return ResponseEntity.ok(ApiResponse.of(requestId(request), cobrancaService.resumo()));
+  }
+
+  /**
    * Returns a paginated list of charges matching the supplied filter criteria.
    *
    * @param filter optional filter parameters

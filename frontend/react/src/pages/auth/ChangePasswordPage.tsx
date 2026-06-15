@@ -27,7 +27,7 @@ type FormValues = z.infer<typeof schema>
 
 export default function ChangePasswordPage() {
   const navigate = useNavigate()
-  const userId = useAuthStore((s) => s.user?.condominioIds[0] ?? 0)
+  const userId = useAuthStore((s) => s.user?.id ?? 0)
   const mutation = useChangePassword(userId)
 
   const {

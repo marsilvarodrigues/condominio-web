@@ -38,6 +38,7 @@ export interface RefreshRequest {
 }
 
 export interface AuthUser {
+  id: number
   email: string
   roles: string[]
   condominioIds: number[]
@@ -428,12 +429,12 @@ export interface HistoricoOcupacaoDTO {
   id: number
   apartamentoId: number
   pessoaId: number
-  nomeMorador: string
+  nomeMorador: string | null
   emailMorador: string | null
   cpfMorador: string | null
-  dataEntrada: string  // ISO date "yyyy-MM-dd"
-  dataSaida: string    // ISO date "yyyy-MM-dd"
-  criadoEm: string     // ISO datetime
+  dataEntrada: string   // ISO date "yyyy-MM-dd"
+  dataSaida: string     // ISO date "yyyy-MM-dd"
+  createdAt: string     // ISO datetime
 }
 
 export interface UpdatePessoaDTO {

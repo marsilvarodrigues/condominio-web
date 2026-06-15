@@ -1,8 +1,6 @@
 package com.pmrodrigues.morador.repository;
 
 import com.pmrodrigues.morador.model.HistoricoOcupacao;
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,7 +18,7 @@ public interface HistoricoOcupacaoRepository extends JpaRepository<HistoricoOcup
    * @param condominioId tenant identifier
    * @return ordered list of occupancy records; never {@code null}
    */
-  Page<HistoricoOcupacao> findByApartamentoIdAndCondominioIdOrderByDataSaidaDesc(
+  Page<HistoricoOcupacao> findByApartamento_IdAndCondominio_IdOrderByDataSaidaDesc(
       Long apartamentoId, Long condominioId,
       Pageable pageable);
 }

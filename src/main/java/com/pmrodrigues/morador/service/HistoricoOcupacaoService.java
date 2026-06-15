@@ -1,15 +1,12 @@
 package com.pmrodrigues.morador.service;
 
-import com.pmrodrigues.commons.tenant.TenantContext;
 import com.pmrodrigues.morador.dto.HistoricoOcupacaoDTO;
 import com.pmrodrigues.morador.mapper.HistoricoOcupacaoMapper;
 import com.pmrodrigues.morador.model.HistoricoOcupacao;
-import com.pmrodrigues.morador.model.Morador;
 import com.pmrodrigues.morador.model.Pessoa;
 import com.pmrodrigues.morador.repository.HistoricoOcupacaoRepository;
 import io.micrometer.core.annotation.Timed;
 import java.time.LocalDate;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,9 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * <ul>
  *   <li>This service never modifies the apartment or the condomínio — it only reads from Pessoa to
- *       build a snapshot before the caller clears the apartment reference.
- *   <li>condominioId is resolved via {@link TenantContext} because {@code Pessoa.condominio} has a
- *       suppressed getter.
+ *       build a record before the caller clears the apartment reference.
+ *   <li>condominio is set via {@code @PrePersist} on {@link HistoricoOcupacao} from TenantContext.
  *   <li>dataEntrada is inferred from {@code Pessoa.createdAt}; falls back to today with a warning
  *       log if createdAt is null.
  *   <li>The record is immutable once persisted — no update or delete methods are exposed.
@@ -45,13 +41,13 @@ public class HistoricoOcupacaoService {
   private final HistoricoOcupacaoMapper historicoMapper;
 
   /**
-   * Persists a snapshot of the morador's occupancy before they are removed from the apartment.
-   * Must be called BEFORE clearing {@code Pessoa.apartamento}. Also disables system access for the
-   * morador unless they hold an apartment-independent role.
+   * Persists an occupancy record before the morador is removed from the apartment. Must be called
+   * BEFORE clearing {@code Pessoa.apartamento}. Also disables system access for the morador unless
+   * they hold an apartment-independent role.
    *
    * @param pessoa the morador being removed; must have {@code apartamento != null}
    * @param dataSaida the departure date (typically {@link LocalDate#now()})
-   * @return the persisted snapshot as a DTO
+   * @return the persisted record as a DTO
    */
   @Transactional
   @Timed(value = "historico.ocupacao.service.registrar")
@@ -63,12 +59,8 @@ public class HistoricoOcupacaoService {
 
     var entity =
         HistoricoOcupacao.builder()
-            .condominioId(TenantContext.getCondominioId())
-            .apartamentoId(pessoa.getApartamento().getId())
-            .pessoaId(pessoa.getId())
-            .nomeMorador(pessoa.getName())
-            .emailMorador(pessoa.getEmail())
-            .cpfMorador(resolveCpf(pessoa))
+            .apartamento(pessoa.getApartamento())
+            .pessoa(pessoa)
             .dataEntrada(resolveDataEntrada(pessoa))
             .dataSaida(dataSaida)
             .build();
@@ -86,14 +78,14 @@ public class HistoricoOcupacaoService {
    *
    * @param apartamentoId apartment primary key
    * @param condominioId tenant identifier (to scope the query)
-   * @return ordered list of DTOs; empty list when no records exist
+   * @return ordered page of DTOs; empty when no records exist
    */
   @Transactional(readOnly = true)
   @Timed(value = "historico.ocupacao.service.listar")
   public Page<HistoricoOcupacaoDTO> listarPorApartamento(Long apartamentoId, Long condominioId, Pageable page) {
     log.info("Listing historico ocupacao for apartamento={}", apartamentoId);
     var result =
-        historicoRepository.findByApartamentoIdAndCondominioIdOrderByDataSaidaDesc(
+        historicoRepository.findByApartamento_IdAndCondominio_IdOrderByDataSaidaDesc(
             apartamentoId, condominioId, page).map(historicoMapper::toDTO);
     log.info(
         "Found {} historico records for apartamento={}", result.getTotalElements(), apartamentoId);
@@ -109,14 +101,6 @@ public class HistoricoOcupacaoService {
     log.warn(
         "Pessoa {} has null createdAt; using today as dataEntrada", pessoa.getId());
     return LocalDate.now();
-  }
-
-  /** Extracts CPF if the Pessoa is a {@link Morador}; returns {@code null} otherwise. */
-  private String resolveCpf(Pessoa pessoa) {
-    if (pessoa instanceof Morador m) {
-      return m.getCpf();
-    }
-    return null;
   }
 
   /**

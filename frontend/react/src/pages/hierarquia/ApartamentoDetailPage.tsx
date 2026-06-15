@@ -89,17 +89,12 @@ function HistoricoOcupacaoTab({ aptId }: { aptId: number }) {
       header: 'Morador',
       render: (r) => (
         <Box>
-          <Typography variant="body2" fontWeight={500}>{r.nomeMorador}</Typography>
-          {r.emailMorador && (
-            <Typography variant="caption" color="text.secondary">{r.emailMorador}</Typography>
+          <Typography variant="body2" fontWeight={500}>{r.nomeMorador ?? '—'}</Typography>
+          {r.cpfMorador && (
+            <Typography variant="caption" color="text.secondary">{r.cpfMorador}</Typography>
           )}
         </Box>
       ),
-    },
-    {
-      key: 'cpfMorador',
-      header: 'CPF',
-      render: (r) => r.cpfMorador ?? '—',
     },
     {
       key: 'dataEntrada',

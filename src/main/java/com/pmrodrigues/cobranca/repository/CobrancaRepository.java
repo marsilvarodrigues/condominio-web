@@ -80,4 +80,22 @@ public interface CobrancaRepository
   @Modifying
   @Query("UPDATE Cobranca c SET c.deleted = true WHERE c.condominio.id = :condominioId")
   void softDeleteByCondominioId(@Param("condominioId") Long condominioId);
+
+  /**
+   * Counts non-deleted charges whose status is one of the provided values.
+   *
+   * @param statuses set of statuses to include
+   * @return total count
+   */
+  @Query("SELECT COUNT(c) FROM Cobranca c WHERE c.status IN :statuses")
+  long countByStatusIn(@Param("statuses") List<StatusCobranca> statuses);
+
+  /**
+   * Sums the {@code valor} of non-deleted charges whose status is one of the provided values.
+   *
+   * @param statuses set of statuses to include
+   * @return sum, or {@link java.math.BigDecimal#ZERO} when no matching rows exist
+   */
+  @Query("SELECT COALESCE(SUM(c.valor), 0) FROM Cobranca c WHERE c.status IN :statuses")
+  java.math.BigDecimal sumValorByStatusIn(@Param("statuses") List<StatusCobranca> statuses);
 }

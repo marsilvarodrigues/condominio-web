@@ -230,6 +230,26 @@ public class CobrancaService {
   }
 
   /**
+   * Returns an aggregate summary of pending and overdue charges for the current tenant.
+   *
+   * @return count and sum of PENDENTE+ENVIADA charges, and count and sum of VENCIDA charges
+   */
+  @Transactional(readOnly = true)
+  @Timed(value = "cobranca.service.resumo", description = "Aggregate pending/overdue charges")
+  public com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO resumo() {
+    log.info("resumo cobrancas");
+    var pendentes = List.of(StatusCobranca.PENDENTE, StatusCobranca.ENVIADA);
+    var vencidas = List.of(StatusCobranca.VENCIDA);
+    var result = new com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO(
+        cobrancaRepository.countByStatusIn(pendentes),
+        cobrancaRepository.sumValorByStatusIn(pendentes),
+        cobrancaRepository.countByStatusIn(vencidas),
+        cobrancaRepository.sumValorByStatusIn(vencidas));
+    log.info("resumo cobrancas: pendentes={} vencidas={}", result.quantidadePendente(), result.quantidadeVencida());
+    return result;
+  }
+
+  /**
    * Returns all charges for a given apartment, ordered by creation date descending.
    *
    * @param apartamentoId apartment primary key

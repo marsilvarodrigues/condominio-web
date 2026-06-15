@@ -13,4 +13,4 @@ public record HistoricoOcupacaoDTO(
     String cpfMorador,
     LocalDate dataEntrada,
     LocalDate dataSaida,
-    LocalDateTime criadoEm) {}
+    LocalDateTime createdAt) {}

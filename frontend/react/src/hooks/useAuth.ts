@@ -9,6 +9,7 @@ interface JwtPayload {
   sub: string
   roles: string[]
   condominio_ids: number[]
+  user_id?: number
   exp: number
 }
 
@@ -23,6 +24,7 @@ export function useLogin() {
       try {
         const payload = jwtDecode<JwtPayload>(data.accessToken)
         setUser({
+          id: payload.user_id ?? 0,
           email: payload.sub,
           roles: payload.roles,
           condominioIds: payload.condominio_ids ?? [],

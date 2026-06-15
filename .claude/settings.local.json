@@ -119,7 +119,8 @@
       "Bash(xargs dirname)",
       "Bash(npm install *)",
       "Bash(Select-Object Name)",
-      "Bash(grep -E '\\\\.\\(java|kt\\)$')"
+      "Bash(grep -E '\\\\.\\(java|kt\\)$')",
+      "Bash(git stash *)"
     ]
   }
 }

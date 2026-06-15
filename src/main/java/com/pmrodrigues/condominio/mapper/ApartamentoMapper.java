@@ -74,7 +74,6 @@ public abstract class ApartamentoMapper {
    */
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "bloco", ignore = true)
-  @Mapping(target = "condominio", ignore = true)
   @Mapping(target = "moradores", ignore = true)
   @Mapping(target = "proprietarios", ignore = true)
   @Mapping(target = "deleted", ignore = true)

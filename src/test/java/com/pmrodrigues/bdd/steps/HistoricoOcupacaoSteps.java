@@ -98,41 +98,46 @@ public class HistoricoOcupacaoSteps {
         commonSteps.fazerLogin(DatabaseSetupHooks.ADMIN_EMAIL, DatabaseSetupHooks.ADMIN_PASSWORD);
         http.get("/pessoas/apartamentos/" + ctx.getTestApartamentoId() + "/historico-ocupacao");
         assertThat(ctx.getLastStatus()).isEqualTo(200);
-        JsonNode data = objectMapper.readTree(ctx.getLastResponseBody()).get("data");
-        assertThat(data.size()).isEqualTo(count);
+        JsonNode content = historicoContent();
+        assertThat(content.size()).isEqualTo(count);
     }
 
     @Then("o morador anterior aparece no histórico com data_saida preenchida")
     public void moradorAnteriorNoHistorico() throws Exception {
         http.get("/pessoas/apartamentos/" + ctx.getTestApartamentoId() + "/historico-ocupacao");
         assertThat(ctx.getLastStatus()).isEqualTo(200);
-        JsonNode data = objectMapper.readTree(ctx.getLastResponseBody()).get("data");
-        assertThat(data.size()).isGreaterThan(0);
-        assertThat(data.get(0).get("dataSaida").asText()).isNotBlank();
+        JsonNode content = historicoContent();
+        assertThat(content.size()).isGreaterThan(0);
+        assertThat(content.get(0).get("dataSaida").asText()).isNotBlank();
     }
 
     @Then("a resposta contém itens em {string}")
     public void respostaContemItens(String jsonPath) throws Exception {
-        JsonNode data = objectMapper.readTree(ctx.getLastResponseBody()).get("data");
-        assertThat(data).isNotNull();
-        assertThat(data.isArray()).isTrue();
-        assertThat(data.size()).isGreaterThan(0);
+        JsonNode content = historicoContent();
+        assertThat(content).isNotNull();
+        assertThat(content.isArray()).isTrue();
+        assertThat(content.size()).isGreaterThan(0);
     }
 
     @Then("a resposta tem lista vazia em {string}")
     public void respostaListaVazia(String jsonPath) throws Exception {
-        JsonNode data = objectMapper.readTree(ctx.getLastResponseBody()).get("data");
-        assertThat(data).isNotNull();
-        assertThat(data.isArray()).isTrue();
-        assertThat(data.size()).isEqualTo(0);
+        JsonNode content = historicoContent();
+        assertThat(content).isNotNull();
+        assertThat(content.isArray()).isTrue();
+        assertThat(content.size()).isEqualTo(0);
     }
 
     @And("o morador está no histórico de ocupação do apartamento de teste")
     public void moradorNoHistorico() throws Exception {
         http.get("/pessoas/apartamentos/" + ctx.getTestApartamentoId() + "/historico-ocupacao");
         assertThat(ctx.getLastStatus()).isEqualTo(200);
-        JsonNode data = objectMapper.readTree(ctx.getLastResponseBody()).get("data");
-        assertThat(data.size()).isGreaterThan(0);
+        JsonNode content = historicoContent();
+        assertThat(content.size()).isGreaterThan(0);
+    }
+
+    /** Parses the {@code content} array from the paginated historico response. */
+    private JsonNode historicoContent() throws Exception {
+        return objectMapper.readTree(ctx.getLastResponseBody()).get("data").get("content");
     }
 
     @Then("o morador removido tem acesso bloqueado no sistema")

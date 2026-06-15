@@ -235,6 +235,7 @@ public class PessoaService extends UserService {
    */
   @Transactional
   @Timed(value = "pessoa.service.assignToApartamento", description = "Assign pessoa to apartamento")
+  @org.springframework.cache.annotation.CacheEvict(value = "apartamentos", allEntries = true)
   public PessoaDTO assignToApartamento(Long pessoaId, Long apartamentoId) {
     log.info("Assigning pessoa {} to apartamento {}", pessoaId, apartamentoId);
     var entity =
@@ -286,6 +287,7 @@ public class PessoaService extends UserService {
   @Timed(
       value = "pessoa.service.removeFromApartamento",
       description = "Remove pessoa from apartamento")
+  @org.springframework.cache.annotation.CacheEvict(value = "apartamentos", allEntries = true)
   public PessoaDTO removeFromApartamento(Long pessoaId) {
     log.info("Removing pessoa {} from apartamento", pessoaId);
     var entity =
