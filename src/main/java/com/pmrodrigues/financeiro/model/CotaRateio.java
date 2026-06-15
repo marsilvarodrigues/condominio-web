@@ -23,6 +23,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Filter;
+import org.hibernate.envers.Audited;
 
 /**
  * Stores the calculated quota assigned to a single apartment unit for a given {@link Despesa}.
@@ -37,6 +38,7 @@ import org.hibernate.annotations.Filter;
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
+@Audited
 @Entity
 @Table(name = "cotas_rateio")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")

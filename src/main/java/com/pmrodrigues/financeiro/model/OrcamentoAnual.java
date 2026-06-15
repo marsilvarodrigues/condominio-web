@@ -33,6 +33,8 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -44,6 +46,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
+@Audited
 @Entity
 @Table(name = "orcamento_anual")
 @SQLDelete(sql = "UPDATE orcamento_anual SET deleted = true WHERE id = ?")
@@ -73,6 +76,7 @@ public class OrcamentoAnual {
   @Column(name = "taxa_estimada_unidade", precision = 15, scale = 2)
   private BigDecimal taxaEstimadaUnidade;
 
+  @Audited(targetAuditMode = RelationTargetAuditMode.AUDITED)
   @OneToMany(mappedBy = "orcamentoAnual", fetch = FetchType.LAZY)
   @Builder.Default
   private List<ItemOrcamento> itens = new ArrayList<>();

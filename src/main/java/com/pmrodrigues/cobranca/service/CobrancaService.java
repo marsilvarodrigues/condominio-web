@@ -7,6 +7,7 @@ import com.pmrodrigues.cobranca.dto.CobrancaDTO;
 import com.pmrodrigues.cobranca.dto.CobrancaFilterDTO;
 import com.pmrodrigues.cobranca.dto.CobrancaResumoDTO;
 import com.pmrodrigues.cobranca.dto.GerarCobrancasDTO;
+import com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO;
 import com.pmrodrigues.cobranca.email.CobrancaEmailTemplate;
 import com.pmrodrigues.cobranca.mapper.CobrancaMapper;
 import com.pmrodrigues.cobranca.model.Cobranca;
@@ -236,11 +237,11 @@ public class CobrancaService {
    */
   @Transactional(readOnly = true)
   @Timed(value = "cobranca.service.resumo", description = "Aggregate pending/overdue charges")
-  public com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO resumo() {
+  public ResumoCobrancasDTO resumo() {
     log.info("resumo cobrancas");
     var pendentes = List.of(StatusCobranca.PENDENTE, StatusCobranca.ENVIADA);
     var vencidas = List.of(StatusCobranca.VENCIDA);
-    var result = new com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO(
+    var result = new ResumoCobrancasDTO(
         cobrancaRepository.countByStatusIn(pendentes),
         cobrancaRepository.sumValorByStatusIn(pendentes),
         cobrancaRepository.countByStatusIn(vencidas),

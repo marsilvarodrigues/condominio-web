@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.envers.Audited;
 
 /**
  * Abstract JPA entity for a property owner (proprietário). Extends {@link Pessoa} and adds a
@@ -31,6 +32,7 @@ import lombok.experimental.Accessors;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
+@Audited
 @Entity
 @Table(name = "proprietarios")
 @PrimaryKeyJoinColumn(name = "id")

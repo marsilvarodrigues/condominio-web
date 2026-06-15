@@ -1,124 +1,135 @@
-# Refactoring Plan — Ciclo 8
+# Refactoring Plan — Ciclo 9
 
-**Source:** inline — avaliação arquitetural 2026-06-11 (módulos cobranca, morador, ArchUnit)
-**Created:** 2026-06-11
-**Target:** Cobertura de testes completa para CobrancaMapper, PessoaSpecification, ProprietarioSpecification, CobrancaRepository, PessoaRepository e ProprietarioRepository; ArchUnit cross-module rule mais robusta.
+**Source:** inline — avaliação arquitetural 2026-06-15 (dashboard/resumo endpoints, historico repository)
+**Created:** 2026-06-15
+**Target:** Cobertura completa dos novos endpoints (resumo de cobranças), limpeza de FQCNs e repositoryTest do HistoricoOcupacao.
 
 ## Pre-flight Checks
-- [ ] All tests pass before starting
-- [ ] No uncommitted changes
-- [ ] Working branch active
+- [x] All tests pass before starting (1137/1137 unit + BDD)
+- [x] Working branch active (master_data)
 
-## Deliberate non-changes (assessment findings rejected)
-- **HistoricoOcupacao cascade soft-delete** — A entidade é um audit log imutável por design (Javadoc explícito: "never updated or soft-deleted"). Os registros denormalizam nome/email/CPF justamente para permanecer legíveis após a deleção da Pessoa. Cascatear o soft-delete destruiria a trilha de auditoria — comportamento indesejado.
-- **ProprietarioService.softDeleteByCondominioId()** — Coberto por `PessoaService.softDeleteByCondominioId()` via herança SINGLE_TABLE: uma query `UPDATE Pessoa WHERE condominio.id = :id` já elimina todos os discriminadores (MORADOR, PROP_PF, PROP_PJ). Adicionar um método redundante violaría DRY.
-- **@Timed description em PessoaController.historicoOcupacao** — Low/YAGNI.
+## Deliberate non-changes
+- **Frontend changes** (dashboard.api.ts, useAuth.ts, DashboardSindico.tsx, ApartamentoDetailPage.tsx, HierarquiaPage.tsx, types/index.ts) — fora do escopo deste skill; sem framework de testes Java para UI.
+- **migration 0043** — DDL coberto pelos BDD integration tests em PostgreSQL real.
 
 ---
 
-## Chunk 1: PessoaSpecificationTest + ProprietarioSpecificationTest
-**Why:** PessoaSpecification (hasNome, hasTipo, hasCpf, hasEmail) e ProprietarioSpecification (hasApartamentoId) existem sem nenhuma cobertura de teste. Todos os outros Specification classes na base têm *SpecificationTest.
-**Entry criteria:** Baseline de testes passando (`mvn test -q`)
+## Chunk 1: Adicionar import para ResumoCobrancasDTO em CobrancaService e CobrancaController
+**Why:** `CobrancaService.resumo()` e `CobrancaController.resumo()` referenciam `ResumoCobrancasDTO` pelo nome fully-qualified (`com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO`) em vez de usar import. Toda outra DTO na codebase usa imports normais. É um descuido de código que dificulta a leitura.
+**Entry criteria:** 1137 testes passando
 **Steps:**
-1. Criar `src/test/java/com/pmrodrigues/morador/specification/PessoaSpecificationTest.java`
-   - `@DataJpaTest(properties = "spring.jpa.hibernate.ddl-auto=create-drop") @Import(JpaAuditingConfig.class)`
-   - `@Autowired PessoaRepository pessoaRepository` + repositórios de fixture (CondominioRepository, ApartamentoRepository, BlocoRepository, EstadoRepository + UserRepository para User insert)
-   - `@BeforeEach`: persistir Condominio → Bloco → Apartamento; criar 2 Morador (nomes distintos, cpfs distintos, emails distintos, tipos distintos se possível) com `em.persist()`
-   - `@AfterEach`: `TenantContext.clear()`
-   - Testes: `hasNome_filtrarPorSubstring`, `hasNome_comNullRetornaTodos`, `hasNome_comBlankRetornaTodos`, `hasCpf_filtrarPorCpf`, `hasCpf_comNullRetornaTodos`, `hasEmail_filtrarPorEmail`, `hasEmail_comNullRetornaTodos`
-2. Criar `src/test/java/com/pmrodrigues/morador/specification/ProprietarioSpecificationTest.java`
-   - Mesma estrutura `@DataJpaTest`
-   - `@Autowired ProprietarioRepository proprietarioRepository`
-   - `@BeforeEach`: persistir Condominio → Bloco → 2 Apartamentos; criar 2 ProprietarioPessoaFisica, associar apt1 a prop1 e apt2 a prop2
-   - Testes: `hasApartamentoId_filtrarPorApartamento`, `hasApartamentoId_comNullRetornaTodos`
-**Exit criteria:** `mvn test -q` → BUILD SUCCESS, ambos os novos test files executados
-**Commit message:** `test: add PessoaSpecificationTest and ProprietarioSpecificationTest`
+1. Editar `src/main/java/com/pmrodrigues/cobranca/service/CobrancaService.java`:
+   - Adicionar `import com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO;` no bloco de imports (após `CobrancaResumoDTO`)
+   - Substituir a assinatura do método `public com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO resumo()` → `public ResumoCobrancasDTO resumo()`
+   - Substituir `var result = new com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO(` → `var result = new ResumoCobrancasDTO(`
+2. Editar `src/main/java/com/pmrodrigues/cobranca/controller/CobrancaController.java`:
+   - Adicionar `import com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO;` no bloco de imports (após `CobrancaResumoDTO`)
+   - Substituir `ResponseEntity<ApiResponse<com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO>>` → `ResponseEntity<ApiResponse<ResumoCobrancasDTO>>`
+**Exit criteria:** `mvn compile -q` → BUILD SUCCESS (sem mudança de testes, apenas limpeza)
+**Commit message:** `refactor(cobranca): replace FQCN with import for ResumoCobrancasDTO`
 
 ---
 
-## Chunk 2: CobrancaMapperTest
-**Why:** CobrancaMapper tem lógica manual de mapeamento (@Mapping com source paths aninhados: apartamento.id, apartamento.numero, apartamento.bloco.bloco) e campos ignorados (moradorNome, moradorEmail). Todos os outros mappers com lógica manual têm MapperTest.
-**Entry criteria:** Baseline passando (independente de Chunk 1)
+## Chunk 2: CobrancaServiceTest — cobertura de resumo()
+**Why:** `CobrancaService.resumo()` chama `cobrancaRepository.countByStatusIn()` e `cobrancaRepository.sumValorByStatusIn()` para dois grupos de status (pendentes + enviadas; vencidas). Não há nenhum teste para esse método em `CobrancaServiceTest`. Todos os outros métodos públicos do service têm cobertura.
+**Entry criteria:** Chunk 1 completo (clean compile)
 **Steps:**
-1. Criar `src/test/java/com/pmrodrigues/cobranca/mapper/CobrancaMapperTest.java`
-   - `@ExtendWith(SpringExtension.class) @ContextConfiguration(classes = {CobrancaMapperImpl.class})`
-   - `@Autowired CobrancaMapper mapper`
-   - Helper `cobranca()` que monta Cobranca com Apartamento (id=10, numero="101") + Bloco (bloco="A") inline (não @BeforeEach — apenas dentro do helper)
-   - Testes:
-     - `toDTO_mapsApartamentoFields`: verifica `apartamentoId=10`, `apartamentoNumero="101"`, `blocoNome="A"`
-     - `toDTO_moradorFieldsAreNull`: verifica que `moradorNome` e `moradorEmail` são null (campos ignorados)
-     - `toDTO_mapsValorAndStatus`: verifica `valor`, `status`, `vencimento`
-     - `toResumoDTO_mapsCriadaEmFromCreatedAt`: verifica `criadaEm` não é null (mapeado de `createdAt`)
-**Exit criteria:** `mvn test -q` → BUILD SUCCESS
-**Commit message:** `test: add CobrancaMapperTest`
-
----
-
-## Chunk 3: CobrancaRepositoryTest + PessoaRepositoryTest + ProprietarioRepositoryTest
-**Why:** Os três repositórios têm custom query methods sem cobertura de testes de repositório (CobrancaSpecificationTest cobre apenas as Specifications, não os finders customizados nem o softDelete).
-**Entry criteria:** Baseline passando (independente de Chunks 1 e 2)
-**Steps:**
-1. Criar `src/test/java/com/pmrodrigues/cobranca/repository/CobrancaRepositoryTest.java`
-   - `@DataJpaTest(properties = "spring.jpa.hibernate.ddl-auto=create-drop") @Import(JpaAuditingConfig.class)`
-   - `@Autowired CobrancaRepository cobrancaRepository` + repositórios de fixture (CondominioRepository, BlocoRepository, ApartamentoRepository, EstadoRepository)
-   - `@BeforeEach`: persistir Condominio → Bloco → 2 Apartamentos; inserir 3 Cobrancas (com cotaRateioId, status, emailEnviado, asaasId distintos); `TenantContext.setCondominioId(...)`
-   - `@AfterEach`: `TenantContext.clear()`
-   - Testes:
-     - `findByCotaRateioId_whenExists_returnsCobranca`
-     - `findByCotaRateioId_whenNotExists_returnsEmpty`
-     - `findByApartamentoIdAndStatus_filtrarPorStatusCorreto`
-     - `findByStatusAndEmailEnviadoFalse_retornaApenasNaoEnviados`
-     - `findByApartamentoIdOrderByCreatedAtDesc_retornaEmOrdemDescendente`
-     - `findByAsaasIdNative_whenExists_returnsCobranca`
-     - `findByAsaasIdNative_whenDeleted_returnsEmpty` (verificar que o filter `deleted=false` funciona)
-     - `softDeleteByCondominioId_marcaTodasDeletadas` (verificar com native SQL `SELECT deleted FROM cobrancas WHERE condominio_id = ?`)
-2. Criar `src/test/java/com/pmrodrigues/morador/repository/PessoaRepositoryTest.java`
-   - `@DataJpaTest(properties = "spring.jpa.hibernate.ddl-auto=create-drop") @Import(JpaAuditingConfig.class)`
-   - `@Autowired PessoaRepository pessoaRepository` + repositórios de fixture + `@Autowired EntityManager em`
-   - `@BeforeEach`: persistir Condominio → Bloco → Apartamento; criar 2 Morador (um com apartamento_id=apt.id, outro sem); `TenantContext.setCondominioId(...)`
-   - `@AfterEach`: `TenantContext.clear()`
-   - Testes:
-     - `findByApartamentoId_retornaMoradoresDoApartamento`
-     - `findByApartamentoId_comApartamentoSemMoradores_retornaVazio`
-     - `softDeleteByCondominioId_marcaTodasPessoasDeletadas` (verificar com `em.createNativeQuery("SELECT deleted FROM users WHERE id = ?")`)
-3. Criar `src/test/java/com/pmrodrigues/morador/repository/ProprietarioRepositoryTest.java`
-   - Mesma estrutura `@DataJpaTest`
-   - `@Autowired ProprietarioRepository proprietarioRepository`
-   - `@BeforeEach`: persistir Condominio → Bloco → 2 Apartamentos; criar 2 ProprietarioPessoaFisica com emails distintos; associar apt1 a prop1, apt2 a prop2
-   - Testes:
-     - `findByApartamentosId_retornaProprietariosDoApartamento`
-     - `findByApartamentosId_comApartamentoSemProprietario_retornaVazio`
-     - `findByUserEmail_whenExists_returnsProprietario`
-     - `findByUserEmail_whenNotExists_returnsEmpty`
-**Exit criteria:** `mvn test -q` → BUILD SUCCESS, todos os 3 novos test files executados
-**Commit message:** `test: add CobrancaRepositoryTest, PessoaRepositoryTest and ProprietarioRepositoryTest`
-
----
-
-## Chunk 4: ArchUnit — substituir check brittle de UserService por constante nomeada
-**Why:** A condição `notAccessRepositoriesFromOtherModules()` em `ArchitectureTest.java` lines 110–111 usa construção dinâmica de string `"com.pmrodrigues." + depModule + ".service.UserService"` para permitir que PessoaService/ProprietarioService (módulo morador) acessem UserRepository (módulo security) via herança. A construção dinâmica torna o intent opaco — parece genérica mas só funciona porque ambos os casos concretos (PessoaService, ProprietarioService) estendem exatamente `com.pmrodrigues.security.service.UserService`.
-**Entry criteria:** Baseline passando (independente de Chunks 1–3)
-**Steps:**
-1. Editar `src/test/java/com/pmrodrigues/arch/ArchitectureTest.java`:
-   - Adicionar constante `private static final String USER_SERVICE_FQCN = "com.pmrodrigues.security.service.UserService";` logo abaixo de `BE_A_RECORD`
-   - No método `notAccessRepositoriesFromOtherModules()` (linha 110), substituir:
+1. Editar `src/test/java/com/pmrodrigues/cobranca/service/CobrancaServiceTest.java`:
+   - No `@BeforeEach` `setUp()`, adicionar stubs lenient para os dois métodos de agregação:
      ```java
-     boolean inheritedViaParent = clazz.isAssignableTo(
-         "com.pmrodrigues." + depModule + ".service.UserService");
+     lenient().when(cobrancaRepository.countByStatusIn(any())).thenReturn(3L);
+     lenient().when(cobrancaRepository.sumValorByStatusIn(any())).thenReturn(new BigDecimal("1500.00"));
      ```
-     por:
+   - Adicionar seção `// ── resumo ────────────────────────────────────────────────────────────` depois de `porApartamento`
+   - Adicionar teste `resumo_deveRetornarContadoresEValores`:
+     - stub específico: `countByStatusIn(List.of(PENDENTE, ENVIADA))` → 3L, `countByStatusIn(List.of(VENCIDA))` → 1L
+     - stub específico: `sumValorByStatusIn(List.of(PENDENTE, ENVIADA))` → `"1500.00"`, `sumValorByStatusIn(List.of(VENCIDA))` → `"300.00"`
+     - verificar que o resultado tem `quantidadePendente=3`, `totalPendente=1500.00`, `quantidadeVencida=1`, `totalVencido=300.00`
+**Exit criteria:** `mvn test -q` → BUILD SUCCESS, CobrancaServiceTest com 1 teste adicional
+**Commit message:** `test(cobranca): add CobrancaServiceTest coverage for resumo()`
+
+---
+
+## Chunk 3: CobrancaControllerTest — GET /cobrancas/resumo
+**Why:** O endpoint `GET /cobrancas/resumo` (novo no ciclo dashboard) não tem nenhum teste em `CobrancaControllerTest`. CLAUDE.md exige pelo menos 2 cenários para GET sem parâmetro de path: 200 (autenticado) e 401 (não autenticado).
+**Entry criteria:** Chunk 1 completo (usa `ResumoCobrancasDTO` com import limpo)
+**Steps:**
+1. Editar `src/test/java/com/pmrodrigues/cobranca/controller/CobrancaControllerTest.java`:
+   - Adicionar import `import com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO;` no bloco de imports (após `CobrancaResumoDTO`)
+   - Adicionar helper:
      ```java
-     // PessoaService and ProprietarioService (morador module) extend UserService (security module),
-     // inheriting its UserRepository dependency — this cross-module access is intentional.
-     boolean inheritedViaParent = clazz.isAssignableTo(USER_SERVICE_FQCN);
+     private ResumoCobrancasDTO resumoCobrancasDTO() {
+         return new ResumoCobrancasDTO(3L, new BigDecimal("1500.00"), 1L, new BigDecimal("300.00"));
+     }
      ```
-**Exit criteria:** `mvn test -q` → BUILD SUCCESS, ArchUnit rule ainda passa (PessoaService/ProprietarioService não disparam violação)
-**Commit message:** `refactor(arch): replace dynamic UserService string with named constant in cross-module rule`
+   - Adicionar seção `// ── resumo ───────────────────────────────────────────────────────────────`
+   - Adicionar teste `resumo_returns200` com `@WithMockUser`: stub `cobrancaService.resumo()` → `resumoCobrancasDTO()`; verificar status 200 e `$.data.quantidadePendente` == 3
+   - Adicionar teste `resumo_unauthenticated_returns401`: sem `@WithMockUser`, GET para `/cobrancas/resumo`, esperar 401
+**Exit criteria:** `mvn test -q` → BUILD SUCCESS, CobrancaControllerTest com 2 testes adicionais
+**Commit message:** `test(cobranca): add CobrancaControllerTest coverage for GET /cobrancas/resumo`
+
+---
+
+## Chunk 4: CobrancaRepositoryTest — countByStatusIn e sumValorByStatusIn
+**Why:** Os dois novos métodos JPQL `countByStatusIn` e `sumValorByStatusIn` em `CobrancaRepository` (adicionados para o dashboard) não estão cobertos por testes de repositório. Todos os outros custom queries do repositório têm testes.
+**Entry criteria:** Baseline de testes passando (independente dos chunks anteriores)
+**Steps:**
+1. Editar `src/test/java/com/pmrodrigues/cobranca/repository/CobrancaRepositoryTest.java`:
+   - Adicionar seção `// ── countByStatusIn / sumValorByStatusIn ─────────────────────────────────────`
+   - Adicionar teste `countByStatusIn_retornaContagemCorreta`:
+     - persistir: 2 PENDENTE (apt1 e apt2) + 1 VENCIDA (apt1) via `cobranca(...)` helper
+     - assertar `countByStatusIn(List.of(StatusCobranca.PENDENTE))` == 2
+     - assertar `countByStatusIn(List.of(StatusCobranca.VENCIDA))` == 1
+     - assertar `countByStatusIn(List.of(StatusCobranca.PENDENTE, StatusCobranca.VENCIDA))` == 3
+   - Adicionar teste `sumValorByStatusIn_retornaSomaCorreta`:
+     - persistir: 1 PENDENTE com valor 500.00 + 1 VENCIDA com valor 300.00 (usar helper cobranca mas com BigDecimal diferente — ou ajustar o helper)
+     - Nota: o helper atual usa valor fixo de 500.00; usar diretamente `cobrancaRepository.save(Cobranca.builder()...)` para valores diferentes
+     - assertar `sumValorByStatusIn(List.of(StatusCobranca.PENDENTE))` == 500.00
+     - assertar `sumValorByStatusIn(List.of(StatusCobranca.VENCIDA))` == 300.00
+     - assertar `sumValorByStatusIn(List.of(StatusCobranca.PAGA))` == 0 (nenhuma PAGA → COALESCE retorna 0)
+**Exit criteria:** `mvn test -q` → BUILD SUCCESS, CobrancaRepositoryTest com 2 testes adicionais
+**Commit message:** `test(cobranca): add CobrancaRepositoryTest coverage for countByStatusIn and sumValorByStatusIn`
+
+---
+
+## Chunk 5: HistoricoOcupacaoRepositoryTest
+**Why:** `HistoricoOcupacaoRepository` tem um método derivado `findByApartamento_IdAndCondominio_IdOrderByDataSaidaDesc` (com lógica de filtragem por condomínio e ordenação por data_saida DESC) sem nenhum `@DataJpaTest` verificando o comportamento. O serviço e o mapper têm testes; o repositório não.
+**Entry criteria:** Baseline de testes passando (independente dos chunks anteriores)
+**Steps:**
+1. Criar `src/test/java/com/pmrodrigues/morador/repository/HistoricoOcupacaoRepositoryTest.java`:
+   - Anotações: `@DataJpaTest(properties = "spring.jpa.hibernate.ddl-auto=create-drop") @Import(JpaAuditingConfig.class)`
+   - Autowire: `HistoricoOcupacaoRepository historicoRepository`, `CondominioRepository condominioRepository`, `BlocoRepository blocoRepository`, `ApartamentoRepository apartamentoRepository`, `EstadoRepository estadoRepository`, `UserRepository userRepository`, `TestEntityManager em`
+   - Campos de fixture: `Condominio cond1`, `Condominio cond2`, `Apartamento apt1`, `Apartamento apt2`
+   - `@BeforeEach setUp()`:
+     - persistir Estado
+     - persistir cond1 e cond2 (dois condomínios para testar isolamento)
+     - `TenantContext.setCondominioId(cond1.getId())`
+     - persistir Bloco → apt1 (cond1), apt2 (cond1)
+     - Para HistoricoOcupacao, usar `em.persist(entity)` diretamente (sem TenantContext ativo no prePersist — precisará setar manualmente o campo condominio via ReflectionTestUtils OU usar `TenantContext` ativo)
+     - Estratégia: como `@PrePersist` lê `TenantContext`, manter `TenantContext.setCondominioId(cond1.getId())` e usar o repository.save que chama prePersist
+     - Nota: HistoricoOcupacao.prePersist usa `new Condominio()` + `setId(condominioId)` — H2 tem FK constraint? Verificar se isso causa ConstraintViolation. Se sim, usar `em.getEntityManager().getReference(Condominio.class, cond1.getId())`.
+     - Para `Pessoa`: HistoricoOcupacao tem FK para `pessoas.id` (via `pessoa_id`). Precisa inserir um User/Pessoa mínimo. Criar `User` mínimo via `UserRepository` e usá-lo como `Pessoa` (já que `Pessoa` é subtype de `User` — SINGLE_TABLE inheritance). Ou usar `TestEntityManager.persist()`.
+     - Alternativa mais simples: usar `TestEntityManager.persist()` diretamente no `HistoricoOcupacao` setando manualmente o campo `condominio` via reflection (`ReflectionTestUtils.setField(entity, "condominio", cond1)`).
+   - `@AfterEach tearDown()`: `TenantContext.clear()`
+   - Testes:
+     - `findByApartamento_IdAndCondominio_IdOrderByDataSaidaDesc_retornaOrdenadoPorDataSaidaDesc`:
+       - Persistir 3 registros para apt1/cond1 com dataSaida diferentes (2024-01-01, 2025-06-30, 2023-01-01)
+       - Chamar o repository method com apt1.getId() e cond1.getId()
+       - Assertar que `content.get(0).getDataSaida()` == 2025-06-30 (mais recente primeiro)
+       - Assertar `totalElements == 3`
+     - `findByApartamento_IdAndCondominio_IdOrderByDataSaidaDesc_filtraPorApartamento`:
+       - Persistir 2 registros para apt1 e 1 para apt2 (mesmo cond1)
+       - Assertar que busca por apt1 retorna 2, busca por apt2 retorna 1
+**Exit criteria:** `mvn test -q` → BUILD SUCCESS, HistoricoOcupacaoRepositoryTest com 2 testes criados
+**Commit message:** `test(morador): add HistoricoOcupacaoRepositoryTest`
 
 ---
 
 ## Post-flight Checks
 - [ ] Full test suite passes (`mvn test -q`)
 - [ ] No TODO/FIXME markers left from this cycle
-- [ ] CobrancaMapper, PessoaSpecification, ProprietarioSpecification, CobrancaRepository, PessoaRepository e ProprietarioRepository todos com cobertura de teste
-- [ ] ArchUnit rule legível e documentada
+- [ ] `ResumoCobrancasDTO` importado corretamente em CobrancaService e CobrancaController
+- [ ] `CobrancaService.resumo()` coberto
+- [ ] `GET /cobrancas/resumo` coberto (200 + 401)
+- [ ] `countByStatusIn` e `sumValorByStatusIn` cobertos em CobrancaRepositoryTest
+- [ ] `HistoricoOcupacaoRepositoryTest` criado com 2 testes

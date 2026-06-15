@@ -30,6 +30,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.envers.Audited;
 import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -48,6 +49,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
+@Audited
 @Entity
 @Table(name = "grupos_despesa")
 @SQLDelete(sql = "UPDATE grupos_despesa SET deleted = true WHERE id = ?")

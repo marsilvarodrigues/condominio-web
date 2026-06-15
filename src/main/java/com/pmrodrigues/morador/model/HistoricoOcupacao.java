@@ -33,6 +33,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 /**
  * Immutable snapshot linking a {@link Pessoa} to an {@link Apartamento} for an occupancy period.
  * Written once when a morador is removed or replaced; never updated or soft-deleted.
+ *
+ * <p>Not audited — this entity IS itself a historical record and must not be double-audited.
  */
 @Getter
 @Setter

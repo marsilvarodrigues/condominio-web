@@ -36,6 +36,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
@@ -48,6 +50,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
+@Audited
 @Entity
 @Table(name = "users")
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
@@ -67,6 +70,7 @@ public class User {
   @NotBlank
   private String email;
 
+  @NotAudited
   @Column(nullable = false)
   private String password;
 
@@ -97,6 +101,7 @@ public class User {
   @Builder.Default
   private Set<Condominio> condominios = new HashSet<>();
 
+  @NotAudited
   @Column(name = "activation_token")
   private String activationToken;
 

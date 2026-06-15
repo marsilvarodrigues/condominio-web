@@ -7,6 +7,7 @@ import com.pmrodrigues.cobranca.dto.CobrancaDTO;
 import com.pmrodrigues.cobranca.dto.CobrancaFilterDTO;
 import com.pmrodrigues.cobranca.dto.CobrancaResumoDTO;
 import com.pmrodrigues.cobranca.dto.GerarCobrancasDTO;
+import com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO;
 import com.pmrodrigues.cobranca.service.CobrancaService;
 import com.pmrodrigues.commons.dto.ApiResponse;
 import com.pmrodrigues.commons.versioning.ApiVersion;
@@ -83,7 +84,7 @@ public class CobrancaController {
    */
   @GetMapping("/resumo")
   @Timed(value = "cobranca.controller.resumo", description = "Aggregate pending/overdue charges")
-  public ResponseEntity<ApiResponse<com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO>> resumo(
+  public ResponseEntity<ApiResponse<ResumoCobrancasDTO>> resumo(
       HttpServletRequest request) {
     log.info("GET /cobrancas/resumo");
     return ResponseEntity.ok(ApiResponse.of(requestId(request), cobrancaService.resumo()));

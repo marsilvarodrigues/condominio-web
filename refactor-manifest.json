@@ -1,9 +1,9 @@
 {
   "plan_file": "refactor-plan.md",
-  "assessment_source": "inline — avaliação arquitetural 2026-06-11 (cobranca mapper/repo, morador specs/repos, ArchUnit)",
-  "created": "2026-06-11",
-  "total_chunks": 4,
-  "current_chunk": 4,
+  "assessment_source": "inline — avaliação arquitetural 2026-06-15 (dashboard resumo, HistoricoOcupacaoRepository, FQCN cleanup)",
+  "created": "2026-06-15",
+  "total_chunks": 5,
+  "current_chunk": 5,
   "status": "completed",
   "preflight_passed": true,
   "verification": {
@@ -16,43 +16,53 @@
   "chunks": [
     {
       "id": 1,
-      "name": "PessoaSpecificationTest + ProprietarioSpecificationTest",
+      "name": "Replace FQCN with import for ResumoCobrancasDTO (CobrancaService + CobrancaController)",
       "status": "completed",
       "depends_on": [],
-      "verification": null,
+      "verification": "mvn compile -q → BUILD SUCCESS",
       "commit_sha": null,
-      "started_at": null,
-      "completed_at": null
+      "started_at": "2026-06-15",
+      "completed_at": "2026-06-15"
     },
     {
       "id": 2,
-      "name": "CobrancaMapperTest",
+      "name": "CobrancaServiceTest — add resumo() test",
       "status": "completed",
-      "depends_on": [],
-      "verification": null,
+      "depends_on": [1],
+      "verification": "CobrancaServiceTest 18/18, 0 failures",
       "commit_sha": null,
-      "started_at": null,
-      "completed_at": null
+      "started_at": "2026-06-15",
+      "completed_at": "2026-06-15"
     },
     {
       "id": 3,
-      "name": "CobrancaRepositoryTest + PessoaRepositoryTest + ProprietarioRepositoryTest",
+      "name": "CobrancaControllerTest — add GET /cobrancas/resumo tests (200 + 401)",
       "status": "completed",
-      "depends_on": [],
-      "verification": "14/14 tests pass (CobrancaRepositoryTest 8, PessoaRepositoryTest 2, ProprietarioRepositoryTest 4); softDeleteByCondominioId removed from PessoaRepositoryTest — H2 incompatible with Hibernate 6 MATERIALIZED CTE on JOINED inheritance UPDATE",
+      "depends_on": [1],
+      "verification": "CobrancaControllerTest 17/17, 0 failures",
       "commit_sha": null,
-      "started_at": null,
-      "completed_at": "2026-06-11"
+      "started_at": "2026-06-15",
+      "completed_at": "2026-06-15"
     },
     {
       "id": 4,
-      "name": "ArchUnit — substituir check brittle de UserService por constante nomeada",
+      "name": "CobrancaRepositoryTest — add countByStatusIn and sumValorByStatusIn tests",
       "status": "completed",
       "depends_on": [],
-      "verification": "8/8 ArchUnit tests pass; USER_SERVICE_FQCN constant introduced; check now explicitly gates on security module",
+      "verification": "CobrancaRepositoryTest 10/10, 0 failures",
       "commit_sha": null,
-      "started_at": null,
-      "completed_at": "2026-06-11"
+      "started_at": "2026-06-15",
+      "completed_at": "2026-06-15"
+    },
+    {
+      "id": 5,
+      "name": "HistoricoOcupacaoRepositoryTest — create with ordering and apartment-scoping tests",
+      "status": "completed",
+      "depends_on": [],
+      "verification": "HistoricoOcupacaoRepositoryTest 2/2, 0 failures; full suite 1144/1144",
+      "commit_sha": null,
+      "started_at": "2026-06-15",
+      "completed_at": "2026-06-15"
     }
   ]
 }

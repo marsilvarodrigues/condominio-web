@@ -143,6 +143,39 @@ public class DatabaseSetupHooks {
         jdbc.update("DELETE FROM users");
         jdbc.update("DELETE FROM condominios");
         // estados mantidos — semeados pelo Liquibase (0006-insert-estados.sql)
+        // audit tables — cleared after public tables to avoid FK violations on revinfo
+        jdbc.update("DELETE FROM audit.user_roles_aud");
+        jdbc.update("DELETE FROM audit.user_condominios_aud");
+        jdbc.update("DELETE FROM audit.users_aud");
+        jdbc.update("DELETE FROM audit.estados_aud");
+        jdbc.update("DELETE FROM audit.bancos_aud");
+        jdbc.update("DELETE FROM audit.condominios_aud");
+        jdbc.update("DELETE FROM audit.blocos_aud");
+        jdbc.update("DELETE FROM audit.apartamentos_aud");
+        jdbc.update("DELETE FROM audit.proprietario_apartamentos_aud");
+        jdbc.update("DELETE FROM audit.proprietario_pf_aud");
+        jdbc.update("DELETE FROM audit.proprietario_pj_aud");
+        jdbc.update("DELETE FROM audit.proprietarios_aud");
+        jdbc.update("DELETE FROM audit.moradores_aud");
+        jdbc.update("DELETE FROM audit.pessoas_aud");
+        jdbc.update("DELETE FROM audit.cobrancas_aud");
+        jdbc.update("DELETE FROM audit.cobranca_configuracoes_aud");
+        jdbc.update("DELETE FROM audit.plano_contas_aud");
+        jdbc.update("DELETE FROM audit.grupos_despesa_aud");
+        jdbc.update("DELETE FROM audit.despesas_aud");
+        jdbc.update("DELETE FROM audit.rateio_execucoes_aud");
+        jdbc.update("DELETE FROM audit.cotas_rateio_aud");
+        jdbc.update("DELETE FROM audit.coeficientes_rateio_aud");
+        jdbc.update("DELETE FROM audit.orcamento_anual_aud");
+        jdbc.update("DELETE FROM audit.item_orcamento_aud");
+        jdbc.update("DELETE FROM audit.contas_bancarias_aud");
+        jdbc.update("DELETE FROM audit.lancamentos_bancarios_aud");
+        jdbc.update("DELETE FROM audit.fundo_reserva_aud");
+        jdbc.update("DELETE FROM audit.fundo_reserva_movimentacao_aud");
+        jdbc.update("DELETE FROM audit.extrato_importacoes_aud");
+        jdbc.update("DELETE FROM audit.itens_extrato_aud");
+        jdbc.update("DELETE FROM audit.asaas_customers_aud");
+        jdbc.update("DELETE FROM audit.revinfo");
     }
 
     private Condominio criarCondominioTeste() {

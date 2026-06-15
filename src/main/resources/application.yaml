@@ -78,6 +78,15 @@ spring:
         query.plan_cache_max_size: 2048
         query.plan_parameter_metadata_max_size: 128
         generate_statistics: false
+      org:
+        hibernate:
+          envers:
+            default_schema: audit
+            audit_table_suffix: _aud
+            revision_field_name: rev
+            revision_type_field_name: revtype
+            store_data_at_delete: true
+            global_with_modified_flag: true
 
   # Redis / Lettuce
   data:

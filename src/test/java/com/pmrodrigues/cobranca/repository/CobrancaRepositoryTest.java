@@ -25,6 +25,7 @@ import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -146,6 +147,39 @@ class CobrancaRepositoryTest {
     @Test
     void findByAsaasIdNative_whenNotExists_returnsEmpty() {
         assertThat(cobrancaRepository.findByAsaasIdNative("pay_nonexistent")).isEmpty();
+    }
+
+    // ── countByStatusIn / sumValorByStatusIn ──────────────────────────────────
+
+    @Test
+    void countByStatusIn_retornaContagemCorreta() {
+        cobranca(apt1, StatusCobranca.PENDENTE, false, 10L, null);
+        cobranca(apt2, StatusCobranca.PENDENTE, false, 11L, null);
+        cobranca(apt1, StatusCobranca.VENCIDA,  false, 12L, null);
+
+        assertThat(cobrancaRepository.countByStatusIn(List.of(StatusCobranca.PENDENTE))).isEqualTo(2L);
+        assertThat(cobrancaRepository.countByStatusIn(List.of(StatusCobranca.VENCIDA))).isEqualTo(1L);
+        assertThat(cobrancaRepository.countByStatusIn(
+                List.of(StatusCobranca.PENDENTE, StatusCobranca.VENCIDA))).isEqualTo(3L);
+    }
+
+    @Test
+    void sumValorByStatusIn_retornaSomaCorreta() {
+        cobrancaRepository.save(Cobranca.builder()
+                .apartamento(apt1).valor(new BigDecimal("500.00"))
+                .vencimento(LocalDate.now().plusDays(30))
+                .status(StatusCobranca.PENDENTE).emailEnviado(false).cotaRateioId(20L).build());
+        cobrancaRepository.save(Cobranca.builder()
+                .apartamento(apt2).valor(new BigDecimal("300.00"))
+                .vencimento(LocalDate.now().plusDays(30))
+                .status(StatusCobranca.VENCIDA).emailEnviado(false).cotaRateioId(21L).build());
+
+        assertThat(cobrancaRepository.sumValorByStatusIn(List.of(StatusCobranca.PENDENTE)))
+                .isEqualByComparingTo("500.00");
+        assertThat(cobrancaRepository.sumValorByStatusIn(List.of(StatusCobranca.VENCIDA)))
+                .isEqualByComparingTo("300.00");
+        assertThat(cobrancaRepository.sumValorByStatusIn(List.of(StatusCobranca.PAGA)))
+                .isEqualByComparingTo("0");
     }
 
     // ── softDeleteByCondominioId ──────────────────────────────────────────────

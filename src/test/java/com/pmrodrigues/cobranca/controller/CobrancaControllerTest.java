@@ -5,6 +5,7 @@ import com.pmrodrigues.cobranca.dto.CancelarCobrancaDTO;
 import com.pmrodrigues.cobranca.dto.CobrancaDTO;
 import com.pmrodrigues.cobranca.dto.CobrancaResumoDTO;
 import com.pmrodrigues.cobranca.dto.GerarCobrancasDTO;
+import com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO;
 import com.pmrodrigues.cobranca.model.StatusCobranca;
 import com.pmrodrigues.cobranca.service.CobrancaService;
 import com.pmrodrigues.commons.interceptor.RequestIdInterceptor;
@@ -72,6 +73,10 @@ class CobrancaControllerTest {
                 StatusCobranca.PENDENTE, null, null, false);
     }
 
+    private ResumoCobrancasDTO resumoCobrancasDTO() {
+        return new ResumoCobrancasDTO(3L, new BigDecimal("1500.00"), 1L, new BigDecimal("300.00"));
+    }
+
     // ── gerar ─────────────────────────────────────────────────────────────────
 
     @Test
@@ -108,6 +113,24 @@ class CobrancaControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isForbidden());
+    }
+
+    // ── resumo ────────────────────────────────────────────────────────────────
+
+    @Test
+    @WithMockUser
+    void resumo_returns200() throws Exception {
+        when(cobrancaService.resumo()).thenReturn(resumoCobrancasDTO());
+
+        mockMvc.perform(get("/cobrancas/resumo").header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.quantidadePendente").value(3));
+    }
+
+    @Test
+    void resumo_unauthenticated_returns401() throws Exception {
+        mockMvc.perform(get("/cobrancas/resumo"))
+                .andExpect(status().isUnauthorized());
     }
 
     // ── filterBy ──────────────────────────────────────────────────────────────

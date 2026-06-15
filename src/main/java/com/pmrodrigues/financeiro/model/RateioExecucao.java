@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Filter;
+import org.hibernate.envers.Audited;
 
 /**
  * Immutable audit record of a single rateio execution for one {@link Despesa}.
@@ -38,6 +39,7 @@ import org.hibernate.annotations.Filter;
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
+@Audited
 @Entity
 @Table(name = "rateio_execucoes")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")

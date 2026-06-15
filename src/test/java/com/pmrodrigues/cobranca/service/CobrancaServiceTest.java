@@ -5,6 +5,7 @@ import com.pmrodrigues.cobranca.dto.CobrancaDTO;
 import com.pmrodrigues.cobranca.dto.CobrancaFilterDTO;
 import com.pmrodrigues.cobranca.dto.CobrancaResumoDTO;
 import com.pmrodrigues.cobranca.dto.GerarCobrancasDTO;
+import com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO;
 import com.pmrodrigues.cobranca.mapper.CobrancaMapper;
 import com.pmrodrigues.cobranca.model.Cobranca;
 import com.pmrodrigues.cobranca.model.CobrancaConfiguracao;
@@ -76,6 +77,8 @@ class CobrancaServiceTest {
             if (c.getId() == null) c.setId(10L);
             return c;
         });
+        lenient().when(cobrancaRepository.countByStatusIn(any())).thenReturn(0L);
+        lenient().when(cobrancaRepository.sumValorByStatusIn(any())).thenReturn(BigDecimal.ZERO);
     }
 
     // ── helpers ───────────────────────────────────────────────────────────────
@@ -220,6 +223,27 @@ class CobrancaServiceTest {
         var result = service.porApartamento(1L, PageRequest.of(0, 10));
 
         assertThat(result).isNotEmpty();
+    }
+
+    // ── resumo ────────────────────────────────────────────────────────────────
+
+    @Test
+    void resumo_deveRetornarContadoresEValores() {
+        when(cobrancaRepository.countByStatusIn(List.of(StatusCobranca.PENDENTE, StatusCobranca.ENVIADA)))
+                .thenReturn(3L);
+        when(cobrancaRepository.countByStatusIn(List.of(StatusCobranca.VENCIDA)))
+                .thenReturn(1L);
+        when(cobrancaRepository.sumValorByStatusIn(List.of(StatusCobranca.PENDENTE, StatusCobranca.ENVIADA)))
+                .thenReturn(new BigDecimal("1500.00"));
+        when(cobrancaRepository.sumValorByStatusIn(List.of(StatusCobranca.VENCIDA)))
+                .thenReturn(new BigDecimal("300.00"));
+
+        ResumoCobrancasDTO result = service.resumo();
+
+        assertThat(result.quantidadePendente()).isEqualTo(3L);
+        assertThat(result.totalPendente()).isEqualByComparingTo("1500.00");
+        assertThat(result.quantidadeVencida()).isEqualTo(1L);
+        assertThat(result.totalVencido()).isEqualByComparingTo("300.00");
     }
 
     // ── cancelar ──────────────────────────────────────────────────────────────

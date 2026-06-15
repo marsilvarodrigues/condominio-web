@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.br.CPF;
 
 /**
@@ -19,6 +20,7 @@ import org.hibernate.validator.constraints.br.CPF;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
+@Audited
 @Entity
 @Table(name = "proprietario_pf")
 @PrimaryKeyJoinColumn(name = "id")

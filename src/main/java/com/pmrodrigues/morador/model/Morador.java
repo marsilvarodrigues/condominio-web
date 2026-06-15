@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.envers.Audited;
 
 /**
  * Concrete JPA entity for a condominium resident (morador), identified by CPF. Stored as a
@@ -19,6 +20,7 @@ import lombok.experimental.Accessors;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
+@Audited
 @Entity
 @Table(name = "moradores")
 @PrimaryKeyJoinColumn(name = "id")

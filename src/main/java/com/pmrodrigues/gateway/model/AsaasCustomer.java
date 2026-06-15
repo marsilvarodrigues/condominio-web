@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.envers.Audited;
 
 /**
  * Caches the Asaas customer ID for a given {@code Pessoa} (identified by {@code pessoa_id}).
@@ -26,6 +27,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Audited
 @Entity
 @Table(name = "asaas_customers")
 public class AsaasCustomer {

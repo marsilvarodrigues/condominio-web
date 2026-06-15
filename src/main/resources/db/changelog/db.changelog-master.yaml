@@ -128,3 +128,9 @@ databaseChangeLog:
   - include:
       file: db/changelog/changes/0043-refactor-historico-ocupacao.sql
       relativeToChangelogFile: false
+  - include:
+      file: db/changelog/changes/0044-create-audit-schema.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/changes/0045-create-audit-tables.sql
+      relativeToChangelogFile: false

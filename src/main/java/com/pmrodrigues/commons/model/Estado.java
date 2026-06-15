@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.envers.Audited;
 
 /** JPA entity representing a Brazilian state with its name and two-letter UF abbreviation. */
 @Getter
@@ -20,6 +21,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
+@Audited
 @Entity
 @Table(name = "estados")
 public class Estado {

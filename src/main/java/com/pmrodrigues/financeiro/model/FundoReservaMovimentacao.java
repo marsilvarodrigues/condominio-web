@@ -31,6 +31,7 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /** Records a single credit or debit movement on a FundoReserva, with justification for debits. */
@@ -40,6 +41,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
+@Audited
 @Entity
 @Table(name = "fundo_reserva_movimentacao")
 @SQLDelete(sql = "UPDATE fundo_reserva_movimentacao SET deleted = true WHERE id = ?")

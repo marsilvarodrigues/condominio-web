@@ -571,3 +571,98 @@ Scope: `com.pmrodrigues.condominio.service.*` public methods only.
 **Post-flight:** `mvn test` → 1136 testes, 0 falhas, 0 erros, BUILD SUCCESS.
 
 ---
+
+## 2026-06-15 — Ciclo 9: Assessment + Plano criado
+
+**Pre-flight:** `mvn test` → 1137 testes passando (unit + BDD). BUILD SUCCESS.
+
+**Assessment base:** Inspeção dos módulos cobrança (novos endpoints de resumo do dashboard) e morador (HistoricoOcupacao refactor).
+
+**Findings selecionados para refactoring (5 identificados, 5 chunks planejados):**
+
+1. **`ResumoCobrancasDTO` referenciado via FQCN** em `CobrancaService.resumo()` e `CobrancaController.resumo()` em vez de import. Descuido de código.
+
+2. **`CobrancaService.resumo()` sem cobertura de teste** — método novo (dashboard), chama `countByStatusIn` e `sumValorByStatusIn`.
+
+3. **`GET /cobrancas/resumo` sem cobertura em `CobrancaControllerTest`** — CLAUDE.md exige pelo menos 200 + 401 para GETs.
+
+4. **`countByStatusIn` e `sumValorByStatusIn` sem cobertura em `CobrancaRepositoryTest`** — dois novos métodos JPQL não testados.
+
+5. **`HistoricoOcupacaoRepositoryTest` ausente** — método derivado `findByApartamento_IdAndCondominio_IdOrderByDataSaidaDesc` sem verificação de ordenação e filtragem por apartamento.
+
+**Deliberate non-changes:** frontend changes (UI/React); migration 0043 (coberta por BDD em PostgreSQL real).
+
+---
+
+## 2026-06-15 — Chunk 1: FQCN → import para ResumoCobrancasDTO
+
+**Entry state:** 1137 testes passando.
+
+**Alterações:**
+1. `CobrancaService.java` — adicionado `import com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO;`; `public com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO resumo()` → `public ResumoCobrancasDTO resumo()`; `new com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO(` → `new ResumoCobrancasDTO(`.
+2. `CobrancaController.java` — adicionado `import com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO;`; `ResponseEntity<ApiResponse<com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO>>` → `ResponseEntity<ApiResponse<ResumoCobrancasDTO>>`.
+
+**Outcome:** `mvn compile -q` → BUILD SUCCESS.
+
+---
+
+## 2026-06-15 — Chunk 2: CobrancaServiceTest — resumo()
+
+**Entry state:** Chunk 1 completo.
+
+**Alterações:**
+1. `CobrancaServiceTest.java` — adicionado import `ResumoCobrancasDTO`; stubs lenient para `countByStatusIn` e `sumValorByStatusIn` no `@BeforeEach`; adicionado teste `resumo_deveRetornarContadoresEValores` verificando os 4 campos do DTO.
+
+**Outcome:** CobrancaServiceTest 18/18, 0 falhas.
+
+---
+
+## 2026-06-15 — Chunk 3: CobrancaControllerTest — GET /cobrancas/resumo
+
+**Entry state:** Chunk 1 completo.
+
+**Alterações:**
+1. `CobrancaControllerTest.java` — adicionado import `ResumoCobrancasDTO`; helper `resumoCobrancasDTO()`; testes `resumo_returns200` (200 + verifica quantidadePendente=3) e `resumo_unauthenticated_returns401`.
+
+**Outcome:** CobrancaControllerTest 17/17, 0 falhas.
+
+---
+
+## 2026-06-15 — Chunk 4: CobrancaRepositoryTest — countByStatusIn + sumValorByStatusIn
+
+**Entry state:** Baseline passando (independente dos anteriores).
+
+**Alterações:**
+1. `CobrancaRepositoryTest.java` — adicionado `import java.util.List`; adicionados testes `countByStatusIn_retornaContagemCorreta` (3 cobrancas, 2 PENDENTE + 1 VENCIDA, verifica contagens individuais e combinada) e `sumValorByStatusIn_retornaSomaCorreta` (verifica 500.00, 300.00, e COALESCE → 0 para PAGA sem registros).
+
+**Outcome:** CobrancaRepositoryTest 10/10, 0 falhas.
+
+---
+
+## 2026-06-15 — Chunk 5: HistoricoOcupacaoRepositoryTest
+
+**Entry state:** Baseline passando (independente dos anteriores).
+
+**Alterações:**
+1. Criado `src/test/java/com/pmrodrigues/morador/repository/HistoricoOcupacaoRepositoryTest.java` — `@DataJpaTest` com fixture: Estado → Condominio → Bloco → 2 Apartamentos → 1 Morador; testes `findByApartamento_IdAndCondominio_Id_retornaOrdenadoPorDataSaidaDesc` (3 registros, verifica que 2025 > 2024 > 2023) e `findByApartamento_IdAndCondominio_Id_filtraPorApartamento` (2 registros em apt1, 1 em apt2).
+
+**Nota:** O `@PrePersist` de `HistoricoOcupacao` usa o mesmo padrão `new Condominio() + setId()` de `Cobranca` — funciona em H2 sem violação de FK.
+
+**Outcome:** HistoricoOcupacaoRepositoryTest 2/2, 0 falhas.
+
+---
+
+## 2026-06-15 — Post-flight: Ciclo 9 completo
+
+**Estado final:** 1144 testes passando (+7 em relação ao baseline pré-Ciclo 9). Os 5 chunks foram entregues.
+
+**Post-flight checklist:**
+- [x] Full test suite passa (1144/1144, 0 failures, BUILD SUCCESS)
+- [x] Nenhum TODO/FIXME deixado
+- [x] `ResumoCobrancasDTO` importado corretamente em `CobrancaService` e `CobrancaController`
+- [x] `CobrancaService.resumo()` coberto com 1 teste
+- [x] `GET /cobrancas/resumo` coberto: 200 + 401
+- [x] `countByStatusIn` e `sumValorByStatusIn` cobertos em `CobrancaRepositoryTest`
+- [x] `HistoricoOcupacaoRepositoryTest` criado com 2 testes (ordem DESC + filtro por apartamento)
+
+---

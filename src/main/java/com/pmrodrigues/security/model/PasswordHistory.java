@@ -14,7 +14,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-/** Records a user's past BCrypt password hashes to prevent recent password reuse. */
+/**
+ * Records a user's past BCrypt password hashes to prevent recent password reuse.
+ *
+ * <p>Not audited — contains credential hashes that must never be written to the audit log.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
