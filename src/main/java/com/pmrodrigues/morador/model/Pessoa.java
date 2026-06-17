@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Filter;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
@@ -80,6 +81,7 @@ public abstract class Pessoa extends User {
    * Current apartment assignment (morador relationship). Null means the person is not currently
    * assigned to any apartment.
    */
+  @BatchSize(size = 20)
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "apartamento_id")
   private Apartamento apartamento;

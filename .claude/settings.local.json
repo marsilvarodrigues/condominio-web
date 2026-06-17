@@ -120,7 +120,20 @@
       "Bash(npm install *)",
       "Bash(Select-Object Name)",
       "Bash(grep -E '\\\\.\\(java|kt\\)$')",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Bash(xargs grep -l \"consulta histórico de apartamento\")",
+      "Read(//c/Users/marsi/.claude/projects/C--Users-marsi-IdeaProjects-condominio-web/24f1a9fd-bdf3-44ef-8894-1cff6ce28c4b/tool-results/**)",
+      "Bash(echo \"EXIT:$?\")",
+      "Read(//tmp/**)",
+      "Bash(mvn -q -o dependency:resolve)",
+      "Bash(mvn -q dependency:resolve)",
+      "Bash(mvn dependency:tree -Dincludes=com.fasterxml.jackson.datatype)",
+      "Bash(tee /tmp/full_test.log)",
+      "Bash(awk -F'tests=\"' '{print $2}')",
+      "Bash(awk -F'\"' '{sum+=$1} END {print \"total tests:\", sum}')",
+      "Bash(echo \"Exit code of last mvn verify: $?\")",
+      "Bash(psql -h localhost -U postgres -d condominio -f /c/Users/marsi/IdeaProjects/condominio-web/scripts/seed-data.sql)",
+      "PowerShell($env:PGPASSWORD = \"postgres\"; & \"C:\\\\Program Files\\\\PostgreSQL\\\\17\\\\bin\\\\psql.exe\" -h localhost -U postgres -d condominio -f \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\scripts\\\\seed-data.sql\" 2>&1 | Select-Object -Last 40)"
     ]
   }
 }

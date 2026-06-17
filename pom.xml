@@ -103,6 +103,13 @@
             <artifactId>hibernate-envers</artifactId>
         </dependency>
 
+        <!-- Lets Jackson serialize uninitialized Hibernate proxies (Envers snapshots carry lazy
+             associations) without throwing LazyInitializationException outside the transaction. -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-hibernate6</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>

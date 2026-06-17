@@ -30,7 +30,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -318,6 +320,29 @@ class PessoaServiceTest {
         service.assignToApartamento(10L, 20L);
 
         verify(historicoOcupacaoService, never()).registrar(any(), any());
+    }
+
+    // ── findByIds ──────────────────────────────────────────────────────────────
+
+    @Test
+    void findByIds_deveRetornarMapaDTOs_quandoExistemPessoas() {
+        var m1 = morador(1L, "Ana");
+        var m2 = morador(2L, "Bia");
+        when(pessoaRepository.findAllById(Set.of(1L, 2L))).thenReturn(List.of(m1, m2));
+
+        Map<Long, PessoaDTO> result = service.findByIds(Set.of(1L, 2L));
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(1L).nome()).isEqualTo("Ana");
+        assertThat(result.get(2L).nome()).isEqualTo("Bia");
+    }
+
+    @Test
+    void findByIds_deveRetornarMapaVazio_quandoIdsVazios() {
+        Map<Long, PessoaDTO> result = service.findByIds(Set.of());
+
+        assertThat(result).isEmpty();
+        verify(pessoaRepository, never()).findAllById(any());
     }
 
     @Test

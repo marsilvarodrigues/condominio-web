@@ -33,6 +33,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -70,6 +71,7 @@ public class PlanoContas {
   @JoinColumn(name = "pai_id")
   private PlanoContas pai;
 
+  @NotAudited
   @OneToMany(mappedBy = "pai", fetch = FetchType.LAZY)
   @Builder.Default
   private List<PlanoContas> filhos = new ArrayList<>();

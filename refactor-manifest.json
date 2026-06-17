@@ -1,9 +1,9 @@
 {
   "plan_file": "refactor-plan.md",
-  "assessment_source": "inline — avaliação arquitetural 2026-06-15 (dashboard resumo, HistoricoOcupacaoRepository, FQCN cleanup)",
-  "created": "2026-06-15",
-  "total_chunks": 5,
-  "current_chunk": 5,
+  "assessment_source": "inline — auditoria N+1 de 2026-06-17 (10 riscos confirmados em 8 entidades)",
+  "created": "2026-06-17",
+  "total_chunks": 3,
+  "current_chunk": 3,
   "status": "completed",
   "preflight_passed": true,
   "verification": {
@@ -16,53 +16,33 @@
   "chunks": [
     {
       "id": 1,
-      "name": "Replace FQCN with import for ResumoCobrancasDTO (CobrancaService + CobrancaController)",
+      "name": "@BatchSize(20) em 9 campos lazy de 8 entidades (Cobranca, Apartamento×2, Despesa, ItemOrcamento, OrcamentoAnual, Pessoa, Proprietario, RateioExecucao)",
       "status": "completed",
       "depends_on": [],
       "verification": "mvn compile -q → BUILD SUCCESS",
       "commit_sha": null,
-      "started_at": "2026-06-15",
-      "completed_at": "2026-06-15"
+      "started_at": "2026-06-17",
+      "completed_at": "2026-06-17"
     },
     {
       "id": 2,
-      "name": "CobrancaServiceTest — add resumo() test",
+      "name": "JOIN FETCH em HistoricoOcupacaoRepository e CotaRateioRepository",
       "status": "completed",
       "depends_on": [1],
-      "verification": "CobrancaServiceTest 18/18, 0 failures",
+      "verification": "mvn compile -q → BUILD SUCCESS",
       "commit_sha": null,
-      "started_at": "2026-06-15",
-      "completed_at": "2026-06-15"
+      "started_at": "2026-06-17",
+      "completed_at": "2026-06-17"
     },
     {
       "id": 3,
-      "name": "CobrancaControllerTest — add GET /cobrancas/resumo tests (200 + 401)",
-      "status": "completed",
-      "depends_on": [1],
-      "verification": "CobrancaControllerTest 17/17, 0 failures",
-      "commit_sha": null,
-      "started_at": "2026-06-15",
-      "completed_at": "2026-06-15"
-    },
-    {
-      "id": 4,
-      "name": "CobrancaRepositoryTest — add countByStatusIn and sumValorByStatusIn tests",
+      "name": "PessoaService.findByIds + CobrancaService.filterBy batch loading + testes",
       "status": "completed",
       "depends_on": [],
-      "verification": "CobrancaRepositoryTest 10/10, 0 failures",
+      "verification": "mvn test -Dtest=PessoaServiceTest,CobrancaServiceTest → 37/37 pass",
       "commit_sha": null,
-      "started_at": "2026-06-15",
-      "completed_at": "2026-06-15"
-    },
-    {
-      "id": 5,
-      "name": "HistoricoOcupacaoRepositoryTest — create with ordering and apartment-scoping tests",
-      "status": "completed",
-      "depends_on": [],
-      "verification": "HistoricoOcupacaoRepositoryTest 2/2, 0 failures; full suite 1144/1144",
-      "commit_sha": null,
-      "started_at": "2026-06-15",
-      "completed_at": "2026-06-15"
+      "started_at": "2026-06-17",
+      "completed_at": "2026-06-17"
     }
   ]
 }

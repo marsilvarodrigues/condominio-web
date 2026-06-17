@@ -28,13 +28,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -76,7 +77,8 @@ public class OrcamentoAnual {
   @Column(name = "taxa_estimada_unidade", precision = 15, scale = 2)
   private BigDecimal taxaEstimadaUnidade;
 
-  @Audited(targetAuditMode = RelationTargetAuditMode.AUDITED)
+  @NotAudited
+  @BatchSize(size = 20)
   @OneToMany(mappedBy = "orcamentoAnual", fetch = FetchType.LAZY)
   @Builder.Default
   private List<ItemOrcamento> itens = new ArrayList<>();

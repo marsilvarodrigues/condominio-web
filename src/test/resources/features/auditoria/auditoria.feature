@@ -6,7 +6,7 @@ Feature: Módulo de Auditoria
   Scenario: Admin consulta histórico de apartamento com sucesso
     When eu consulto o histórico de auditoria de "apartamentos" do apartamento de teste
     Then o status da resposta é 200
-    And a resposta contém uma lista com pelo menos 1 item em "$.data"
+    And a resposta contém uma lista com pelo menos 1 item em "$.data.content"
 
   Scenario: Entidade inválida retorna 400
     When eu faço GET para "/auditoria/entidade-invalida/1"

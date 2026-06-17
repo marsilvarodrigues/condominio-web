@@ -26,12 +26,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
@@ -67,10 +69,12 @@ public class ItemOrcamento {
   @JoinColumn(name = "orcamento_anual_id", nullable = false)
   private OrcamentoAnual orcamentoAnual;
 
+  @BatchSize(size = 20)
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "plano_contas_id", nullable = false)
   private PlanoContas planoContas;
 
+  @NotAudited
   @OneToMany(mappedBy = "itemOrcamento", fetch = FetchType.LAZY)
   @Builder.Default
   private List<ItemExtrato> itensExtrato = new ArrayList<>();

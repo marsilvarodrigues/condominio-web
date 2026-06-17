@@ -26,6 +26,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
@@ -68,6 +69,7 @@ public class Despesa {
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
 
+  @BatchSize(size = 20)
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "grupo_despesa_id", nullable = false)
   private GrupoDespesa grupoDespesa;

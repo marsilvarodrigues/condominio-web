@@ -36,6 +36,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -71,6 +72,7 @@ class CobrancaServiceTest {
         lenient().when(configuracaoRepo.findByCondominioId(any()))
                 .thenReturn(Optional.of(CobrancaConfiguracao.builder().condominioId(1L).build()));
         lenient().when(pessoaService.listarPorApartamento(any())).thenReturn(List.of(pessoaDTO(1L)));
+        lenient().when(pessoaService.findByIds(any())).thenReturn(Map.of(1L, pessoaDTO(1L)));
         lenient().when(gatewayService.emitir(any())).thenReturn(emissaoResult());
         lenient().when(cobrancaRepository.save(any(Cobranca.class))).thenAnswer(inv -> {
             Cobranca c = inv.getArgument(0);
@@ -190,6 +192,17 @@ class CobrancaServiceTest {
                 PageRequest.of(0, 10));
 
         assertThat(result).isNotEmpty();
+    }
+
+    @Test
+    void filterBy_deveChamarFindByIdsUmaVez_naoNVezes() {
+        var page = new PageImpl<>(List.of(cobranca(1L, "pay_1"), cobranca(2L, "pay_2")));
+        when(cobrancaRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(page);
+
+        service.filterBy(new CobrancaFilterDTO(null, null, null, null, null), PageRequest.of(0, 10));
+
+        verify(pessoaService, times(1)).findByIds(any());
+        verify(pessoaService, never()).findById(any());
     }
 
     // ── findById ──────────────────────────────────────────────────────────────

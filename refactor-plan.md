@@ -1,135 +1,187 @@
-# Refactoring Plan — Ciclo 9
+# Refactoring Plan — Ciclo 10
 
-**Source:** inline — avaliação arquitetural 2026-06-15 (dashboard/resumo endpoints, historico repository)
-**Created:** 2026-06-15
-**Target:** Cobertura completa dos novos endpoints (resumo de cobranças), limpeza de FQCNs e repositoryTest do HistoricoOcupacao.
+**Source:** inline — auditoria N+1 de 2026-06-17 (10 riscos confirmados em 8 entidades)
+**Created:** 2026-06-17
+**Target:** Eliminar todos os N+1 queries confirmados: @BatchSize nas associações lazy mapeadas em DTOs; JOIN FETCH em queries concretas de repositório; batch morador loading no CobrancaService.
 
 ## Pre-flight Checks
-- [x] All tests pass before starting (1137/1137 unit + BDD)
-- [x] Working branch active (master_data)
+- [ ] All tests pass before starting
+- [ ] Working branch active (master_data)
 
-## Deliberate non-changes
-- **Frontend changes** (dashboard.api.ts, useAuth.ts, DashboardSindico.tsx, ApartamentoDetailPage.tsx, HierarquiaPage.tsx, types/index.ts) — fora do escopo deste skill; sem framework de testes Java para UI.
-- **migration 0043** — DDL coberto pelos BDD integration tests em PostgreSQL real.
+## Estratégia de correção
 
----
-
-## Chunk 1: Adicionar import para ResumoCobrancasDTO em CobrancaService e CobrancaController
-**Why:** `CobrancaService.resumo()` e `CobrancaController.resumo()` referenciam `ResumoCobrancasDTO` pelo nome fully-qualified (`com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO`) em vez de usar import. Toda outra DTO na codebase usa imports normais. É um descuido de código que dificulta a leitura.
-**Entry criteria:** 1137 testes passando
-**Steps:**
-1. Editar `src/main/java/com/pmrodrigues/cobranca/service/CobrancaService.java`:
-   - Adicionar `import com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO;` no bloco de imports (após `CobrancaResumoDTO`)
-   - Substituir a assinatura do método `public com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO resumo()` → `public ResumoCobrancasDTO resumo()`
-   - Substituir `var result = new com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO(` → `var result = new ResumoCobrancasDTO(`
-2. Editar `src/main/java/com/pmrodrigues/cobranca/controller/CobrancaController.java`:
-   - Adicionar `import com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO;` no bloco de imports (após `CobrancaResumoDTO`)
-   - Substituir `ResponseEntity<ApiResponse<com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO>>` → `ResponseEntity<ApiResponse<ResumoCobrancasDTO>>`
-**Exit criteria:** `mvn compile -q` → BUILD SUCCESS (sem mudança de testes, apenas limpeza)
-**Commit message:** `refactor(cobranca): replace FQCN with import for ResumoCobrancasDTO`
+- **`@BatchSize(size = 20)`** em toda associação `@ManyToOne` LAZY e coleção `@OneToMany`/`@ManyToMany` LAZY que o mapper acessa na conversão para DTO. Reduz N queries para ceil(N/20). Compatível com Specification-based `findAll` — nenhuma mudança em repositórios ou services.
+- **`JOIN FETCH` em queries concretas** de repositório onde a associação é sempre necessária e a query não é paginada com coleção (sem risco de Cartesian product). Elimina as queries extras completamente.
+- **Batch loading no service** para o N+1 de nível de aplicação em `CobrancaService.filterBy → enriquecerMorador → pessoaService.findById × N`.
 
 ---
 
-## Chunk 2: CobrancaServiceTest — cobertura de resumo()
-**Why:** `CobrancaService.resumo()` chama `cobrancaRepository.countByStatusIn()` e `cobrancaRepository.sumValorByStatusIn()` para dois grupos de status (pendentes + enviadas; vencidas). Não há nenhum teste para esse método em `CobrancaServiceTest`. Todos os outros métodos públicos do service têm cobertura.
-**Entry criteria:** Chunk 1 completo (clean compile)
+## Chunk 1: `@BatchSize(size = 20)` em todas as associações lazy mapeadas em DTO
+**Why:** 8 entidades têm campos `@ManyToOne` ou coleções `@OneToMany`/`@ManyToMany` com `FetchType.LAZY` cujos valores são sistematicamente acessados pelo mapper durante a serialização de listas/páginas. Sem `@BatchSize`, cada entidade na página dispara 1 query extra por associação. Com `@BatchSize(size = 20)`, Hibernate agrupa a inicialização de proxies em batches de 20, reduzindo N queries para ceil(N/20).
+**Entry criteria:** Testes passando (baseline)
 **Steps:**
-1. Editar `src/test/java/com/pmrodrigues/cobranca/service/CobrancaServiceTest.java`:
-   - No `@BeforeEach` `setUp()`, adicionar stubs lenient para os dois métodos de agregação:
+1. Editar `src/main/java/com/pmrodrigues/cobranca/model/Cobranca.java`:
+   - Adicionar `import org.hibernate.annotations.BatchSize;`
+   - Adicionar `@BatchSize(size = 20)` na linha acima da anotação `@ManyToOne` do campo `apartamento`
+2. Editar `src/main/java/com/pmrodrigues/condominio/model/Apartamento.java`:
+   - Adicionar `import org.hibernate.annotations.BatchSize;`
+   - Adicionar `@BatchSize(size = 20)` no campo `bloco` (ManyToOne LAZY)
+   - Adicionar `@BatchSize(size = 20)` no campo `moradores` (OneToMany LAZY) — nota: já tem `@NotAudited`
+3. Editar `src/main/java/com/pmrodrigues/financeiro/model/Despesa.java`:
+   - Adicionar `import org.hibernate.annotations.BatchSize;`
+   - Adicionar `@BatchSize(size = 20)` no campo `grupoDespesa` (ManyToOne LAZY)
+4. Editar `src/main/java/com/pmrodrigues/financeiro/model/ItemOrcamento.java`:
+   - Adicionar `import org.hibernate.annotations.BatchSize;`
+   - Adicionar `@BatchSize(size = 20)` no campo `planoContas` (ManyToOne LAZY)
+5. Editar `src/main/java/com/pmrodrigues/financeiro/model/OrcamentoAnual.java`:
+   - Adicionar `import org.hibernate.annotations.BatchSize;`
+   - Adicionar `@BatchSize(size = 20)` no campo `itens` (OneToMany LAZY) — nota: já tem `@NotAudited`
+6. Editar `src/main/java/com/pmrodrigues/morador/model/Pessoa.java`:
+   - Adicionar `import org.hibernate.annotations.BatchSize;`
+   - Adicionar `@BatchSize(size = 20)` no campo `apartamento` (ManyToOne LAZY)
+7. Editar `src/main/java/com/pmrodrigues/morador/model/Proprietario.java`:
+   - Adicionar `import org.hibernate.annotations.BatchSize;`
+   - Adicionar `@BatchSize(size = 20)` no campo `apartamentos` (@ManyToMany — sem `fetch` explícito, default é LAZY)
+8. Editar `src/main/java/com/pmrodrigues/financeiro/model/RateioExecucao.java`:
+   - Adicionar `import org.hibernate.annotations.BatchSize;`
+   - Adicionar `@BatchSize(size = 20)` no campo `despesa` (ManyToOne LAZY)
+**Exit criteria:** `mvn compile -q` → BUILD SUCCESS; `mvn test -q` → BUILD SUCCESS (sem regressões)
+**Commit message:** `perf: add @BatchSize(20) to all lazy associations accessed in DTO mapping`
+
+---
+
+## Chunk 2: `JOIN FETCH` em queries concretas de repositório
+**Why:** Dois repositórios têm queries derivadas concretas (não-Specification) onde a associação lazy é **sempre** necessária e **sempre** irá disparar N queries extras. JOIN FETCH é mais eficiente que BatchSize nesses casos porque elimina as queries extras completamente em vez de apenas agrupá-las.
+
+- `HistoricoOcupacaoRepository.findByApartamento_IdAndCondominio_Id...`: Pageable + `@ManyToOne` JOIN FETCH é seguro (sem Cartesian product, um historico → uma pessoa).
+- `CotaRateioRepository.findByRateioExecucaoId`: Retorna `List<>` (não paginado); dois `@ManyToOne` JOIN FETCH em cadeia são seguros.
+
+**Entry criteria:** Chunk 1 completo
+**Steps:**
+1. Editar `src/main/java/com/pmrodrigues/morador/repository/HistoricoOcupacaoRepository.java`:
+   - Adicionar imports: `import org.springframework.data.jpa.repository.Query;` e `import org.springframework.data.repository.query.Param;`
+   - Substituir o método derivado `findByApartamento_IdAndCondominio_IdOrderByDataSaidaDesc` por:
      ```java
-     lenient().when(cobrancaRepository.countByStatusIn(any())).thenReturn(3L);
-     lenient().when(cobrancaRepository.sumValorByStatusIn(any())).thenReturn(new BigDecimal("1500.00"));
+     @Query(
+         value = "SELECT h FROM HistoricoOcupacao h JOIN FETCH h.pessoa " +
+                 "WHERE h.apartamento.id = :apartamentoId AND h.condominio.id = :condominioId " +
+                 "ORDER BY h.dataSaida DESC",
+         countQuery = "SELECT COUNT(h) FROM HistoricoOcupacao h " +
+                      "WHERE h.apartamento.id = :apartamentoId AND h.condominio.id = :condominioId"
+     )
+     Page<HistoricoOcupacao> findByApartamento_IdAndCondominio_IdOrderByDataSaidaDesc(
+         @Param("apartamentoId") Long apartamentoId,
+         @Param("condominioId") Long condominioId,
+         Pageable pageable);
      ```
-   - Adicionar seção `// ── resumo ────────────────────────────────────────────────────────────` depois de `porApartamento`
-   - Adicionar teste `resumo_deveRetornarContadoresEValores`:
-     - stub específico: `countByStatusIn(List.of(PENDENTE, ENVIADA))` → 3L, `countByStatusIn(List.of(VENCIDA))` → 1L
-     - stub específico: `sumValorByStatusIn(List.of(PENDENTE, ENVIADA))` → `"1500.00"`, `sumValorByStatusIn(List.of(VENCIDA))` → `"300.00"`
-     - verificar que o resultado tem `quantidadePendente=3`, `totalPendente=1500.00`, `quantidadeVencida=1`, `totalVencido=300.00`
-**Exit criteria:** `mvn test -q` → BUILD SUCCESS, CobrancaServiceTest com 1 teste adicional
-**Commit message:** `test(cobranca): add CobrancaServiceTest coverage for resumo()`
+   - Nota: manter o mesmo nome de método (sem mudança nos callers); a anotação `@Query` overrides a derivação.
+2. Editar `src/main/java/com/pmrodrigues/financeiro/repository/CotaRateioRepository.java`:
+   - Adicionar imports: `import org.springframework.data.jpa.repository.Query;` e `import org.springframework.data.repository.query.Param;`
+   - Substituir `findByRateioExecucaoId` por:
+     ```java
+     @Query("SELECT c FROM CotaRateio c JOIN FETCH c.apartamento a JOIN FETCH a.bloco " +
+            "WHERE c.rateioExecucao.id = :rateioExecucaoId")
+     List<CotaRateio> findByRateioExecucaoId(@Param("rateioExecucaoId") Long rateioExecucaoId);
+     ```
+**Exit criteria:** `mvn test -q` → BUILD SUCCESS (HistoricoOcupacaoRepositoryTest e todos os demais passam)
+**Commit message:** `perf: add JOIN FETCH to HistoricoOcupacaoRepository and CotaRateioRepository`
 
 ---
 
-## Chunk 3: CobrancaControllerTest — GET /cobrancas/resumo
-**Why:** O endpoint `GET /cobrancas/resumo` (novo no ciclo dashboard) não tem nenhum teste em `CobrancaControllerTest`. CLAUDE.md exige pelo menos 2 cenários para GET sem parâmetro de path: 200 (autenticado) e 401 (não autenticado).
-**Entry criteria:** Chunk 1 completo (usa `ResumoCobrancasDTO` com import limpo)
+## Chunk 3: Batch morador loading em `CobrancaService.filterBy`
+**Why:** `CobrancaService.filterBy()` chama `this.enriquecerMorador(dto)` para **cada** DTO da página. `enriquecerMorador` chama `pessoaService.findById(dto.moradorId())`, que executa uma query JPA por chamada. Com `page_size=20`, isso são 20 queries extras de Pessoa por requisição de listagem — um N+1 de nível de aplicação, não resolvido pelo `@BatchSize` do Chunk 1.
+
+**Fix:** Adicionar `PessoaService.findByIds(Set<Long> ids): Map<Long, PessoaDTO>` que carrega todos os moradores em 1 query, e refatorar `filterBy` para usar esse mapa.
+
+**Entry criteria:** Baseline de testes passando (independente dos outros chunks)
 **Steps:**
-1. Editar `src/test/java/com/pmrodrigues/cobranca/controller/CobrancaControllerTest.java`:
-   - Adicionar import `import com.pmrodrigues.cobranca.dto.ResumoCobrancasDTO;` no bloco de imports (após `CobrancaResumoDTO`)
-   - Adicionar helper:
+1. Editar `src/main/java/com/pmrodrigues/morador/service/PessoaService.java`:
+   - Após o método `listarPorApartamento`, adicionar:
      ```java
-     private ResumoCobrancasDTO resumoCobrancasDTO() {
-         return new ResumoCobrancasDTO(3L, new BigDecimal("1500.00"), 1L, new BigDecimal("300.00"));
+     /**
+      * Batch-loads all Pessoas matching the given ids. Used by CobrancaService to avoid N+1 when
+      * enriching a page of charges with resident names.
+      *
+      * @param ids set of pessoa primary keys (may be empty)
+      * @return map of id → PessoaDTO for each found entity; absent ids are excluded
+      */
+     @Transactional(readOnly = true)
+     @Timed(value = "pessoa.service.findByIds", description = "Batch find pessoas by ids")
+     public Map<Long, PessoaDTO> findByIds(Set<Long> ids) {
+         if (ids.isEmpty()) return Map.of();
+         log.info("Batch loading {} pessoa ids", ids.size());
+         return pessoaRepository.findAllById(ids).stream()
+             .collect(java.util.stream.Collectors.toMap(
+                 com.pmrodrigues.morador.model.Pessoa::getId,
+                 pessoaMapper::toDTO));
      }
      ```
-   - Adicionar seção `// ── resumo ───────────────────────────────────────────────────────────────`
-   - Adicionar teste `resumo_returns200` com `@WithMockUser`: stub `cobrancaService.resumo()` → `resumoCobrancasDTO()`; verificar status 200 e `$.data.quantidadePendente` == 3
-   - Adicionar teste `resumo_unauthenticated_returns401`: sem `@WithMockUser`, GET para `/cobrancas/resumo`, esperar 401
-**Exit criteria:** `mvn test -q` → BUILD SUCCESS, CobrancaControllerTest com 2 testes adicionais
-**Commit message:** `test(cobranca): add CobrancaControllerTest coverage for GET /cobrancas/resumo`
-
----
-
-## Chunk 4: CobrancaRepositoryTest — countByStatusIn e sumValorByStatusIn
-**Why:** Os dois novos métodos JPQL `countByStatusIn` e `sumValorByStatusIn` em `CobrancaRepository` (adicionados para o dashboard) não estão cobertos por testes de repositório. Todos os outros custom queries do repositório têm testes.
-**Entry criteria:** Baseline de testes passando (independente dos chunks anteriores)
-**Steps:**
-1. Editar `src/test/java/com/pmrodrigues/cobranca/repository/CobrancaRepositoryTest.java`:
-   - Adicionar seção `// ── countByStatusIn / sumValorByStatusIn ─────────────────────────────────────`
-   - Adicionar teste `countByStatusIn_retornaContagemCorreta`:
-     - persistir: 2 PENDENTE (apt1 e apt2) + 1 VENCIDA (apt1) via `cobranca(...)` helper
-     - assertar `countByStatusIn(List.of(StatusCobranca.PENDENTE))` == 2
-     - assertar `countByStatusIn(List.of(StatusCobranca.VENCIDA))` == 1
-     - assertar `countByStatusIn(List.of(StatusCobranca.PENDENTE, StatusCobranca.VENCIDA))` == 3
-   - Adicionar teste `sumValorByStatusIn_retornaSomaCorreta`:
-     - persistir: 1 PENDENTE com valor 500.00 + 1 VENCIDA com valor 300.00 (usar helper cobranca mas com BigDecimal diferente — ou ajustar o helper)
-     - Nota: o helper atual usa valor fixo de 500.00; usar diretamente `cobrancaRepository.save(Cobranca.builder()...)` para valores diferentes
-     - assertar `sumValorByStatusIn(List.of(StatusCobranca.PENDENTE))` == 500.00
-     - assertar `sumValorByStatusIn(List.of(StatusCobranca.VENCIDA))` == 300.00
-     - assertar `sumValorByStatusIn(List.of(StatusCobranca.PAGA))` == 0 (nenhuma PAGA → COALESCE retorna 0)
-**Exit criteria:** `mvn test -q` → BUILD SUCCESS, CobrancaRepositoryTest com 2 testes adicionais
-**Commit message:** `test(cobranca): add CobrancaRepositoryTest coverage for countByStatusIn and sumValorByStatusIn`
-
----
-
-## Chunk 5: HistoricoOcupacaoRepositoryTest
-**Why:** `HistoricoOcupacaoRepository` tem um método derivado `findByApartamento_IdAndCondominio_IdOrderByDataSaidaDesc` (com lógica de filtragem por condomínio e ordenação por data_saida DESC) sem nenhum `@DataJpaTest` verificando o comportamento. O serviço e o mapper têm testes; o repositório não.
-**Entry criteria:** Baseline de testes passando (independente dos chunks anteriores)
-**Steps:**
-1. Criar `src/test/java/com/pmrodrigues/morador/repository/HistoricoOcupacaoRepositoryTest.java`:
-   - Anotações: `@DataJpaTest(properties = "spring.jpa.hibernate.ddl-auto=create-drop") @Import(JpaAuditingConfig.class)`
-   - Autowire: `HistoricoOcupacaoRepository historicoRepository`, `CondominioRepository condominioRepository`, `BlocoRepository blocoRepository`, `ApartamentoRepository apartamentoRepository`, `EstadoRepository estadoRepository`, `UserRepository userRepository`, `TestEntityManager em`
-   - Campos de fixture: `Condominio cond1`, `Condominio cond2`, `Apartamento apt1`, `Apartamento apt2`
-   - `@BeforeEach setUp()`:
-     - persistir Estado
-     - persistir cond1 e cond2 (dois condomínios para testar isolamento)
-     - `TenantContext.setCondominioId(cond1.getId())`
-     - persistir Bloco → apt1 (cond1), apt2 (cond1)
-     - Para HistoricoOcupacao, usar `em.persist(entity)` diretamente (sem TenantContext ativo no prePersist — precisará setar manualmente o campo condominio via ReflectionTestUtils OU usar `TenantContext` ativo)
-     - Estratégia: como `@PrePersist` lê `TenantContext`, manter `TenantContext.setCondominioId(cond1.getId())` e usar o repository.save que chama prePersist
-     - Nota: HistoricoOcupacao.prePersist usa `new Condominio()` + `setId(condominioId)` — H2 tem FK constraint? Verificar se isso causa ConstraintViolation. Se sim, usar `em.getEntityManager().getReference(Condominio.class, cond1.getId())`.
-     - Para `Pessoa`: HistoricoOcupacao tem FK para `pessoas.id` (via `pessoa_id`). Precisa inserir um User/Pessoa mínimo. Criar `User` mínimo via `UserRepository` e usá-lo como `Pessoa` (já que `Pessoa` é subtype de `User` — SINGLE_TABLE inheritance). Ou usar `TestEntityManager.persist()`.
-     - Alternativa mais simples: usar `TestEntityManager.persist()` diretamente no `HistoricoOcupacao` setando manualmente o campo `condominio` via reflection (`ReflectionTestUtils.setField(entity, "condominio", cond1)`).
-   - `@AfterEach tearDown()`: `TenantContext.clear()`
-   - Testes:
-     - `findByApartamento_IdAndCondominio_IdOrderByDataSaidaDesc_retornaOrdenadoPorDataSaidaDesc`:
-       - Persistir 3 registros para apt1/cond1 com dataSaida diferentes (2024-01-01, 2025-06-30, 2023-01-01)
-       - Chamar o repository method com apt1.getId() e cond1.getId()
-       - Assertar que `content.get(0).getDataSaida()` == 2025-06-30 (mais recente primeiro)
-       - Assertar `totalElements == 3`
-     - `findByApartamento_IdAndCondominio_IdOrderByDataSaidaDesc_filtraPorApartamento`:
-       - Persistir 2 registros para apt1 e 1 para apt2 (mesmo cond1)
-       - Assertar que busca por apt1 retorna 2, busca por apt2 retorna 1
-**Exit criteria:** `mvn test -q` → BUILD SUCCESS, HistoricoOcupacaoRepositoryTest com 2 testes criados
-**Commit message:** `test(morador): add HistoricoOcupacaoRepositoryTest`
+   - Adicionar imports: `java.util.Map`, `java.util.Set`
+2. Editar `src/main/java/com/pmrodrigues/cobranca/service/CobrancaService.java`:
+   - Refatorar o método `filterBy()` para batch-load moradores:
+     ```java
+     @Transactional(readOnly = true)
+     @Timed(value = "cobranca.service.filterBy", description = "List charges with filters")
+     public Page<CobrancaDTO> filterBy(CobrancaFilterDTO filter, Pageable pageable) {
+         log.info("filterBy filter={}", filter);
+         var page = cobrancaRepository.findAll(
+                 Specification.allOf(
+                     CobrancaSpecification.hasApartamento(filter.apartamentoId()),
+                     CobrancaSpecification.hasStatus(filter.status()),
+                     CobrancaSpecification.vencimentoFrom(filter.vencimentoDe()),
+                     CobrancaSpecification.vencimentoTo(filter.vencimentoAte()),
+                     CobrancaSpecification.emailEnviado(filter.emailEnviado())),
+                 pageable)
+             .map(mapper::toDTO);
+         var moradorIds = page.getContent().stream()
+             .map(CobrancaDTO::moradorId)
+             .filter(java.util.Objects::nonNull)
+             .collect(java.util.stream.Collectors.toSet());
+         var moradores = pessoaService.findByIds(moradorIds);
+         return page.map(dto -> enriquecerMoradorFromMap(dto, moradores));
+     }
+     ```
+   - Adicionar método privado `enriquecerMoradorFromMap(CobrancaDTO dto, Map<Long, PessoaDTO> moradores)`:
+     ```java
+     private CobrancaDTO enriquecerMoradorFromMap(CobrancaDTO dto, Map<Long, PessoaDTO> moradores) {
+         if (dto.moradorId() == null) return dto;
+         var pessoa = moradores.get(dto.moradorId());
+         if (pessoa == null) return dto;
+         return new CobrancaDTO(
+             dto.id(), dto.apartamentoId(), dto.apartamentoNumero(), dto.blocoNome(),
+             dto.moradorId(), pessoa.nome(), pessoa.email(),
+             dto.valor(), dto.vencimento(), dto.status(),
+             dto.boletoUrl(), dto.boletoCodBarras(), dto.pixQrCodeBase64(), dto.pixCopiaCola(),
+             dto.emailEnviado(), dto.emailEnviadoEm(), dto.pagoEm(), dto.criadaEm());
+     }
+     ```
+   - Nota: `enriquecerMorador(dto)` (versão antiga, com try-catch por moradorId individual) permanece para uso em `findById`, `cancelar` e `reenviarEmail` — apenas `filterBy` muda para o batch approach.
+   - Adicionar imports: `java.util.Map`, `java.util.Objects`, `java.util.stream.Collectors`
+3. Editar `src/test/java/com/pmrodrigues/morador/service/PessoaServiceTest.java`:
+   - Adicionar seção `// ── findByIds ──────────────────────────────────────────────────────────────`
+   - Adicionar teste `findByIds_deveRetornarMapaDTOs_quandoExistemPessoas`:
+     - stub `pessoaRepository.findAllById(Set.of(1L, 2L))` → `List.of(morador(1L, "Ana"), morador(2L, "Bia"))`
+     - resultado: `Map<Long, PessoaDTO>` com 2 entradas
+     - assertar `result.get(1L).nome() == "Ana"` e `result.get(2L).nome() == "Bia"`
+   - Adicionar teste `findByIds_deveRetornarMapaVazio_quandoIdsVazios`:
+     - chamar `service.findByIds(Set.of())`
+     - assertar `result.isEmpty()`
+     - verificar que `pessoaRepository.findAllById` NÃO é chamado (never)
+4. Editar `src/test/java/com/pmrodrigues/cobranca/service/CobrancaServiceTest.java`:
+   - Adicionar `@Mock PessoaService pessoaService` se não existir (verificar se já existe via injeção direta)
+   - No `@BeforeEach`, adicionar stub lenient para `pessoaService.findByIds(any())` → `Map.of()`
+   - Atualizar o teste existente de `filterBy` para:
+     - Stub `pessoaService.findByIds(any())` → mapa com morador mockado
+     - Verificar que `pessoaService.findByIds` é chamado UMA vez (não N vezes)
+**Exit criteria:** `mvn test -q` → BUILD SUCCESS; PessoaServiceTest e CobrancaServiceTest passam com novos testes
+**Commit message:** `perf(cobranca): batch-load moradores in filterBy to eliminate N+1 service calls`
 
 ---
 
 ## Post-flight Checks
 - [ ] Full test suite passes (`mvn test -q`)
-- [ ] No TODO/FIXME markers left from this cycle
-- [ ] `ResumoCobrancasDTO` importado corretamente em CobrancaService e CobrancaController
-- [ ] `CobrancaService.resumo()` coberto
-- [ ] `GET /cobrancas/resumo` coberto (200 + 401)
-- [ ] `countByStatusIn` e `sumValorByStatusIn` cobertos em CobrancaRepositoryTest
-- [ ] `HistoricoOcupacaoRepositoryTest` criado com 2 testes
+- [ ] No TODO/FIXME markers left
+- [ ] `@BatchSize(size = 20)` adicionado em: `Cobranca.apartamento`, `Apartamento.bloco`, `Apartamento.moradores`, `Despesa.grupoDespesa`, `ItemOrcamento.planoContas`, `OrcamentoAnual.itens`, `Pessoa.apartamento`, `Proprietario.apartamentos`, `RateioExecucao.despesa`
+- [ ] `HistoricoOcupacaoRepository` usa `JOIN FETCH h.pessoa` com countQuery separado
+- [ ] `CotaRateioRepository` usa `JOIN FETCH c.apartamento a JOIN FETCH a.bloco`
+- [ ] `CobrancaService.filterBy()` usa batch loading — `pessoaService.findByIds()` chamado 1x por requisição

@@ -78,6 +78,12 @@ spring:
         query.plan_cache_max_size: 2048
         query.plan_parameter_metadata_max_size: 128
         generate_statistics: false
+        # Allows Hibernate DDL to also create non-default schemas (e.g. audit).
+        # Harmless in production (ddl-auto: none generates no DDL); required for
+        # H2 @DataJpaTest contexts (ddl-auto: create-drop) where the audit schema
+        # does not exist yet.
+        hbm2ddl:
+          create_namespaces: true
       org:
         hibernate:
           envers:

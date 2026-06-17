@@ -21,11 +21,15 @@ public interface CotaRateioRepository extends JpaRepository<CotaRateio, Long> {
   void deleteByDespesaId(@Param("despesaId") Long despesaId);
 
   /**
-   * Returns all quota records belonging to the given rateio execution. Used by the billing module
-   * to generate charges from a completed rateio run.
+   * Returns all quota records belonging to the given rateio execution, with {@code apartamento} and
+   * its {@code bloco} eagerly fetched to avoid N+1 queries when the billing service accesses those
+   * fields per cota.
    *
    * @param rateioExecucaoId primary key of the {@code RateioExecucao}
    * @return list of cotas (may be empty if the execution had no units)
    */
-  List<CotaRateio> findByRateioExecucaoId(Long rateioExecucaoId);
+  @Query(
+      "SELECT c FROM CotaRateio c JOIN FETCH c.apartamento a JOIN FETCH a.bloco "
+          + "WHERE c.rateioExecucao.id = :rateioExecucaoId")
+  List<CotaRateio> findByRateioExecucaoId(@Param("rateioExecucaoId") Long rateioExecucaoId);
 }

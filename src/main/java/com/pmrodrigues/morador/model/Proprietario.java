@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.envers.Audited;
 
 /**
@@ -42,6 +43,7 @@ public abstract class Proprietario extends Pessoa {
   /**
    * Apartments owned by this proprietário (many-to-many through {@code proprietario_apartamentos}).
    */
+  @BatchSize(size = 20)
   @ManyToMany
   @JoinTable(
       name = "proprietario_apartamentos",

@@ -22,6 +22,9 @@ import com.pmrodrigues.security.repository.UserRepository;
 import com.pmrodrigues.security.service.UserService;
 import io.micrometer.core.annotation.Timed;
 import java.time.LocalDate;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -274,6 +277,22 @@ public class PessoaService extends UserService {
             .toList();
     log.info("Found {} pessoas for apartamentoId={}", result.size(), apartamentoId);
     return result;
+  }
+
+  /**
+   * Batch-loads all Pessoas matching the given ids. Used by CobrancaService to avoid N+1 when
+   * enriching a page of charges with resident names.
+   *
+   * @param ids set of pessoa primary keys (may be empty)
+   * @return map of id to PessoaDTO for each found entity; absent ids are excluded
+   */
+  @Transactional(readOnly = true)
+  @Timed(value = "pessoa.service.findByIds", description = "Batch find pessoas by ids")
+  public Map<Long, PessoaDTO> findByIds(Set<Long> ids) {
+    if (ids.isEmpty()) return Map.of();
+    log.info("Batch loading {} pessoa ids", ids.size());
+    return pessoaRepository.findAllById(ids).stream()
+        .collect(Collectors.toMap(p -> p.getId(), pessoaMapper::toDTO));
   }
 
   /**

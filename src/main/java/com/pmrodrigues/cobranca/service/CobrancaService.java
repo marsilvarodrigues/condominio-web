@@ -23,12 +23,17 @@ import com.pmrodrigues.financeiro.service.CotaRateioService;
 import com.pmrodrigues.gateway.dto.AsaasEmissaoRequest;
 import com.pmrodrigues.gateway.dto.AsaasWebhookPayload;
 import com.pmrodrigues.gateway.service.AsaasGatewayService;
+import com.pmrodrigues.morador.dto.PessoaDTO;
 import com.pmrodrigues.morador.service.PessoaService;
 import io.micrometer.core.annotation.Timed;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -201,7 +206,7 @@ public class CobrancaService {
   @Timed(value = "cobranca.service.filterBy", description = "List charges with filters")
   public Page<CobrancaDTO> filterBy(CobrancaFilterDTO filter, Pageable pageable) {
     log.info("filterBy filter={}", filter);
-    return cobrancaRepository
+    var page = cobrancaRepository
         .findAll(
             Specification.allOf(
                 CobrancaSpecification.hasApartamento(filter.apartamentoId()),
@@ -210,8 +215,13 @@ public class CobrancaService {
                 CobrancaSpecification.vencimentoTo(filter.vencimentoAte()),
                 CobrancaSpecification.emailEnviado(filter.emailEnviado())),
             pageable)
-        .map(mapper::toDTO)
-        .map(this::enriquecerMorador);
+        .map(mapper::toDTO);
+    Set<Long> moradorIds = page.getContent().stream()
+        .map(CobrancaDTO::moradorId)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toSet());
+    Map<Long, PessoaDTO> moradores = pessoaService.findByIds(moradorIds);
+    return page.map(dto -> enriquecerMoradorFromMap(dto, moradores));
   }
 
   /**
@@ -426,6 +436,18 @@ public class CobrancaService {
       log.warn("Could not enrich moradorNome for cobrancaId={}: {}", dto.id(), e.getMessage());
       return dto;
     }
+  }
+
+  private CobrancaDTO enriquecerMoradorFromMap(CobrancaDTO dto, Map<Long, PessoaDTO> moradores) {
+    if (dto.moradorId() == null) return dto;
+    var pessoa = moradores.get(dto.moradorId());
+    if (pessoa == null) return dto;
+    return new CobrancaDTO(
+        dto.id(), dto.apartamentoId(), dto.apartamentoNumero(), dto.blocoNome(),
+        dto.moradorId(), pessoa.nome(), pessoa.email(),
+        dto.valor(), dto.vencimento(), dto.status(),
+        dto.boletoUrl(), dto.boletoCodBarras(), dto.pixQrCodeBase64(), dto.pixCopiaCola(),
+        dto.emailEnviado(), dto.emailEnviadoEm(), dto.pagoEm(), dto.criadaEm());
   }
 
   private static boolean isPaymentEvent(String event) {

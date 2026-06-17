@@ -30,12 +30,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -69,6 +71,7 @@ public class Apartamento {
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
 
+  @BatchSize(size = 20)
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "bloco_id", nullable = false)
   private Bloco bloco;
@@ -85,10 +88,13 @@ public class Apartamento {
   @Column
   private Integer andar;
 
+  @NotAudited
+  @BatchSize(size = 20)
   @OneToMany(mappedBy = "apartamento", fetch = FetchType.LAZY)
   @Builder.Default
   private List<Pessoa> moradores = new ArrayList<>();
 
+  @NotAudited
   @ManyToMany(mappedBy = "apartamentos", fetch = FetchType.LAZY)
   @Builder.Default
   private Set<Proprietario> proprietarios = new HashSet<>();

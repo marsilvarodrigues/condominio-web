@@ -530,14 +530,15 @@ INSERT INTO proprietario_apartamentos (proprietario_id, apartamento_id)
 VALUES (v_luciana_id, v_c2_102_id);
 
 -- ===========================================================================
--- 6. HISTÓRICO DE OCUPAÇÃO (ex-morador do Apt A102 antes de José Pereira)
+-- 6. HISTÓRICO DE OCUPAÇÃO
+-- Carlos Mendes morava em A102 antes de se mudar para A201 em 2025.
+-- José Pereira adquiriu A102 como imóvel de investimento em 01/2026.
 -- ===========================================================================
 INSERT INTO historico_ocupacao
-    (condominio_id, apartamento_id, pessoa_id, nome_morador, email_morador, cpf_morador,
-     data_entrada, data_saida, criado_em)
+    (condominio_id, apartamento_id, pessoa_id,
+     data_entrada, data_saida, created_at, created_by, updated_by)
 VALUES (v_cond1_id, v_c1_a102_id, v_carlos_id,
-        'Ricardo Almeida', 'ricardo.almeida@email.com', NULL,
-        '2023-01-01', '2025-12-31', NOW());
+        '2023-01-01', '2025-12-31', NOW(), 'seed', 'seed');
 
 -- ===========================================================================
 -- 7. PLANO DE CONTAS — Cond1
