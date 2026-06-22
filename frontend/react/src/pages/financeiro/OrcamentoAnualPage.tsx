@@ -14,7 +14,7 @@ import CalculateIcon from '@mui/icons-material/Calculate'
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
-import { PageHeader, DataTable, ConfirmDialog, FormDialog, type Column } from '@/components/common'
+import { PageHeader, DataTable, ConfirmDialog, FormDialog, NoCondominioGuard, type Column } from '@/components/common'
 import { orcamentoApi } from '@/api/financeiro/orcamento.api'
 import { formatCurrency } from '@/utils/formatters'
 import type { OrcamentoItemDTO, AddOrcamentoItemDTO } from '@/types'
@@ -86,6 +86,7 @@ export default function OrcamentoAnualPage() {
 
   return (
     <Box>
+      <NoCondominioGuard />
       <PageHeader
         title="Orçamento Anual"
         subtitle="Gerencie as previsões de despesa por ano."

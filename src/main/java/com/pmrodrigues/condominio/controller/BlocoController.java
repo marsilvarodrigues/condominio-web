@@ -48,6 +48,7 @@ public class BlocoController {
    */
   @GetMapping
   @Timed(value = "bloco.controller.findAll", description = "Find all blocos")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO','PROPRIETARIO','MORADOR')")
   public ResponseEntity<ApiResponse<List<BlocoDTO>>> findAll(
       @ModelAttribute BlocoFilterDTO filter, HttpServletRequest request) {
     log.info("GET /blocos - filter={}", filter);
@@ -66,6 +67,7 @@ public class BlocoController {
    */
   @GetMapping("/{id}")
   @Timed(value = "bloco.controller.findById", description = "Find bloco by id")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO','PROPRIETARIO','MORADOR')")
   public ResponseEntity<ApiResponse<BlocoDTO>> findById(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("GET /blocos/{} - finding bloco by id", id);
@@ -86,7 +88,7 @@ public class BlocoController {
    */
   @PostMapping
   @Timed(value = "bloco.controller.create", description = "Create bloco")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<BlocoDTO>> create(
       @RequestBody @Valid CreateBlocoDTO dto, HttpServletRequest request) {
     log.info("POST /blocos - creating bloco: numero={}, bloco={}", dto.numero(), dto.bloco());
@@ -106,7 +108,7 @@ public class BlocoController {
    */
   @PutMapping("/{id}")
   @Timed(value = "bloco.controller.update", description = "Update bloco")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<BlocoDTO>> update(
       @PathVariable Long id, @RequestBody @Valid BlocoDTO dto, HttpServletRequest request) {
     log.info("PUT /blocos/{} - updating bloco", id);
@@ -125,7 +127,7 @@ public class BlocoController {
    */
   @DeleteMapping("/{id}")
   @Timed(value = "bloco.controller.delete", description = "Delete bloco")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     log.info("DELETE /blocos/{} - deleting bloco", id);
     blocoService.delete(id);

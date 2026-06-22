@@ -20,7 +20,7 @@ import ToggleOffIcon from '@mui/icons-material/ToggleOff'
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
-import { PageHeader, DataTable, ConfirmDialog, FormDialog, type Column } from '@/components/common'
+import { PageHeader, DataTable, ConfirmDialog, FormDialog, NoCondominioGuard, type Column } from '@/components/common'
 import { usuariosApi } from '@/api/usuarios.api'
 import { useCondominios } from '@/hooks/useCondominios'
 import { useNotificationStore } from '@/store/notificationStore'
@@ -177,6 +177,7 @@ export default function UsuariosPage() {
 
   return (
     <Box>
+      <NoCondominioGuard />
       <PageHeader
         title="Usuários"
         subtitle={`${data?.totalElements ?? 0} usuário(s) cadastrado(s)`}

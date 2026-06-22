@@ -49,7 +49,7 @@ class CondominioControllerTest {
     // ── findAll ───────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_returnsListWith200() throws Exception {
         when(condominioService.filterBy(any(CondominioFilterDTO.class))).thenReturn(List.of(
                 dto(1L, "Cond A", "11.111.111/0001-11"),
@@ -63,7 +63,7 @@ class CondominioControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_withNomeFilter_delegatesToFilterBy() throws Exception {
         when(condominioService.filterBy(any(CondominioFilterDTO.class)))
                 .thenReturn(List.of(dto(1L, "Cond A", "11.111.111/0001-11")));
@@ -76,7 +76,7 @@ class CondominioControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_withCnpjFilter_delegatesToFilterBy() throws Exception {
         when(condominioService.filterBy(any(CondominioFilterDTO.class)))
                 .thenReturn(List.of(dto(1L, "Cond A", "11.111.111/0001-11")));
@@ -89,7 +89,7 @@ class CondominioControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_withBothFilters_delegatesToFilterBy() throws Exception {
         when(condominioService.filterBy(any(CondominioFilterDTO.class)))
                 .thenReturn(List.of(dto(1L, "Cond A", "11.111.111/0001-11")));
@@ -110,7 +110,7 @@ class CondominioControllerTest {
     // ── findById ──────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenFound_returns200() throws Exception {
         when(condominioService.findById(1L)).thenReturn(Optional.of(dto(1L, "Cond A", "11.111.111/0001-11")));
 
@@ -121,7 +121,7 @@ class CondominioControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenNotFound_returns404() throws Exception {
         when(condominioService.findById(99L)).thenReturn(Optional.empty());
 

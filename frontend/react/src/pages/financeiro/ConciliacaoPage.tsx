@@ -10,7 +10,7 @@ import {
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { PageHeader, DataTable, type Column } from '@/components/common'
+import { PageHeader, DataTable, NoCondominioGuard, type Column } from '@/components/common'
 import { conciliacaoApi } from '@/api/financeiro/conciliacao.api'
 import { contasBancariasApi } from '@/api/financeiro/bancos.api'
 import { formatCurrency, formatDate } from '@/utils/formatters'
@@ -102,6 +102,7 @@ export default function ConciliacaoPage() {
 
   return (
     <Box>
+      <NoCondominioGuard />
       <PageHeader
         title="Conciliação Bancária"
         subtitle="Visualize os lançamentos bancários e seu status de conciliação."

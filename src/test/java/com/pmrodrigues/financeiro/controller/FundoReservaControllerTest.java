@@ -61,7 +61,7 @@ class FundoReservaControllerTest {
     // ── get ───────────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void get_returns200() throws Exception {
         when(service.get()).thenReturn(fundoDto());
 
@@ -244,7 +244,7 @@ class FundoReservaControllerTest {
     // ── listMovimentacoes ─────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void listMovimentacoes_returns200() throws Exception {
         when(service.listMovimentacoes(any())).thenReturn(
                 new PageImpl<>(List.of(movDto(TipoMovimentacao.CREDITO)), PageRequest.of(0, 20), 1));

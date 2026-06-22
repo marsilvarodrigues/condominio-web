@@ -59,6 +59,7 @@ public class PessoaController {
    */
   @GetMapping
   @Timed(value = "pessoa.controller.filterBy", description = "Filter pessoas")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO','PROPRIETARIO')")
   public ResponseEntity<ApiResponse<Page<PessoaDTO>>> filterBy(
       @ModelAttribute PessoaFilterDTO filter,
       @PageableDefault(size = 20) Pageable pageable,
@@ -79,6 +80,7 @@ public class PessoaController {
    */
   @GetMapping("/{id}")
   @Timed(value = "pessoa.controller.findById", description = "Find pessoa by id")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO','PROPRIETARIO')")
   public ResponseEntity<ApiResponse<PessoaDTO>> findById(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("GET /pessoas/{} - finding pessoa by id", id);
@@ -96,7 +98,7 @@ public class PessoaController {
    */
   @PostMapping
   @Timed(value = "pessoa.controller.create", description = "Create pessoa")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<PessoaDTO>> create(
       @RequestBody @Valid CreatePessoaDTO dto, HttpServletRequest request) {
     log.info("POST /pessoas - creating pessoa: nome={}", dto.nome());
@@ -116,7 +118,7 @@ public class PessoaController {
    */
   @PutMapping("/{id}")
   @Timed(value = "pessoa.controller.update", description = "Update pessoa")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<PessoaDTO>> update(
       @PathVariable Long id, @RequestBody @Valid UpdatePessoaDTO dto, HttpServletRequest request) {
     log.info("PUT /pessoas/{} - updating pessoa", id);
@@ -133,7 +135,7 @@ public class PessoaController {
    */
   @DeleteMapping("/{id}")
   @Timed(value = "pessoa.controller.delete", description = "Delete pessoa")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     log.info("DELETE /pessoas/{} - deleting pessoa", id);
     pessoaService.delete(id);
@@ -153,7 +155,7 @@ public class PessoaController {
   @Timed(
       value = "pessoa.controller.assignToApartamento",
       description = "Assign pessoa to apartamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<PessoaDTO>> assignToApartamento(
       @PathVariable Long id, @RequestParam Long apartamentoId, HttpServletRequest request) {
     log.info("POST /pessoas/{}/apartamento - assigning to apartamento {}", id, apartamentoId);
@@ -173,7 +175,7 @@ public class PessoaController {
   @Timed(
       value = "pessoa.controller.removeFromApartamento",
       description = "Remove pessoa from apartamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<PessoaDTO>> removeFromApartamento(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("DELETE /pessoas/{}/apartamento - removing from apartamento", id);

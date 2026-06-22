@@ -21,7 +21,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { PageHeader, DataTable, ConfirmDialog, FormDialog, type Column } from '@/components/common'
+import { PageHeader, DataTable, ConfirmDialog, FormDialog, NoCondominioGuard, type Column } from '@/components/common'
 import { contasBancariasApi, bancosApi } from '@/api/financeiro/bancos.api'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { TIPO_CONTA_LABELS } from '@/utils/constants'
@@ -158,6 +158,7 @@ export default function ContasBancariasPage() {
 
   return (
     <Box>
+      <NoCondominioGuard />
       <PageHeader
         title="Contas Bancárias"
         subtitle="Gerencie as contas bancárias do condomínio."

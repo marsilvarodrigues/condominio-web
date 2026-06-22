@@ -49,6 +49,7 @@ public class BancoController {
    */
   @GetMapping
   @Timed(value = "banco.controller.findAll", description = "Find all bancos")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<List<BancoDTO>>> findAll(
       @ModelAttribute BancoFilterDTO filter, HttpServletRequest request) {
     log.info("GET /bancos - filter={}", filter);
@@ -65,6 +66,7 @@ public class BancoController {
    */
   @GetMapping("/{id}")
   @Timed(value = "banco.controller.findById", description = "Find banco by id")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<BancoDTO>> findById(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("GET /bancos/{} - finding banco by id", id);
@@ -81,7 +83,7 @@ public class BancoController {
    */
   @PostMapping
   @Timed(value = "banco.controller.create", description = "Create banco")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<BancoDTO>> create(
       @Valid @RequestBody CreateBancoDTO dto, HttpServletRequest request) {
     log.info("POST /bancos - creating banco: {}", dto.codigo());
@@ -100,7 +102,7 @@ public class BancoController {
    */
   @PutMapping("/{id}")
   @Timed(value = "banco.controller.update", description = "Update banco")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<BancoDTO>> update(
       @PathVariable Long id, @Valid @RequestBody UpdateBancoDTO dto, HttpServletRequest request) {
     log.info("PUT /bancos/{} - updating banco", id);
@@ -117,7 +119,7 @@ public class BancoController {
    */
   @DeleteMapping("/{id}")
   @Timed(value = "banco.controller.delete", description = "Delete banco")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<Void> delete(@PathVariable Long id, HttpServletRequest request) {
     log.info("DELETE /bancos/{} - deleting banco", id);
     bancoService.delete(id);

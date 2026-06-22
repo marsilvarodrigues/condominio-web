@@ -50,7 +50,7 @@ public class RateioController {
    */
   @PostMapping("/simular")
   @Timed(value = "rateio.controller.simular", description = "Simulate rateio")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<SimularRateioResponse>> simular(
       @Valid @RequestBody SimularRateioRequest body, HttpServletRequest request) {
     log.info(
@@ -68,7 +68,7 @@ public class RateioController {
    */
   @PostMapping("/despesa/{despesaId}")
   @Timed(value = "rateio.controller.ratearDespesa", description = "Rate a single despesa")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<RateioExecucaoDTO>> ratearDespesa(
       @PathVariable Long despesaId, HttpServletRequest request) {
     log.info("POST /rateio/despesa/{}", despesaId);
@@ -86,7 +86,7 @@ public class RateioController {
    */
   @PostMapping("/recalcular")
   @Timed(value = "rateio.controller.recalcular", description = "Force full rateio recalculation")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<RateioLoteResultado>> recalcular(
       @Valid @RequestBody RecalcularRateioRequest body, HttpServletRequest request) {
     Long condominioId = TenantContext.getCondominioId();
@@ -104,6 +104,7 @@ public class RateioController {
    */
   @GetMapping("/execucoes")
   @Timed(value = "rateio.controller.execucoes", description = "List rateio executions")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<Page<RateioExecucaoDTO>>> execucoes(
       @ModelAttribute RateioExecucaoFilterDTO filter,
       Pageable pageable,

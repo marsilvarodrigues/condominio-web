@@ -16,7 +16,7 @@ import {
 import CalculateIcon from '@mui/icons-material/Calculate'
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { PageHeader } from '@/components/common'
+import { PageHeader, NoCondominioGuard } from '@/components/common'
 import { rateioApi } from '@/api/financeiro/rateio.api'
 import { useGruposDespesa } from '@/hooks/useRateio'
 import { formatCurrency } from '@/utils/formatters'
@@ -39,6 +39,7 @@ export default function SimulacaoRateioPage() {
 
   return (
     <Box>
+      <NoCondominioGuard />
       <PageHeader
         title="Simulação de Rateio"
         subtitle="Visualize como as despesas serão distribuídas antes de efetivar."

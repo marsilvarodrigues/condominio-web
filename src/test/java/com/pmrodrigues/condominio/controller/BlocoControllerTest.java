@@ -48,7 +48,7 @@ class BlocoControllerTest {
     // ── findAll ───────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_returnsListWith200() throws Exception {
         when(blocoService.filterBy(any(BlocoFilterDTO.class)))
                 .thenReturn(List.of(blocoDto(1L, 1, "A"), blocoDto(2L, 2, "B")));
@@ -60,7 +60,7 @@ class BlocoControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_withBlocoFilter_delegatesToFilterBy() throws Exception {
         when(blocoService.filterBy(any(BlocoFilterDTO.class)))
                 .thenReturn(List.of(blocoDto(1L, 1, "A")));
@@ -73,7 +73,7 @@ class BlocoControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_withNoFilter_delegatesToFilterByWithNull() throws Exception {
         when(blocoService.filterBy(any(BlocoFilterDTO.class))).thenReturn(List.of());
 
@@ -91,7 +91,7 @@ class BlocoControllerTest {
     // ── findById ──────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenFound_returns200() throws Exception {
         when(blocoService.findById(1L)).thenReturn(Optional.of(blocoDto(1L, 1, "A")));
 
@@ -102,7 +102,7 @@ class BlocoControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenNotFound_returns404() throws Exception {
         when(blocoService.findById(99L)).thenReturn(Optional.empty());
 

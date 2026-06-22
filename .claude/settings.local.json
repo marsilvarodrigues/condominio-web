@@ -133,7 +133,10 @@
       "Bash(awk -F'\"' '{sum+=$1} END {print \"total tests:\", sum}')",
       "Bash(echo \"Exit code of last mvn verify: $?\")",
       "Bash(psql -h localhost -U postgres -d condominio -f /c/Users/marsi/IdeaProjects/condominio-web/scripts/seed-data.sql)",
-      "PowerShell($env:PGPASSWORD = \"postgres\"; & \"C:\\\\Program Files\\\\PostgreSQL\\\\17\\\\bin\\\\psql.exe\" -h localhost -U postgres -d condominio -f \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\scripts\\\\seed-data.sql\" 2>&1 | Select-Object -Last 40)"
+      "PowerShell($env:PGPASSWORD = \"postgres\"; & \"C:\\\\Program Files\\\\PostgreSQL\\\\17\\\\bin\\\\psql.exe\" -h localhost -U postgres -d condominio -f \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\scripts\\\\seed-data.sql\" 2>&1 | Select-Object -Last 40)",
+      "Bash(gh repo *)",
+      "PowerShell(gh repo view anthropics/skills --json name,description,url 2>&1)",
+      "Bash(echo \"EXIT_CODE=$?\")"
     ]
   }
 }

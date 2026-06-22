@@ -17,7 +17,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { PageHeader, DataTable, FormDialog, type Column } from '@/components/common'
+import { PageHeader, DataTable, FormDialog, NoCondominioGuard, type Column } from '@/components/common'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import type { MovimentacaoFundoDTO, CreateMovimentacaoFundoDTO } from '@/types'
 import { TIPO_MOVIMENTACAO_LABELS } from '@/utils/constants'
@@ -110,6 +110,7 @@ export default function FundoReservaPage() {
 
   return (
     <Box>
+      <NoCondominioGuard />
       <PageHeader
         title="Fundo de Reserva"
         subtitle="Controle entradas, saídas e rendimentos do fundo."

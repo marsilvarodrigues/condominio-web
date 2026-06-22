@@ -42,6 +42,7 @@ public class FundoReservaController {
   /** Returns the reserve fund for the current condominium. */
   @GetMapping
   @Timed(value = "fundo.controller.get", description = "Get fundo de reserva")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO','PROPRIETARIO')")
   public ResponseEntity<ApiResponse<FundoReservaDTO>> get(HttpServletRequest request) {
     log.info("GET /fundo-reserva");
     return ResponseEntity.ok(ApiResponse.of(requestId(request), service.get()));
@@ -50,7 +51,7 @@ public class FundoReservaController {
   /** Creates the reserve fund; requires ADMIN role. */
   @PostMapping
   @Timed(value = "fundo.controller.create", description = "Create fundo de reserva")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<FundoReservaDTO>> create(
       @RequestBody @Valid CreateFundoReservaDTO dto, HttpServletRequest request) {
     log.info("POST /fundo-reserva");
@@ -62,7 +63,7 @@ public class FundoReservaController {
   /** Updates the reserve fund percentual and bank account; requires ADMIN role. */
   @PutMapping
   @Timed(value = "fundo.controller.update", description = "Update fundo de reserva")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<FundoReservaDTO>> update(
       @RequestBody @Valid UpdateFundoReservaDTO dto, HttpServletRequest request) {
     log.info("PUT /fundo-reserva");
@@ -72,7 +73,7 @@ public class FundoReservaController {
   /** Credits an amount to the fund; requires ADMIN role. */
   @PostMapping("/creditar")
   @Timed(value = "fundo.controller.creditar", description = "Creditar fundo de reserva")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<FundoReservaMovimentacaoDTO>> creditar(
       @RequestBody @Valid CreditarFundoDTO dto, HttpServletRequest request) {
     log.info("POST /fundo-reserva/creditar - valor={}", dto.valor());
@@ -83,7 +84,7 @@ public class FundoReservaController {
   /** Debits an amount from the fund; requires ADMIN role. */
   @PostMapping("/debitar")
   @Timed(value = "fundo.controller.debitar", description = "Debitar fundo de reserva")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<FundoReservaMovimentacaoDTO>> debitar(
       @RequestBody @Valid DebitarFundoDTO dto, HttpServletRequest request) {
     log.info("POST /fundo-reserva/debitar - valor={}", dto.valor());
@@ -94,6 +95,7 @@ public class FundoReservaController {
   /** Returns paginated movement history for the fund. */
   @GetMapping("/movimentacoes")
   @Timed(value = "fundo.controller.movimentacoes", description = "List movimentacoes")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO','PROPRIETARIO')")
   public ResponseEntity<ApiResponse<Page<FundoReservaMovimentacaoDTO>>> listMovimentacoes(
       @PageableDefault(size = 20) Pageable pageable, HttpServletRequest request) {
     log.info("GET /fundo-reserva/movimentacoes");

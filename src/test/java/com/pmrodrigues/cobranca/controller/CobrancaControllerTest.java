@@ -118,7 +118,7 @@ class CobrancaControllerTest {
     // ── resumo ────────────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void resumo_returns200() throws Exception {
         when(cobrancaService.resumo()).thenReturn(resumoCobrancasDTO());
 
@@ -136,7 +136,7 @@ class CobrancaControllerTest {
     // ── filterBy ──────────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void filterBy_returns200() throws Exception {
         var page = new PageImpl<>(List.of(cobrancaDTO()), PageRequest.of(0, 20), 1);
         when(cobrancaService.filterBy(any(), any())).thenReturn(page);
@@ -149,7 +149,7 @@ class CobrancaControllerTest {
     // ── findById ──────────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_returns200() throws Exception {
         when(cobrancaService.findById(1L)).thenReturn(cobrancaDTO());
 
@@ -159,7 +159,7 @@ class CobrancaControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_notFound_returns404() throws Exception {
         when(cobrancaService.findById(99L))
                 .thenThrow(new ResponseStatusException(NOT_FOUND, "Cobranca not found: 99"));
@@ -234,7 +234,7 @@ class CobrancaControllerTest {
     // ── porApartamento ────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void porApartamento_returns200() throws Exception {
         var page = new PageImpl<>(List.of(resumoDTO()), PageRequest.of(0, 20), 1);
         when(cobrancaService.porApartamento(any(), any())).thenReturn(page);

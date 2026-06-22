@@ -6,7 +6,7 @@ import { ROLES } from '@/utils/constants'
 
 function setRoles(roles: string[]) {
   useAuthStore.setState({
-    user: { email: 'test@test.com', roles, condominioIds: [] },
+    user: { id: 1, email: 'test@test.com', roles, condominioIds: [] },
     accessToken: 'token',
     refreshToken: 'refresh',
     activeCondominioId: null,

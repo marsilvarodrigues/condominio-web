@@ -21,6 +21,8 @@ import {
   type Column,
 } from '@/components/common'
 import { useCondominios, useCondominioMutations } from '@/hooks/useCondominios'
+import { useAuthStore } from '@/store/authStore'
+import { ROLES } from '@/utils/constants'
 import type { CondominioDTO, CreateCondominioDTO, EstadoDTO, CreateEnderecoDTO } from '@/types'
 import { formatCnpj } from '@/utils/formatters'
 
@@ -43,6 +45,8 @@ type FormValues = z.infer<typeof schema>
 export default function CondominiosPage() {
   const { data: condominios = [], isLoading } = useCondominios()
   const { create, update, remove } = useCondominioMutations()
+  const hasRole = useAuthStore((s) => s.hasRole)
+  const canDelete = hasRole(ROLES.ADMIN)
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<CondominioDTO | null>(null)
@@ -119,11 +123,13 @@ export default function CondominiosPage() {
               <EditIcon fontSize="small" />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Excluir">
-            <IconButton size="small" color="error" onClick={(e) => { e.stopPropagation(); setDeleteTarget(r) }}>
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
+          {canDelete && (
+            <Tooltip title="Excluir">
+              <IconButton size="small" color="error" onClick={(e) => { e.stopPropagation(); setDeleteTarget(r) }}>
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
         </Box>
       ),
     },

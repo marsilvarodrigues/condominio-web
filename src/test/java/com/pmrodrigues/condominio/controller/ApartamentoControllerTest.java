@@ -49,7 +49,7 @@ class ApartamentoControllerTest {
     // ── findAll ───────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_returnsListWith200() throws Exception {
         when(apartamentoService.filterBy(any(ApartamentoFilterDTO.class)))
                 .thenReturn(List.of(aptDto(1L, "101"), aptDto(2L, "102")));
@@ -61,7 +61,7 @@ class ApartamentoControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_withBlocoIdFilter_delegatesToFilterBy() throws Exception {
         when(apartamentoService.filterBy(any(ApartamentoFilterDTO.class)))
                 .thenReturn(List.of(aptDto(1L, "101")));
@@ -74,7 +74,7 @@ class ApartamentoControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_withNumeroFilter_delegatesToFilterBy() throws Exception {
         when(apartamentoService.filterBy(any(ApartamentoFilterDTO.class)))
                 .thenReturn(List.of(aptDto(1L, "101"), aptDto(2L, "102")));
@@ -86,7 +86,7 @@ class ApartamentoControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_withBothFilters_delegatesToFilterBy() throws Exception {
         when(apartamentoService.filterBy(any(ApartamentoFilterDTO.class)))
                 .thenReturn(List.of(aptDto(1L, "101")));
@@ -106,7 +106,7 @@ class ApartamentoControllerTest {
     // ── findById ──────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenFound_returns200() throws Exception {
         when(apartamentoService.findById(1L)).thenReturn(Optional.of(aptDto(1L, "101")));
 
@@ -117,7 +117,7 @@ class ApartamentoControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenNotFound_returns404() throws Exception {
         when(apartamentoService.findById(99L)).thenReturn(Optional.empty());
 

@@ -26,6 +26,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -68,7 +70,7 @@ public class CobrancaController {
   @Timed(
       value = "cobranca.controller.gerar",
       description = "Generate charges for a rateio execution")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<List<CobrancaDTO>>> gerar(
       @RequestBody @Valid GerarCobrancasDTO dto, HttpServletRequest request) {
     log.info("POST /cobrancas/gerar execucaoId={}", dto.execucaoId());
@@ -84,6 +86,7 @@ public class CobrancaController {
    */
   @GetMapping("/resumo")
   @Timed(value = "cobranca.controller.resumo", description = "Aggregate pending/overdue charges")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ResumoCobrancasDTO>> resumo(
       HttpServletRequest request) {
     log.info("GET /cobrancas/resumo");
@@ -100,6 +103,7 @@ public class CobrancaController {
    */
   @GetMapping
   @Timed(value = "cobranca.controller.filterBy", description = "List charges with filters")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<Page<CobrancaDTO>>> filterBy(
       @ModelAttribute CobrancaFilterDTO filter,
       @PageableDefault(size = 20) Pageable pageable,
@@ -118,6 +122,7 @@ public class CobrancaController {
    */
   @GetMapping("/{id}")
   @Timed(value = "cobranca.controller.findById", description = "Get charge by ID")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<CobrancaDTO>> findById(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("GET /cobrancas/{}", id);
@@ -134,7 +139,7 @@ public class CobrancaController {
    */
   @PostMapping("/{id}/cancelar")
   @Timed(value = "cobranca.controller.cancelar", description = "Cancel a charge")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<CobrancaDTO>> cancelar(
       @PathVariable Long id,
       @RequestBody @Valid CancelarCobrancaDTO dto,
@@ -152,7 +157,7 @@ public class CobrancaController {
    */
   @PostMapping("/{id}/reenviar-email")
   @Timed(value = "cobranca.controller.reenviarEmail", description = "Resend billing email")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<Void> reenviarEmail(@PathVariable Long id, HttpServletRequest request) {
     log.info("POST /cobrancas/{}/reenviar-email", id);
     cobrancaService.reenviarEmail(id);
@@ -169,12 +174,15 @@ public class CobrancaController {
    */
   @GetMapping("/apartamentos/{apartamentoId}/cobrancas")
   @Timed(value = "cobranca.controller.porApartamento", description = "List charges by apartment")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO','MORADOR','PROPRIETARIO')")
   public ResponseEntity<ApiResponse<Page<CobrancaResumoDTO>>> porApartamento(
       @PathVariable Long apartamentoId,
       @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
           Pageable pageable,
+      @AuthenticationPrincipal Jwt jwt,
       HttpServletRequest request) {
     log.info("GET /cobrancas/apartamentos/{}/cobrancas", apartamentoId);
+    cobrancaService.validarAcessoAoApartamento(apartamentoId, jwt);
     return ResponseEntity.ok(
         ApiResponse.of(
             requestId(request), cobrancaService.porApartamento(apartamentoId, pageable)));

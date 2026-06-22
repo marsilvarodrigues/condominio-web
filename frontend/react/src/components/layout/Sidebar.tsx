@@ -35,66 +35,65 @@ interface NavItem {
   label: string
   icon: React.ReactNode
   path?: string
-  adminOnly?: boolean
-  roles?: string[]
+  roles: string[]
   children?: NavItem[]
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard', icon: <DashboardIcon />, path: '/' },
+const ALL_ROLES = [ROLES.ADMIN, ROLES.SINDICO, ROLES.PROPRIETARIO, ROLES.MORADOR, ROLES.USER]
+const ADMIN_SINDICO = [ROLES.ADMIN, ROLES.SINDICO]
+const HIERARQUIA_ROLES = [ROLES.ADMIN, ROLES.SINDICO, ROLES.PROPRIETARIO, ROLES.MORADOR]
 
-  // ── Admin e Síndico ──────────────────────────────────────────────────────
-  { label: 'Condomínios',  icon: <LocationCityIcon />, path: '/condominios',  adminOnly: true },
-  { label: 'Hierarquia',   icon: <ApartmentIcon />,    path: '/hierarquia' },
-  { label: 'Usuários',     icon: <PeopleIcon />,        path: '/usuarios',    adminOnly: true },
+const NAV_ITEMS: NavItem[] = [
+  { label: 'Dashboard', icon: <DashboardIcon />, path: '/', roles: ALL_ROLES },
+
+  { label: 'Condomínios', icon: <LocationCityIcon />, path: '/condominios',  roles: ADMIN_SINDICO },
+  { label: 'Hierarquia',  icon: <ApartmentIcon />,    path: '/hierarquia',   roles: HIERARQUIA_ROLES },
+  { label: 'Usuários',    icon: <PeopleIcon />,        path: '/usuarios',     roles: [ROLES.ADMIN] },
+
   {
     label: 'Financeiro',
     icon: <AccountBalanceWalletIcon />,
+    roles: ADMIN_SINDICO,
     children: [
-      { label: 'Plano de Contas',  icon: <AccountBalanceWalletIcon />, path: '/financeiro/plano-contas' },
-      { label: 'Orçamento Anual',  icon: <AccountBalanceWalletIcon />, path: '/financeiro/orcamento' },
-      { label: 'Fundo de Reserva', icon: <AccountBalanceWalletIcon />, path: '/financeiro/fundo-reserva' },
+      { label: 'Plano de Contas',  icon: <AccountBalanceWalletIcon />, path: '/financeiro/plano-contas',  roles: ADMIN_SINDICO },
+      { label: 'Orçamento Anual',  icon: <AccountBalanceWalletIcon />, path: '/financeiro/orcamento',     roles: ADMIN_SINDICO },
+      { label: 'Fundo de Reserva', icon: <AccountBalanceWalletIcon />, path: '/financeiro/fundo-reserva', roles: ADMIN_SINDICO },
     ],
   },
   {
     label: 'Bancos',
     icon: <AccountBalanceIcon />,
+    roles: ADMIN_SINDICO,
     children: [
-      { label: 'Bancos',           icon: <AccountBalanceIcon />, path: '/financeiro/bancos' },
-      { label: 'Contas Bancárias', icon: <AccountBalanceIcon />, path: '/financeiro/contas' },
-      { label: 'Conciliação',      icon: <AccountBalanceIcon />, path: '/financeiro/conciliacao' },
+      { label: 'Bancos',           icon: <AccountBalanceIcon />, path: '/financeiro/bancos',      roles: ADMIN_SINDICO },
+      { label: 'Contas Bancárias', icon: <AccountBalanceIcon />, path: '/financeiro/contas',       roles: ADMIN_SINDICO },
+      { label: 'Conciliação',      icon: <AccountBalanceIcon />, path: '/financeiro/conciliacao',  roles: ADMIN_SINDICO },
     ],
   },
-  { label: 'Cobranças', icon: <CreditCardIcon />, path: '/cobrancas', adminOnly: true },
+  { label: 'Cobranças', icon: <CreditCardIcon />, path: '/cobrancas', roles: ADMIN_SINDICO },
   {
     label: 'Relatórios',
     icon: <AssignmentIcon />,
+    roles: ADMIN_SINDICO,
     children: [
-      {
-        label: 'Prestação de Contas',
-        icon: <AssignmentIcon />,
-        path: '/relatorio/prestacao-contas',
-        roles: [ROLES.ADMIN, ROLES.SINDICO],
-      },
+      { label: 'Prestação de Contas', icon: <AssignmentIcon />, path: '/relatorio/prestacao-contas', roles: ADMIN_SINDICO },
     ],
   },
   {
     label: 'Rateio',
     icon: <CalculateIcon />,
+    roles: ADMIN_SINDICO,
     children: [
-      { label: 'Grupos de Despesa', icon: <CalculateIcon />, path: '/rateio/grupos' },
-      { label: 'Coeficientes',      icon: <CalculateIcon />, path: '/rateio/coeficientes' },
-      { label: 'Simulação',         icon: <CalculateIcon />, path: '/rateio/simulacao' },
-      { label: 'Execuções',         icon: <CalculateIcon />, path: '/rateio/execucoes' },
+      { label: 'Grupos de Despesa', icon: <CalculateIcon />, path: '/rateio/grupos',       roles: ADMIN_SINDICO },
+      { label: 'Coeficientes',      icon: <CalculateIcon />, path: '/rateio/coeficientes', roles: ADMIN_SINDICO },
+      { label: 'Simulação',         icon: <CalculateIcon />, path: '/rateio/simulacao',    roles: ADMIN_SINDICO },
+      { label: 'Execuções',         icon: <CalculateIcon />, path: '/rateio/execucoes',    roles: ADMIN_SINDICO },
     ],
   },
 
-  // ── Morador ──────────────────────────────────────────────────────────────
-  { label: 'Comunicados', icon: <NotificationsIcon />, path: '/comunicados', roles: [ROLES.MORADOR] },
-  { label: 'Reservas',    icon: <EventIcon />,          path: '/reservas',    roles: [ROLES.MORADOR] },
-
-  // ── Proprietário ─────────────────────────────────────────────────────────
-  { label: 'Meus Imóveis', icon: <BusinessIcon />, path: '/proprietario/meus-imoveis', roles: [ROLES.PROPRIETARIO] },
+  { label: 'Comunicados', icon: <NotificationsIcon />, path: '/comunicados',                 roles: [ROLES.MORADOR] },
+  { label: 'Reservas',    icon: <EventIcon />,          path: '/reservas',                    roles: [ROLES.MORADOR] },
+  { label: 'Meus Imóveis', icon: <BusinessIcon />,      path: '/proprietario/meus-imoveis',  roles: [ROLES.PROPRIETARIO] },
 ]
 
 interface Props {
@@ -105,7 +104,6 @@ interface Props {
 export function Sidebar({ mobileOpen, onMobileClose }: Props) {
   const location = useLocation()
   const navigate = useNavigate()
-  const isAdmin = useAuthStore((s) => s.hasRole(ROLES.ADMIN))
   const hasRole = useAuthStore((s) => s.hasRole)
   const [expanded, setExpanded] = useState<string | null>(null)
 
@@ -116,11 +114,12 @@ export function Sidebar({ mobileOpen, onMobileClose }: Props) {
     path ? location.pathname === path || location.pathname.startsWith(path + '/') : false
 
   const renderItem = (item: NavItem, depth = 0) => {
-    if (item.adminOnly && !isAdmin) return null
-    if (item.roles && !item.roles.some((r) => hasRole(r)) && !isAdmin) return null
+    if (!item.roles.some((r) => hasRole(r))) return null
 
     if (item.children) {
-      const anyChildActive = item.children.some((c) => isActive(c.path))
+      const visibleChildren = item.children.filter((c) => c.roles.some((r) => hasRole(r)))
+      if (visibleChildren.length === 0) return null
+      const anyChildActive = visibleChildren.some((c) => isActive(c.path))
       return (
         <Box key={item.label}>
           <ListItemButton
@@ -139,7 +138,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: Props) {
           </ListItemButton>
           <Collapse in={expanded === item.label || anyChildActive} unmountOnExit>
             <List disablePadding>
-              {item.children.map((child) => renderItem(child, depth + 1))}
+              {visibleChildren.map((child) => renderItem(child, depth + 1))}
             </List>
           </Collapse>
         </Box>

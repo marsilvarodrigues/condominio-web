@@ -49,6 +49,7 @@ public class ContaBancariaController {
    */
   @GetMapping
   @Timed(value = "conta.bancaria.controller.findAll", description = "Find all contas bancarias")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<Page<ContaBancariaDTO>>> findAll(
       @ModelAttribute ContaBancariaFilterDTO filter,
       Pageable pageable,
@@ -67,6 +68,7 @@ public class ContaBancariaController {
    */
   @GetMapping("/{id}")
   @Timed(value = "conta.bancaria.controller.findById", description = "Find conta bancaria by id")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ContaBancariaDTO>> findById(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("GET /contas-bancarias/{} - finding conta bancaria by id", id);
@@ -83,7 +85,7 @@ public class ContaBancariaController {
    */
   @PostMapping
   @Timed(value = "conta.bancaria.controller.create", description = "Create conta bancaria")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ContaBancariaDTO>> create(
       @Valid @RequestBody CreateContaBancariaDTO dto, HttpServletRequest request) {
     log.info("POST /contas-bancarias - creating conta: tipo={}", dto.tipo());
@@ -102,7 +104,7 @@ public class ContaBancariaController {
    */
   @PutMapping("/{id}")
   @Timed(value = "conta.bancaria.controller.update", description = "Update conta bancaria")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ContaBancariaDTO>> update(
       @PathVariable Long id,
       @Valid @RequestBody UpdateContaBancariaDTO dto,
@@ -121,7 +123,7 @@ public class ContaBancariaController {
    */
   @PatchMapping("/{id}/ativar")
   @Timed(value = "conta.bancaria.controller.ativar", description = "Activate conta bancaria")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ContaBancariaDTO>> ativar(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("PATCH /contas-bancarias/{}/ativar", id);
@@ -137,7 +139,7 @@ public class ContaBancariaController {
    */
   @PatchMapping("/{id}/desativar")
   @Timed(value = "conta.bancaria.controller.desativar", description = "Deactivate conta bancaria")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ContaBancariaDTO>> desativar(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("PATCH /contas-bancarias/{}/desativar", id);
@@ -153,7 +155,7 @@ public class ContaBancariaController {
    */
   @DeleteMapping("/{id}")
   @Timed(value = "conta.bancaria.controller.delete", description = "Delete conta bancaria")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<Void> delete(@PathVariable Long id, HttpServletRequest request) {
     log.info("DELETE /contas-bancarias/{} - deleting conta bancaria", id);
     contaBancariaService.delete(id);

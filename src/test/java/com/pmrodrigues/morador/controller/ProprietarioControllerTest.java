@@ -61,7 +61,7 @@ class ProprietarioControllerTest {
     // ── filterBy ──────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void filterBy_returns200() throws Exception {
         Page<ProprietarioDTO> page = new PageImpl<>(List.of(proprietarioDTO()));
         when(proprietarioService.filterBy(any(ProprietarioFilterDTO.class), any(Pageable.class))).thenReturn(page);
@@ -74,7 +74,7 @@ class ProprietarioControllerTest {
     // ── findById ──────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_returns200() throws Exception {
         when(proprietarioService.findById(1L)).thenReturn(proprietarioDTO());
 
@@ -84,7 +84,7 @@ class ProprietarioControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_notFound_returns404() throws Exception {
         when(proprietarioService.findById(99L))
                 .thenThrow(new ResponseStatusException(NOT_FOUND, "Not found"));
@@ -199,7 +199,7 @@ class ProprietarioControllerTest {
     // ── findByApartamento ─────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findByApartamento_returns200() throws Exception {
         when(proprietarioService.findByApartamento(1L)).thenReturn(List.of(proprietarioDTO()));
 

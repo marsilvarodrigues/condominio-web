@@ -46,6 +46,7 @@ public class OrcamentoAnualController {
   /** Returns all budgets matching the given filter. */
   @GetMapping
   @Timed(value = "orcamento.controller.findAll", description = "Find all orcamentos")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO','PROPRIETARIO')")
   public ResponseEntity<ApiResponse<List<OrcamentoAnualDTO>>> findAll(
       @ModelAttribute OrcamentoAnualFilterDTO filter, HttpServletRequest request) {
     log.info("GET /orcamentos - filter={}", filter);
@@ -55,6 +56,7 @@ public class OrcamentoAnualController {
   /** Returns a single budget by its identifier including items. */
   @GetMapping("/{id}")
   @Timed(value = "orcamento.controller.findById", description = "Find orcamento by id")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO','PROPRIETARIO')")
   public ResponseEntity<ApiResponse<OrcamentoAnualDTO>> findById(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("GET /orcamentos/{}", id);
@@ -68,7 +70,7 @@ public class OrcamentoAnualController {
   /** Creates a new budget in RASCUNHO state; requires ADMIN role. */
   @PostMapping
   @Timed(value = "orcamento.controller.create", description = "Create orcamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<OrcamentoAnualDTO>> create(
       @RequestBody @Valid CreateOrcamentoAnualDTO dto, HttpServletRequest request) {
     log.info("POST /orcamentos - exercicio={}", dto.exercicio());
@@ -80,7 +82,7 @@ public class OrcamentoAnualController {
   /** Updates a RASCUNHO budget; requires ADMIN role. */
   @PutMapping("/{id}")
   @Timed(value = "orcamento.controller.update", description = "Update orcamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<OrcamentoAnualDTO>> update(
       @PathVariable Long id,
       @RequestBody @Valid CreateOrcamentoAnualDTO dto,
@@ -92,7 +94,7 @@ public class OrcamentoAnualController {
   /** Approves a RASCUNHO budget and computes the estimated monthly fee; requires ADMIN role. */
   @PatchMapping("/{id}/aprovar")
   @Timed(value = "orcamento.controller.aprovar", description = "Aprovar orcamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<OrcamentoAnualDTO>> aprovar(
       @PathVariable Long id,
       @RequestBody @Valid AprovarOrcamentoDTO dto,
@@ -104,7 +106,7 @@ public class OrcamentoAnualController {
   /** Closes an APROVADO budget; requires ADMIN role. */
   @PatchMapping("/{id}/encerrar")
   @Timed(value = "orcamento.controller.encerrar", description = "Encerrar orcamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<OrcamentoAnualDTO>> encerrar(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("PATCH /orcamentos/{}/encerrar", id);
@@ -114,7 +116,7 @@ public class OrcamentoAnualController {
   /** Soft-deletes a RASCUNHO budget and its items; requires ADMIN role. */
   @DeleteMapping("/{id}")
   @Timed(value = "orcamento.controller.delete", description = "Delete orcamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     log.info("DELETE /orcamentos/{}", id);
     service.delete(id);
@@ -124,7 +126,7 @@ public class OrcamentoAnualController {
   /** Adds a line item to a RASCUNHO budget; requires ADMIN role. */
   @PostMapping("/{id}/itens")
   @Timed(value = "orcamento.controller.addItem", description = "Add item to orcamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ItemOrcamentoDTO>> addItem(
       @PathVariable Long id,
       @RequestBody @Valid CreateItemOrcamentoDTO dto,
@@ -137,7 +139,7 @@ public class OrcamentoAnualController {
   /** Updates a line item's predicted value in a RASCUNHO budget; requires ADMIN role. */
   @PutMapping("/{id}/itens/{itemId}")
   @Timed(value = "orcamento.controller.updateItem", description = "Update orcamento item")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ItemOrcamentoDTO>> updateItem(
       @PathVariable Long id,
       @PathVariable Long itemId,
@@ -151,7 +153,7 @@ public class OrcamentoAnualController {
   /** Soft-deletes a line item from a RASCUNHO budget; requires ADMIN role. */
   @DeleteMapping("/{id}/itens/{itemId}")
   @Timed(value = "orcamento.controller.deleteItem", description = "Delete orcamento item")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<Void> deleteItem(@PathVariable Long id, @PathVariable Long itemId) {
     log.info("DELETE /orcamentos/{}/itens/{}", id, itemId);
     service.deleteItem(id, itemId);

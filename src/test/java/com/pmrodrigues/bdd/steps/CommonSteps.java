@@ -44,6 +44,11 @@ public class CommonSteps {
         fazerLogin(DatabaseSetupHooks.ADMIN_EMAIL, DatabaseSetupHooks.ADMIN_PASSWORD);
     }
 
+    @Given("estou autenticado como síndico")
+    public void autenticarComoSindico() throws Exception {
+        fazerLogin(DatabaseSetupHooks.SINDICO_EMAIL, DatabaseSetupHooks.SINDICO_PASSWORD);
+    }
+
     @Given("estou autenticado como usuário regular")
     public void autenticarComoUsuarioRegular() throws Exception {
         fazerLogin(DatabaseSetupHooks.USER_EMAIL, DatabaseSetupHooks.USER_PASSWORD);

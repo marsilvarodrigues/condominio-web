@@ -48,6 +48,7 @@ public class ApartamentoController {
    */
   @GetMapping
   @Timed(value = "apartamento.controller.findAll", description = "Find all apartamentos")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO','PROPRIETARIO','MORADOR')")
   public ResponseEntity<ApiResponse<List<ApartamentoDTO>>> findAll(
       @ModelAttribute ApartamentoFilterDTO filter, HttpServletRequest request) {
     log.info("GET /apartamentos - filter={}", filter);
@@ -66,6 +67,7 @@ public class ApartamentoController {
    */
   @GetMapping("/{id}")
   @Timed(value = "apartamento.controller.findById", description = "Find apartamento by id")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO','PROPRIETARIO','MORADOR')")
   public ResponseEntity<ApiResponse<ApartamentoDTO>> findById(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("GET /apartamentos/{} - finding apartamento by id", id);
@@ -87,7 +89,7 @@ public class ApartamentoController {
    */
   @PostMapping
   @Timed(value = "apartamento.controller.create", description = "Create apartamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ApartamentoDTO>> create(
       @RequestBody @Valid CreateApartamentoDTO dto, HttpServletRequest request) {
     log.info(
@@ -110,7 +112,7 @@ public class ApartamentoController {
    */
   @PutMapping("/{id}")
   @Timed(value = "apartamento.controller.update", description = "Update apartamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ApartamentoDTO>> update(
       @PathVariable Long id, @RequestBody @Valid ApartamentoDTO dto, HttpServletRequest request) {
     log.info("PUT /apartamentos/{} - updating apartamento", id);
@@ -139,7 +141,7 @@ public class ApartamentoController {
    */
   @DeleteMapping("/{id}")
   @Timed(value = "apartamento.controller.delete", description = "Delete apartamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     log.info("DELETE /apartamentos/{} - deleting apartamento", id);
     apartamentoService.delete(id);

@@ -62,7 +62,7 @@ class OrcamentoAnualControllerTest {
     // ── findAll ───────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_returns200() throws Exception {
         when(service.filterBy(any())).thenReturn(List.of(orcamentoDto(1L, StatusOrcamento.RASCUNHO)));
 
@@ -81,7 +81,7 @@ class OrcamentoAnualControllerTest {
     // ── findById ──────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenFound_returns200() throws Exception {
         when(service.findById(1L)).thenReturn(Optional.of(orcamentoDto(1L, StatusOrcamento.RASCUNHO)));
 
@@ -91,7 +91,7 @@ class OrcamentoAnualControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenNotFound_returns404() throws Exception {
         when(service.findById(99L)).thenReturn(Optional.empty());
 

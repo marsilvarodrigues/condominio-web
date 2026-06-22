@@ -34,6 +34,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.server.ResponseStatusException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -367,6 +370,45 @@ public class CobrancaService {
               log.info("Charge marked as PAID: cobrancaId={}", cobranca.getId());
             },
             () -> log.warn("No charge found for asaasId={}", payload.payment().id()));
+  }
+
+  /**
+   * Validates that the caller is allowed to view charges for the given apartment.
+   *
+   * <p>ADMIN and SINDICO may see any apartment. MORADOR is restricted to the apartment stored in
+   * the {@code apartamento_id} JWT claim. PROPRIETARIO is restricted to the ids listed in
+   * {@code apartamentos_ids_proprietario}.
+   *
+   * @param apartamentoId the apartment being requested
+   * @param jwt the authenticated principal's token
+   * @throws ResponseStatusException 403 if the caller has no access to the apartment
+   */
+  @Timed(value = "cobranca.service.validarAcessoAoApartamento")
+  public void validarAcessoAoApartamento(Long apartamentoId, Jwt jwt) {
+    List<String> roles = jwt.getClaimAsStringList("roles");
+    if (roles == null) roles = List.of();
+    if (roles.contains("ROLE_ADMIN") || roles.contains("ROLE_SINDICO")) {
+      return;
+    }
+    if (roles.contains("ROLE_MORADOR")) {
+      Number aptIdClaim = jwt.getClaim("apartamento_id");
+      if (aptIdClaim == null || !aptIdClaim.equals(apartamentoId)) {
+        log.warn("MORADOR tentou acessar apartamentoId={} sem permissão", apartamentoId);
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acesso negado ao apartamento");
+      }
+      return;
+    }
+    if (roles.contains("ROLE_PROPRIETARIO")) {
+      List<Number> ids = jwt.getClaim("apartamentos_ids_proprietario");
+      boolean autorizado = ids != null && ids.stream()
+          .anyMatch(n -> n.longValue() == apartamentoId);
+      if (!autorizado) {
+        log.warn("PROPRIETARIO tentou acessar apartamentoId={} sem permissão", apartamentoId);
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acesso negado ao apartamento");
+      }
+      return;
+    }
+    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acesso negado ao apartamento");
   }
 
   // ── Private helpers ────────────────────────────────────────────────────────

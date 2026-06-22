@@ -50,6 +50,7 @@ public class LancamentoBancarioController {
   @Timed(
       value = "lancamento.bancario.controller.findAll",
       description = "Find all lancamentos bancarios")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<Page<LancamentoBancarioDTO>>> findAll(
       @ModelAttribute LancamentoBancarioFilterDTO filter,
       Pageable pageable,
@@ -70,6 +71,7 @@ public class LancamentoBancarioController {
   @Timed(
       value = "lancamento.bancario.controller.findById",
       description = "Find lancamento bancario by id")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<LancamentoBancarioDTO>> findById(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("GET /lancamentos-bancarios/{} - finding lancamento by id", id);
@@ -88,7 +90,7 @@ public class LancamentoBancarioController {
   @Timed(
       value = "lancamento.bancario.controller.create",
       description = "Create lancamento bancario")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<LancamentoBancarioDTO>> create(
       @Valid @RequestBody CreateLancamentoBancarioDTO dto, HttpServletRequest request) {
     log.info("POST /lancamentos-bancarios - creating lancamento: tipo={}", dto.tipo());
@@ -109,7 +111,7 @@ public class LancamentoBancarioController {
   @Timed(
       value = "lancamento.bancario.controller.update",
       description = "Update lancamento bancario")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<LancamentoBancarioDTO>> update(
       @PathVariable Long id,
       @Valid @RequestBody UpdateLancamentoBancarioDTO dto,
@@ -130,7 +132,7 @@ public class LancamentoBancarioController {
   @Timed(
       value = "lancamento.bancario.controller.delete",
       description = "Delete lancamento bancario")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<Void> delete(@PathVariable Long id, HttpServletRequest request) {
     log.info("DELETE /lancamentos-bancarios/{} - deleting lancamento", id);
     lancamentoBancarioService.delete(id);

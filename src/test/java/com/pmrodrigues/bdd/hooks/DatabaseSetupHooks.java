@@ -62,6 +62,8 @@ public class DatabaseSetupHooks {
     public static final String MASTER_PASSWORD = "Master@123";
     public static final String ADMIN_EMAIL     = "admin@bdd.com";
     public static final String ADMIN_PASSWORD  = "Admin@123";
+    public static final String SINDICO_EMAIL   = "sindico@bdd.com";
+    public static final String SINDICO_PASSWORD = "Sindico@123";
     public static final String USER_EMAIL      = "user@bdd.com";
     public static final String USER_PASSWORD   = "User@123";
 
@@ -89,6 +91,7 @@ public class DatabaseSetupHooks {
 
             criarUsuarioMasterViaSql();
             criarAdminCondominio(condominio.getId());
+            criarSindico(condominio.getId());
             criarUsuarioRegular(condominio.getId());
 
             var bloco = blocoRepository.save(
@@ -223,6 +226,19 @@ public class DatabaseSetupHooks {
         jdbc.update(
             "INSERT INTO user_condominios (user_id, condominio_id) SELECT id, ? FROM users WHERE email = ?",
             condominioId, ADMIN_EMAIL);
+    }
+
+    private void criarSindico(Long condominioId) {
+        String hash = passwordEncoder.encode(SINDICO_PASSWORD);
+        jdbc.update(
+            "INSERT INTO users (email, password, name, enabled, deleted) VALUES (?,?,?,?,?)",
+            SINDICO_EMAIL, hash, "Sindico BDD", true, false);
+        jdbc.update(
+            "INSERT INTO user_roles (user_id, role) SELECT id, 'ROLE_SINDICO' FROM users WHERE email = ?",
+            SINDICO_EMAIL);
+        jdbc.update(
+            "INSERT INTO user_condominios (user_id, condominio_id) SELECT id, ? FROM users WHERE email = ?",
+            condominioId, SINDICO_EMAIL);
     }
 
     private void criarUsuarioRegular(Long condominioId) {

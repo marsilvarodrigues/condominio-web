@@ -42,6 +42,7 @@ public class PlanoContasController {
   /** Returns all PlanoContas nodes matching the given filter criteria. */
   @GetMapping
   @Timed(value = "planocontas.controller.findAll", description = "Find all plano de contas")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<List<PlanoContasDTO>>> findAll(
       @ModelAttribute PlanoContasFilterDTO filter, HttpServletRequest request) {
     log.info("GET /plano-contas - filter={}", filter);
@@ -51,6 +52,7 @@ public class PlanoContasController {
   /** Returns the full chart-of-accounts tree from root nodes. */
   @GetMapping("/arvore")
   @Timed(value = "planocontas.controller.arvore", description = "Get plano de contas tree")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<List<PlanoContasNodeDTO>>> getArvore(
       HttpServletRequest request) {
     log.info("GET /plano-contas/arvore");
@@ -60,6 +62,7 @@ public class PlanoContasController {
   /** Returns a single PlanoContas node by its identifier. */
   @GetMapping("/{id}")
   @Timed(value = "planocontas.controller.findById", description = "Find plano de contas by id")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<PlanoContasDTO>> findById(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("GET /plano-contas/{}", id);
@@ -75,7 +78,7 @@ public class PlanoContasController {
   /** Creates a new PlanoContas node; requires ADMIN role. */
   @PostMapping
   @Timed(value = "planocontas.controller.create", description = "Create plano de contas")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<PlanoContasDTO>> create(
       @RequestBody @Valid CreatePlanoContasDTO dto, HttpServletRequest request) {
     log.info("POST /plano-contas - codigo={}", dto.codigo());
@@ -87,7 +90,7 @@ public class PlanoContasController {
   /** Updates an existing PlanoContas node; requires ADMIN role. */
   @PutMapping("/{id}")
   @Timed(value = "planocontas.controller.update", description = "Update plano de contas")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<PlanoContasDTO>> update(
       @PathVariable Long id, @RequestBody @Valid PlanoContasDTO dto, HttpServletRequest request) {
     log.info("PUT /plano-contas/{}", id);
@@ -109,7 +112,7 @@ public class PlanoContasController {
   /** Soft-deletes a PlanoContas node; requires ADMIN role. */
   @DeleteMapping("/{id}")
   @Timed(value = "planocontas.controller.delete", description = "Delete plano de contas")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     log.info("DELETE /plano-contas/{}", id);
     service.delete(id);

@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { PageHeader, DataTable, ConfirmDialog, FormDialog, StatusChip, type Column } from '@/components/common'
+import { PageHeader, DataTable, ConfirmDialog, FormDialog, StatusChip, NoCondominioGuard, type Column } from '@/components/common'
 import { useGruposDespesa, useGruposDespesaMutations } from '@/hooks/useRateio'
 import type { GrupoDespesaDTO, CreateGrupoDespesaDTO } from '@/types'
 import { TIPO_RATEIO_LABELS, ESCOPO_RATEIO_LABELS } from '@/utils/constants'
@@ -82,6 +82,7 @@ export default function GruposDespesaPage() {
 
   return (
     <Box>
+      <NoCondominioGuard />
       <PageHeader
         title="Grupos de Despesa"
         subtitle="Defina grupos e estratégias de rateio para as despesas condominiais."

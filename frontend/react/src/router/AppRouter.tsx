@@ -26,6 +26,9 @@ const PlaceholderPage = lazy(() => import('@/pages/dashboard/PlaceholderPage'))
 const CobrancasPage = lazy(() => import('@/pages/cobrancas/CobrancasPage'))
 const PrestacaoContasPage = lazy(() => import('@/pages/relatorio/PrestacaoContasPage'))
 
+const ADMIN_SINDICO = [ROLES.ADMIN, ROLES.SINDICO]
+const HIERARQUIA_ROLES = [ROLES.ADMIN, ROLES.SINDICO, ROLES.PROPRIETARIO, ROLES.MORADOR]
+
 function Loader() {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
@@ -53,13 +56,27 @@ export function AppRouter() {
             <Route
               path="condominios"
               element={
-                <ProtectedRoute requiredRole={ROLES.ADMIN}>
+                <ProtectedRoute requiredRoles={ADMIN_SINDICO}>
                   <CondominiosPage />
                 </ProtectedRoute>
               }
             />
-            <Route path="hierarquia" element={<HierarquiaPage />} />
-            <Route path="hierarquia/apartamentos/:id" element={<ApartamentoDetailPage />} />
+            <Route
+              path="hierarquia"
+              element={
+                <ProtectedRoute requiredRoles={HIERARQUIA_ROLES}>
+                  <HierarquiaPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="hierarquia/apartamentos/:id"
+              element={
+                <ProtectedRoute requiredRoles={HIERARQUIA_ROLES}>
+                  <ApartamentoDetailPage />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="usuarios"
               element={
@@ -69,27 +86,105 @@ export function AppRouter() {
               }
             />
             <Route path="alterar-senha" element={<ChangePasswordPage />} />
-            <Route path="financeiro/plano-contas" element={<PlanoContasPage />} />
-            <Route path="financeiro/orcamento" element={<OrcamentoAnualPage />} />
-            <Route path="financeiro/fundo-reserva" element={<FundoReservaPage />} />
-            <Route path="financeiro/bancos" element={<BancosPage />} />
-            <Route path="financeiro/contas" element={<ContasBancariasPage />} />
-            <Route path="financeiro/conciliacao" element={<ConciliacaoPage />} />
 
-            <Route path="rateio/grupos" element={<GruposDespesaPage />} />
-            <Route path="rateio/coeficientes" element={<CoeficientesPage />} />
-            <Route path="rateio/simulacao" element={<SimulacaoRateioPage />} />
-            <Route path="rateio/execucoes" element={<ExecucoesRateioPage />} />
+            <Route
+              path="financeiro/plano-contas"
+              element={
+                <ProtectedRoute requiredRoles={ADMIN_SINDICO}>
+                  <PlanoContasPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="financeiro/orcamento"
+              element={
+                <ProtectedRoute requiredRoles={ADMIN_SINDICO}>
+                  <OrcamentoAnualPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="financeiro/fundo-reserva"
+              element={
+                <ProtectedRoute requiredRoles={ADMIN_SINDICO}>
+                  <FundoReservaPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="financeiro/bancos"
+              element={
+                <ProtectedRoute requiredRoles={ADMIN_SINDICO}>
+                  <BancosPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="financeiro/contas"
+              element={
+                <ProtectedRoute requiredRoles={ADMIN_SINDICO}>
+                  <ContasBancariasPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="financeiro/conciliacao"
+              element={
+                <ProtectedRoute requiredRoles={ADMIN_SINDICO}>
+                  <ConciliacaoPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="rateio/grupos"
+              element={
+                <ProtectedRoute requiredRoles={ADMIN_SINDICO}>
+                  <GruposDespesaPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="rateio/coeficientes"
+              element={
+                <ProtectedRoute requiredRoles={ADMIN_SINDICO}>
+                  <CoeficientesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="rateio/simulacao"
+              element={
+                <ProtectedRoute requiredRoles={ADMIN_SINDICO}>
+                  <SimulacaoRateioPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="rateio/execucoes"
+              element={
+                <ProtectedRoute requiredRoles={ADMIN_SINDICO}>
+                  <ExecucoesRateioPage />
+                </ProtectedRoute>
+              }
+            />
 
             <Route
               path="cobrancas"
               element={
-                <ProtectedRoute requiredRole={ROLES.ADMIN}>
+                <ProtectedRoute requiredRoles={ADMIN_SINDICO}>
                   <CobrancasPage />
                 </ProtectedRoute>
               }
             />
-            <Route path="relatorio/prestacao-contas" element={<PrestacaoContasPage />} />
+            <Route
+              path="relatorio/prestacao-contas"
+              element={
+                <ProtectedRoute requiredRoles={ADMIN_SINDICO}>
+                  <PrestacaoContasPage />
+                </ProtectedRoute>
+              }
+            />
             <Route path="comunicados" element={<PlaceholderPage titulo="Comunicados" />} />
             <Route path="reservas" element={<PlaceholderPage titulo="Reservas de Áreas Comuns" />} />
             <Route path="proprietario/meus-imoveis" element={<PlaceholderPage titulo="Meus Imóveis" />} />

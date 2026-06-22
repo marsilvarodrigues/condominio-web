@@ -15,7 +15,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { PageHeader, DataTable, ConfirmDialog, FormDialog, type Column } from '@/components/common'
+import { PageHeader, DataTable, ConfirmDialog, FormDialog, NoCondominioGuard, type Column } from '@/components/common'
 import { usePessoas, usePessoaMutations } from '@/hooks/useMoradores'
 import type { PessoaDTO, CreatePessoaDTO, UpdatePessoaDTO, TipoPessoa } from '@/types'
 
@@ -162,6 +162,7 @@ export default function PessoasPage() {
 
   return (
     <Box>
+      <NoCondominioGuard />
       <PageHeader
         title="Moradores"
         subtitle={`${pessoas.length} morador${pessoas.length !== 1 ? 'es' : ''} encontrado${pessoas.length !== 1 ? 's' : ''}`}

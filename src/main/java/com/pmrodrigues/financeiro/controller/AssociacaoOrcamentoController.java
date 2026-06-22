@@ -52,7 +52,7 @@ public class AssociacaoOrcamentoController {
   @Timed(
       value = "associacao.orcamento.controller.associar",
       description = "Associate ItemExtrato to ItemOrcamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ItemExtratoComOrcamentoResponse>> associar(
       @PathVariable Long itemExtratoId,
       @Valid @RequestBody AssociarItemOrcamentoRequest request,
@@ -78,7 +78,7 @@ public class AssociacaoOrcamentoController {
   @Timed(
       value = "associacao.orcamento.controller.desassociar",
       description = "Disassociate ItemExtrato from ItemOrcamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ItemExtratoComOrcamentoResponse>> desassociar(
       @PathVariable Long itemExtratoId,
       @Valid @RequestBody DesassociarItemOrcamentoRequest request,
@@ -103,6 +103,7 @@ public class AssociacaoOrcamentoController {
   @Timed(
       value = "associacao.orcamento.controller.sugestoes",
       description = "Suggest ItemOrcamento for ItemExtrato")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<List<SugestaoItemOrcamentoResponse>>> sugestoes(
       @PathVariable Long itemExtratoId, HttpServletRequest httpRequest) {
     log.info("GET /conciliacao/associacao/sugestoes/{} - buscando sugestões", itemExtratoId);
@@ -125,6 +126,7 @@ public class AssociacaoOrcamentoController {
   @Timed(
       value = "associacao.orcamento.controller.contribuicao",
       description = "Calculate contribution for ItemOrcamento")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ContribuicaoResponse>> contribuicao(
       @PathVariable Long itemOrcamentoId, HttpServletRequest httpRequest) {
     log.info(

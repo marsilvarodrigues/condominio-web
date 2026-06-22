@@ -48,6 +48,7 @@ public class CondominioController {
    */
   @GetMapping
   @Timed(value = "condominio.controller.findAll", description = "Find all condominios")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<List<CondominioDTO>>> findAll(
       @ModelAttribute CondominioFilterDTO filter, HttpServletRequest request) {
     log.info("GET /condominios - filter={}", filter);
@@ -66,6 +67,7 @@ public class CondominioController {
    */
   @GetMapping("/{id}")
   @Timed(value = "condominio.controller.findById", description = "Find condominio by id")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<CondominioDTO>> findById(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("GET /condominios/{} - finding condominio by id", id);
@@ -88,7 +90,7 @@ public class CondominioController {
    */
   @PostMapping
   @Timed(value = "condominio.controller.create", description = "Create condominio")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<CondominioDTO>> create(
       @RequestBody @Valid CreateCondominioDTO dto, HttpServletRequest request) {
     log.info("POST /condominios - creating condominio with cnpj: {}", dto.cnpj());
@@ -108,7 +110,7 @@ public class CondominioController {
    */
   @PutMapping("/{id}")
   @Timed(value = "condominio.controller.update", description = "Update condominio")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<CondominioDTO>> update(
       @PathVariable Long id, @RequestBody @Valid CondominioDTO dto, HttpServletRequest request) {
     log.info("PUT /condominios/{} - updating condominio", id);

@@ -176,7 +176,7 @@ class AssociacaoOrcamentoControllerTest {
     // ── GET /conciliacao/associacao/sugestoes/{id} ────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void sugestoes_returns200WithList() throws Exception {
         var sugestao = new SugestaoItemOrcamentoResponse(
                 10L, "1.1", "Taxa condominial", BigDecimal.valueOf(500), BigDecimal.ZERO,
@@ -192,7 +192,7 @@ class AssociacaoOrcamentoControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void sugestoes_whenExtratoNotFound_returns404() throws Exception {
         when(associacaoService.sugerirItemOrcamento(99L))
                 .thenThrow(new ResponseStatusException(NOT_FOUND, "ItemExtrato not found: 99"));
@@ -212,7 +212,7 @@ class AssociacaoOrcamentoControllerTest {
     // ── GET /conciliacao/associacao/contribuicao/{id} ─────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void contribuicao_returns200WithData() throws Exception {
         var response = new ContribuicaoResponse(
                 10L, BigDecimal.valueOf(1000), BigDecimal.valueOf(500),
@@ -228,7 +228,7 @@ class AssociacaoOrcamentoControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void contribuicao_whenOrcamentoNotFound_returns404() throws Exception {
         when(associacaoService.calcularContribuicao(99L))
                 .thenThrow(new ResponseStatusException(NOT_FOUND, "ItemOrcamento not found: 99"));

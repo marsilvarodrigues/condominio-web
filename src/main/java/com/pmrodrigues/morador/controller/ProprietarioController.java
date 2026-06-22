@@ -83,6 +83,7 @@ public class ProprietarioController {
    */
   @GetMapping("/proprietarios")
   @Timed(value = "proprietario.controller.filterBy", description = "Filter proprietarios")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<Page<ProprietarioDTO>>> filterBy(
       @ModelAttribute ProprietarioFilterDTO filter,
       @PageableDefault(size = 20) Pageable pageable,
@@ -103,6 +104,7 @@ public class ProprietarioController {
    */
   @GetMapping("/proprietarios/{id}")
   @Timed(value = "proprietario.controller.findById", description = "Find proprietario by id")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ProprietarioDTO>> findById(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("GET /proprietarios/{} - finding proprietario", id);
@@ -120,7 +122,7 @@ public class ProprietarioController {
    */
   @PostMapping("/proprietarios")
   @Timed(value = "proprietario.controller.create", description = "Create proprietario")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ProprietarioDTO>> create(
       @RequestBody @Valid CreateProprietarioDTO dto, HttpServletRequest request) {
     log.info(
@@ -143,7 +145,7 @@ public class ProprietarioController {
    */
   @PutMapping("/proprietarios/{id}")
   @Timed(value = "proprietario.controller.update", description = "Update proprietario")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ProprietarioDTO>> update(
       @PathVariable Long id, @RequestBody UpdateProprietarioDTO dto, HttpServletRequest request) {
     log.info("PUT /proprietarios/{} - updating proprietario", id);
@@ -164,7 +166,7 @@ public class ProprietarioController {
   @Timed(
       value = "proprietario.controller.associarApartamento",
       description = "Associate proprietario with apartamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ProprietarioDTO>> associarApartamento(
       @PathVariable Long id, @RequestParam Long apartamentoId, HttpServletRequest request) {
     log.info(
@@ -186,7 +188,7 @@ public class ProprietarioController {
   @Timed(
       value = "proprietario.controller.desassociarApartamento",
       description = "Dissociate proprietario from apartamento")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<ProprietarioDTO>> desassociarApartamento(
       @PathVariable Long id, @PathVariable Long aptId, HttpServletRequest request) {
     log.info("DELETE /proprietarios/{}/apartamentos/{} - dissociating", id, aptId);
@@ -203,7 +205,7 @@ public class ProprietarioController {
    */
   @DeleteMapping("/proprietarios/{id}")
   @Timed(value = "proprietario.controller.delete", description = "Delete proprietario")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     log.info("DELETE /proprietarios/{} - deleting", id);
     proprietarioService.delete(id);
@@ -222,6 +224,7 @@ public class ProprietarioController {
   @Timed(
       value = "proprietario.controller.findByApartamento",
       description = "List proprietarios for apartamento")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<List<ProprietarioDTO>>> findByApartamento(
       @PathVariable Long aptId, HttpServletRequest request) {
     log.info("GET /apartamentos/{}/proprietarios", aptId);

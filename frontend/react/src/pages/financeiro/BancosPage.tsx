@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { PageHeader, DataTable, ConfirmDialog, FormDialog, type Column } from '@/components/common'
+import { PageHeader, DataTable, ConfirmDialog, FormDialog, NoCondominioGuard, type Column } from '@/components/common'
 import { bancosApi } from '@/api/financeiro/bancos.api'
 import type { BancoDTO, CreateBancoDTO } from '@/types'
 
@@ -62,6 +62,7 @@ export default function BancosPage() {
 
   return (
     <Box>
+      <NoCondominioGuard />
       <PageHeader
         title="Bancos"
         subtitle="Cadastre os bancos utilizados pelo condomínio."

@@ -22,14 +22,18 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
-import { PageHeader, DataTable, ConfirmDialog, FormDialog, type Column } from '@/components/common'
+import { PageHeader, DataTable, ConfirmDialog, FormDialog, NoCondominioGuard, type Column } from '@/components/common'
 import { blocosApi } from '@/api/blocos.api'
 import { apartamentosApi } from '@/api/apartamentos.api'
+import { useAuthStore } from '@/store/authStore'
+import { ROLES } from '@/utils/constants'
 import type { BlocoDTO, ApartamentoDTO, CreateBlocoDTO, CreateApartamentoDTO } from '@/types'
 
 export default function HierarquiaPage() {
   const qc = useQueryClient()
   const navigate = useNavigate()
+  const hasRole = useAuthStore((s) => s.hasRole)
+  const canWrite = hasRole(ROLES.ADMIN) || hasRole(ROLES.SINDICO)
   const [selectedBloco, setSelectedBloco] = useState<BlocoDTO | null>(null)
   const [blocoDialogOpen, setBlocoDialogOpen] = useState(false)
   const [aptDialogOpen, setAptDialogOpen] = useState(false)
@@ -99,9 +103,11 @@ export default function HierarquiaPage() {
               <OpenInNewIcon fontSize="small" />
             </IconButton>
           </Tooltip>
-          <IconButton size="small" color="error" onClick={() => setDeleteApt(r)}>
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+          {canWrite && (
+            <IconButton size="small" color="error" onClick={() => setDeleteApt(r)}>
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          )}
         </Box>
       ),
     },
@@ -109,6 +115,7 @@ export default function HierarquiaPage() {
 
   return (
     <Box>
+      <NoCondominioGuard />
       <PageHeader
         title="Hierarquia — Blocos e Apartamentos"
         subtitle="Selecione um bloco para gerenciar seus apartamentos."
@@ -120,9 +127,11 @@ export default function HierarquiaPage() {
           <Paper sx={{ p: 2 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="subtitle2">Blocos</Typography>
-              <Button size="small" startIcon={<AddIcon />} onClick={() => setBlocoDialogOpen(true)}>
-                Novo
-              </Button>
+              {canWrite && (
+                <Button size="small" startIcon={<AddIcon />} onClick={() => setBlocoDialogOpen(true)}>
+                  Novo
+                </Button>
+              )}
             </Box>
 
             {loadingBlocos ? (
@@ -147,15 +156,17 @@ export default function HierarquiaPage() {
                       primaryTypographyProps={{ fontSize: 14 }}
                       secondaryTypographyProps={{ fontSize: 12 }}
                     />
-                    <Tooltip title="Excluir">
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={(e) => { e.stopPropagation(); setDeleteBloco(bloco) }}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
+                    {canWrite && (
+                      <Tooltip title="Excluir">
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={(e) => { e.stopPropagation(); setDeleteBloco(bloco) }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </ListItemButton>
                 ))}
               </List>
@@ -171,9 +182,11 @@ export default function HierarquiaPage() {
                 <Typography variant="h6">
                   Bloco {selectedBloco.bloco} — Apartamentos
                 </Typography>
-                <Button variant="contained" startIcon={<AddIcon />} onClick={() => setAptDialogOpen(true)}>
-                  Novo Apartamento
-                </Button>
+                {canWrite && (
+                  <Button variant="contained" startIcon={<AddIcon />} onClick={() => setAptDialogOpen(true)}>
+                    Novo Apartamento
+                  </Button>
+                )}
               </Box>
               <DataTable
                 columns={aptColumns}

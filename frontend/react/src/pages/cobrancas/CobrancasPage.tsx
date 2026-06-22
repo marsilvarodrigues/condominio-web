@@ -20,7 +20,7 @@ import LinkIcon from '@mui/icons-material/Link'
 import CancelIcon from '@mui/icons-material/Cancel'
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { PageHeader, DataTable, type Column } from '@/components/common'
+import { PageHeader, DataTable, NoCondominioGuard, type Column } from '@/components/common'
 import { StatusChipCobranca } from '@/pages/dashboard/components/StatusChipCobranca'
 import { useCobrancas, useCancelarCobranca } from '@/hooks/useCobrancas'
 import { cobrancasApi } from '@/api/cobrancas.api'
@@ -181,6 +181,7 @@ export default function CobrancasPage() {
 
   return (
     <Box>
+      <NoCondominioGuard />
       <PageHeader
         title="Cobranças"
         subtitle="Financeiro / Cobranças"

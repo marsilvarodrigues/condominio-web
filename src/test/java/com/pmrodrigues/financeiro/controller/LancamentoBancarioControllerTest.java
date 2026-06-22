@@ -64,7 +64,7 @@ class LancamentoBancarioControllerTest {
     // ── findAll ───────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_returns200WithPage() throws Exception {
         var page = new PageImpl<>(List.of(lancamentoDto(1L)), PageRequest.of(0, 10), 1);
         when(service.filterBy(any(), any())).thenReturn(page);
@@ -84,7 +84,7 @@ class LancamentoBancarioControllerTest {
     // ── findById ──────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenFound_returns200() throws Exception {
         when(service.findById(1L)).thenReturn(lancamentoDto(1L));
 
@@ -95,7 +95,7 @@ class LancamentoBancarioControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenNotFound_returns404() throws Exception {
         when(service.findById(99L))
                 .thenThrow(new ResponseStatusException(NOT_FOUND, "LancamentoBancario not found: 99"));

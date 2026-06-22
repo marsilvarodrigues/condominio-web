@@ -12,7 +12,7 @@ import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useState } from 'react'
-import { PageHeader, DataTable, ConfirmDialog, FormDialog, type Column } from '@/components/common'
+import { PageHeader, DataTable, ConfirmDialog, FormDialog, NoCondominioGuard, type Column } from '@/components/common'
 import {
   useGruposDespesa,
   useCoeficientesGrupo,
@@ -97,6 +97,7 @@ export default function CoeficientesPage() {
 
   return (
     <Box>
+      <NoCondominioGuard />
       <PageHeader
         title="Coeficientes de Rateio"
         subtitle="Defina os pesos de cada unidade por grupo de despesa."

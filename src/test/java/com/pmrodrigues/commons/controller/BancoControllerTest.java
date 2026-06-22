@@ -53,7 +53,7 @@ class BancoControllerTest {
     // ── findAll ───────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_returns200WithList() throws Exception {
         when(bancoService.filterBy(any())).thenReturn(List.of(bancoDto(1L), bancoDto(2L)));
 
@@ -72,7 +72,7 @@ class BancoControllerTest {
     // ── findById ──────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenFound_returns200() throws Exception {
         when(bancoService.findById(1L)).thenReturn(bancoDto(1L));
 
@@ -83,7 +83,7 @@ class BancoControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenNotFound_returns404() throws Exception {
         when(bancoService.findById(99L))
                 .thenThrow(new ResponseStatusException(NOT_FOUND, "Banco not found: 99"));

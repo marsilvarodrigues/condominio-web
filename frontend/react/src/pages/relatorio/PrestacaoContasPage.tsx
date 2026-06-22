@@ -26,7 +26,7 @@ import { contasBancariasApi } from '@/api/financeiro/bancos.api'
 import { apiClient } from '@/api/client'
 import { StatCard } from '@/pages/dashboard/components/StatCard'
 import { SectionCard } from '@/pages/dashboard/components/SectionCard'
-import { PageHeader } from '@/components/common'
+import { PageHeader, NoCondominioGuard } from '@/components/common'
 import { formatCurrency, formatDateTime, formatPercent } from '@/utils/formatters'
 import type { OrcamentoItemDTO, ContaBancariaDTO } from '@/types'
 
@@ -83,6 +83,7 @@ export default function PrestacaoContasPage() {
 
   return (
     <Box>
+      <NoCondominioGuard />
       <PageHeader
         title="Prestação de Contas"
         subtitle={`Exercício ${ano} — gerado em ${formatDateTime(new Date().toISOString())}`}

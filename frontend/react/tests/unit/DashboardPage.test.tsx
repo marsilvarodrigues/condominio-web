@@ -9,7 +9,7 @@ import DashboardPage from '@/pages/dashboard/DashboardPage'
 
 function setUser(roles: string[]) {
   useAuthStore.setState({
-    user: { email: 'test@test.com', roles, condominioIds: [] },
+    user: { id: 1, email: 'test@test.com', roles, condominioIds: [] },
     accessToken: 'token',
     refreshToken: 'refresh',
     activeCondominioId: null,

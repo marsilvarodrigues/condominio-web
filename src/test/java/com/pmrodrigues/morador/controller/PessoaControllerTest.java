@@ -65,7 +65,7 @@ class PessoaControllerTest {
     // ── filterBy ──────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void filterBy_returns200() throws Exception {
         Page<PessoaDTO> page = new PageImpl<>(List.of(pessoaDTO()));
         when(pessoaService.filterBy(any(PessoaFilterDTO.class), any(Pageable.class))).thenReturn(page);
@@ -78,7 +78,7 @@ class PessoaControllerTest {
     // ── findById ──────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_returns200() throws Exception {
         when(pessoaService.findById(1L)).thenReturn(pessoaDTO());
 
@@ -88,7 +88,7 @@ class PessoaControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_notFound_returns404() throws Exception {
         when(pessoaService.findById(99L))
                 .thenThrow(new ResponseStatusException(NOT_FOUND, "Not found"));

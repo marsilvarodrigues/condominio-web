@@ -31,7 +31,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { differenceInDays, differenceInMonths, format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { PageHeader, DataTable, ConfirmDialog, FormDialog, type Column } from '@/components/common'
+import { PageHeader, DataTable, ConfirmDialog, FormDialog, NoCondominioGuard, type Column } from '@/components/common'
 import { apartamentosApi } from '@/api/apartamentos.api'
 import {
   useMoradoresDeApartamento,
@@ -153,8 +153,8 @@ export default function ApartamentoDetailPage() {
   const navigate = useNavigate()
   const [tab, setTab] = useState(0)
   const hasRole = useAuthStore((s) => s.hasRole)
-  const canViewHistory =
-    hasRole(ROLES.ADMIN) || hasRole(ROLES.SINDICO) || hasRole(ROLES.PROPRIETARIO)
+  const canWrite = hasRole(ROLES.ADMIN) || hasRole(ROLES.SINDICO)
+  const canViewHistory = canWrite || hasRole(ROLES.PROPRIETARIO)
 
   const [moradorDialog, setMoradorDialog] = useState<{ open: boolean; editing: PessoaDTO | null }>({
     open: false, editing: null,
@@ -251,22 +251,23 @@ export default function ApartamentoDetailPage() {
       header: '',
       width: 100,
       align: 'right',
-      render: (r) => (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
-          <Tooltip title="Reenviar e-mail">
-            <IconButton size="small" onClick={() => reenviarEmail.mutate(r.id)}>
-              <EmailIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          {r.status !== 'CANCELADA' && r.status !== 'PAGA' && (
-            <Tooltip title="Cancelar cobrança">
-              <IconButton size="small" color="error" onClick={() => setCancelTarget(r)}>
-                <CancelIcon fontSize="small" />
+      render: (r) =>
+        canWrite ? (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
+            <Tooltip title="Reenviar e-mail">
+              <IconButton size="small" onClick={() => reenviarEmail.mutate(r.id)}>
+                <EmailIcon fontSize="small" />
               </IconButton>
             </Tooltip>
-          )}
-        </Box>
-      ),
+            {r.status !== 'CANCELADA' && r.status !== 'PAGA' && (
+              <Tooltip title="Cancelar cobrança">
+                <IconButton size="small" color="error" onClick={() => setCancelTarget(r)}>
+                  <CancelIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Box>
+        ) : null,
     },
   ]
 
@@ -312,20 +313,21 @@ export default function ApartamentoDetailPage() {
       header: '',
       width: 80,
       align: 'right',
-      render: (r) => (
-        <>
-          <Tooltip title="Editar">
-            <IconButton size="small" onClick={() => openEditMorador(r)}>
-              <EditIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Excluir morador">
-            <IconButton size="small" color="error" onClick={() => setRemoveTarget(r)}>
-              <PersonRemoveIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        </>
-      ),
+      render: (r) =>
+        canWrite ? (
+          <>
+            <Tooltip title="Editar">
+              <IconButton size="small" onClick={() => openEditMorador(r)}>
+                <EditIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Excluir morador">
+              <IconButton size="small" color="error" onClick={() => setRemoveTarget(r)}>
+                <PersonRemoveIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </>
+        ) : null,
     },
   ]
 
@@ -349,29 +351,31 @@ export default function ApartamentoDetailPage() {
       header: '',
       width: 80,
       align: 'right',
-      render: (r) => (
-        <>
-          <Tooltip title="Editar">
-            <IconButton size="small" onClick={() => openEditProp(r)}>
-              <EditIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Desassociar do apartamento">
-            <IconButton
-              size="small"
-              color="warning"
-              onClick={() => setDissocTarget({ propId: r.id, nome: r.nome })}
-            >
-              <LinkOffIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        </>
-      ),
+      render: (r) =>
+        canWrite ? (
+          <>
+            <Tooltip title="Editar">
+              <IconButton size="small" onClick={() => openEditProp(r)}>
+                <EditIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Desassociar do apartamento">
+              <IconButton
+                size="small"
+                color="warning"
+                onClick={() => setDissocTarget({ propId: r.id, nome: r.nome })}
+              >
+                <LinkOffIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </>
+        ) : null,
     },
   ]
 
   return (
     <Box>
+      <NoCondominioGuard />
       <PageHeader
         title={aptLabel}
         subtitle="Moradores e proprietários do apartamento"
@@ -400,9 +404,11 @@ export default function ApartamentoDetailPage() {
             Moradores
             <Chip label={moradoresLista.length} size="small" sx={{ ml: 1 }} />
           </Typography>
-          <Button variant="contained" startIcon={<AddIcon />} onClick={openNewMorador}>
-            Novo Morador
-          </Button>
+          {canWrite && (
+            <Button variant="contained" startIcon={<AddIcon />} onClick={openNewMorador}>
+              Novo Morador
+            </Button>
+          )}
         </Box>
 
         {moradoresLista.length === 0 ? (
@@ -428,9 +434,11 @@ export default function ApartamentoDetailPage() {
             Proprietários
             <Chip label={proprietarios.length} size="small" sx={{ ml: 1 }} />
           </Typography>
-          <Button variant="contained" startIcon={<AddIcon />} onClick={openNewProp}>
-            Novo Proprietário
-          </Button>
+          {canWrite && (
+            <Button variant="contained" startIcon={<AddIcon />} onClick={openNewProp}>
+              Novo Proprietário
+            </Button>
+          )}
         </Box>
 
         {proprietarios.length === 0 ? (

@@ -59,7 +59,7 @@ class PlanoContasControllerTest {
     // ── findAll ───────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_returns200WithList() throws Exception {
         when(service.filterBy(any(PlanoContasFilterDTO.class))).thenReturn(List.of(dto(1L), dto(2L)));
 
@@ -78,7 +78,7 @@ class PlanoContasControllerTest {
     // ── findById ──────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenFound_returns200() throws Exception {
         when(service.findById(1L)).thenReturn(Optional.of(dto(1L)));
 
@@ -88,7 +88,7 @@ class PlanoContasControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenFound_includesTipoRateioAndEscopo() throws Exception {
         when(service.findById(2L)).thenReturn(Optional.of(dtoWithRateio(2L)));
 
@@ -99,7 +99,7 @@ class PlanoContasControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenNotFound_returns404() throws Exception {
         when(service.findById(99L)).thenReturn(Optional.empty());
 

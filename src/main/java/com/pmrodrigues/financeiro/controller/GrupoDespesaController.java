@@ -48,6 +48,7 @@ public class GrupoDespesaController {
    */
   @GetMapping
   @Timed(value = "grupo.despesa.controller.findAll", description = "List grupos de despesa")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<List<GrupoDespesaDTO>>> findAll(
       @ModelAttribute GrupoDespesaFilterDTO filter, HttpServletRequest request) {
     log.info("GET /grupos-despesa - filter={}", filter);
@@ -62,6 +63,7 @@ public class GrupoDespesaController {
    */
   @GetMapping("/{id}")
   @Timed(value = "grupo.despesa.controller.findById", description = "Find grupo de despesa by id")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<GrupoDespesaDTO>> findById(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("GET /grupos-despesa/{}", id);
@@ -76,7 +78,7 @@ public class GrupoDespesaController {
    */
   @PostMapping
   @Timed(value = "grupo.despesa.controller.create", description = "Create grupo de despesa")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<GrupoDespesaDTO>> create(
       @Valid @RequestBody CreateGrupoDespesaDTO dto, HttpServletRequest request) {
     log.info("POST /grupos-despesa - nome={}", dto.nome());
@@ -94,7 +96,7 @@ public class GrupoDespesaController {
    */
   @PutMapping("/{id}")
   @Timed(value = "grupo.despesa.controller.update", description = "Update grupo de despesa")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<GrupoDespesaDTO>> update(
       @PathVariable Long id, @Valid @RequestBody GrupoDespesaDTO dto, HttpServletRequest request) {
     log.info("PUT /grupos-despesa/{}", id);
@@ -109,7 +111,7 @@ public class GrupoDespesaController {
    */
   @DeleteMapping("/{id}")
   @Timed(value = "grupo.despesa.controller.delete", description = "Delete grupo de despesa")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<Void> delete(@PathVariable Long id, HttpServletRequest request) {
     log.info("DELETE /grupos-despesa/{}", id);
     service.delete(id);

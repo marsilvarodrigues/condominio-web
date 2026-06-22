@@ -49,6 +49,7 @@ public class CoeficienteRateioController {
   @Timed(
       value = "coeficiente.rateio.controller.findAll",
       description = "List coeficientes by grupo")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<List<CoeficienteRateioDTO>>> findAll(
       @PathVariable Long grupoDespesaId, HttpServletRequest request) {
     log.info("GET /grupos-despesa/{}/coeficientes", grupoDespesaId);
@@ -67,7 +68,7 @@ public class CoeficienteRateioController {
   @Timed(
       value = "coeficiente.rateio.controller.create",
       description = "Create coeficiente de rateio")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<CoeficienteRateioDTO>> create(
       @PathVariable Long grupoDespesaId,
       @Valid @RequestBody CreateCoeficienteRateioDTO dto,
@@ -92,7 +93,7 @@ public class CoeficienteRateioController {
    */
   @PutMapping("/{coefId}/consumo")
   @Timed(value = "coeficiente.rateio.controller.updateConsumo", description = "Update consumo m3")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN','SINDICO')")
   public ResponseEntity<ApiResponse<CoeficienteRateioDTO>> updateConsumo(
       @PathVariable Long grupoDespesaId,
       @PathVariable Long coefId,
