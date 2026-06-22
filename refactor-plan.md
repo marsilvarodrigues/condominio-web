@@ -18,35 +18,36 @@
 
 ## Chunk 1: `@BatchSize(size = 20)` em todas as associações lazy mapeadas em DTO
 **Why:** 8 entidades têm campos `@ManyToOne` ou coleções `@OneToMany`/`@ManyToMany` com `FetchType.LAZY` cujos valores são sistematicamente acessados pelo mapper durante a serialização de listas/páginas. Sem `@BatchSize`, cada entidade na página dispara 1 query extra por associação. Com `@BatchSize(size = 20)`, Hibernate agrupa a inicialização de proxies em batches de 20, reduzindo N queries para ceil(N/20).
+
+**Correção técnica (descoberta durante a execução):** `@BatchSize` em um campo `@ManyToOne`/`@OneToOne` (to-one) não tem efeito no Hibernate — a anotação só é respeitada em (a) coleções (`@OneToMany`/`@ManyToMany`), no próprio campo, ou (b) entidades, na classe alvo, controlando o batch de proxies daquele tipo onde quer que sejam referenciados. A versão original deste chunk colocava `@BatchSize` nos 6 campos `@ManyToOne` — o que compila mas não tem efeito algum em runtime. Os 2 campos de coleção (`Apartamento.moradores`, `OrcamentoAnual.itens`) e o `@ManyToMany` (`Proprietario.apartamentos`) estavam corretos desde o início. Os passos abaixo refletem a colocação correta.
+
 **Entry criteria:** Testes passando (baseline)
 **Steps:**
-1. Editar `src/main/java/com/pmrodrigues/cobranca/model/Cobranca.java`:
+1. Editar `src/main/java/com/pmrodrigues/condominio/model/Apartamento.java`:
    - Adicionar `import org.hibernate.annotations.BatchSize;`
-   - Adicionar `@BatchSize(size = 20)` na linha acima da anotação `@ManyToOne` do campo `apartamento`
-2. Editar `src/main/java/com/pmrodrigues/condominio/model/Apartamento.java`:
+   - Adicionar `@BatchSize(size = 20)` **na classe** `Apartamento` (não no campo `bloco`) — cobre todo proxy de `Apartamento` referenciado lazily (por `Cobranca.apartamento` e `Pessoa.apartamento`)
+   - Manter `@BatchSize(size = 20)` no campo `moradores` (OneToMany LAZY) — já correto
+2. Editar `src/main/java/com/pmrodrigues/condominio/model/Bloco.java`:
    - Adicionar `import org.hibernate.annotations.BatchSize;`
-   - Adicionar `@BatchSize(size = 20)` no campo `bloco` (ManyToOne LAZY)
-   - Adicionar `@BatchSize(size = 20)` no campo `moradores` (OneToMany LAZY) — nota: já tem `@NotAudited`
+   - Adicionar `@BatchSize(size = 20)` **na classe** `Bloco` — cobre o proxy referenciado por `Apartamento.bloco`
 3. Editar `src/main/java/com/pmrodrigues/financeiro/model/Despesa.java`:
    - Adicionar `import org.hibernate.annotations.BatchSize;`
-   - Adicionar `@BatchSize(size = 20)` no campo `grupoDespesa` (ManyToOne LAZY)
-4. Editar `src/main/java/com/pmrodrigues/financeiro/model/ItemOrcamento.java`:
+   - Adicionar `@BatchSize(size = 20)` **na classe** `Despesa` — cobre o proxy referenciado por `RateioExecucao.despesa`
+4. Editar `src/main/java/com/pmrodrigues/financeiro/model/GrupoDespesa.java`:
    - Adicionar `import org.hibernate.annotations.BatchSize;`
-   - Adicionar `@BatchSize(size = 20)` no campo `planoContas` (ManyToOne LAZY)
-5. Editar `src/main/java/com/pmrodrigues/financeiro/model/OrcamentoAnual.java`:
+   - Adicionar `@BatchSize(size = 20)` **na classe** `GrupoDespesa` — cobre o proxy referenciado por `Despesa.grupoDespesa`
+5. Editar `src/main/java/com/pmrodrigues/financeiro/model/PlanoContas.java`:
    - Adicionar `import org.hibernate.annotations.BatchSize;`
-   - Adicionar `@BatchSize(size = 20)` no campo `itens` (OneToMany LAZY) — nota: já tem `@NotAudited`
-6. Editar `src/main/java/com/pmrodrigues/morador/model/Pessoa.java`:
+   - Adicionar `@BatchSize(size = 20)` **na classe** `PlanoContas` — cobre o proxy referenciado por `ItemOrcamento.planoContas`
+6. Editar `src/main/java/com/pmrodrigues/financeiro/model/OrcamentoAnual.java`:
    - Adicionar `import org.hibernate.annotations.BatchSize;`
-   - Adicionar `@BatchSize(size = 20)` no campo `apartamento` (ManyToOne LAZY)
+   - Adicionar `@BatchSize(size = 20)` no campo `itens` (OneToMany LAZY) — nota: já tem `@NotAudited`; já correto, sem mudança nesta correção
 7. Editar `src/main/java/com/pmrodrigues/morador/model/Proprietario.java`:
    - Adicionar `import org.hibernate.annotations.BatchSize;`
-   - Adicionar `@BatchSize(size = 20)` no campo `apartamentos` (@ManyToMany — sem `fetch` explícito, default é LAZY)
-8. Editar `src/main/java/com/pmrodrigues/financeiro/model/RateioExecucao.java`:
-   - Adicionar `import org.hibernate.annotations.BatchSize;`
-   - Adicionar `@BatchSize(size = 20)` no campo `despesa` (ManyToOne LAZY)
+   - Adicionar `@BatchSize(size = 20)` no campo `apartamentos` (@ManyToMany — sem `fetch` explícito, default é LAZY); já correto, sem mudança nesta correção
+8. Remover `@BatchSize(size = 20)` (e o import correspondente) dos campos `@ManyToOne` onde não tem efeito: `Cobranca.apartamento`, `ItemOrcamento.planoContas`, `RateioExecucao.despesa`, `Pessoa.apartamento`, `Apartamento.bloco`, `Despesa.grupoDespesa` — a cobertura passa a vir da anotação na classe alvo (passos 1–5).
 **Exit criteria:** `mvn compile -q` → BUILD SUCCESS; `mvn test -q` → BUILD SUCCESS (sem regressões)
-**Commit message:** `perf: add @BatchSize(20) to all lazy associations accessed in DTO mapping`
+**Commit message:** `perf: move @BatchSize(20) from to-one fields to target entity classes`
 
 ---
 

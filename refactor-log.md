@@ -666,3 +666,71 @@ Scope: `com.pmrodrigues.condominio.service.*` public methods only.
 - [x] `HistoricoOcupacaoRepositoryTest` criado com 2 testes (ordem DESC + filtro por apartamento)
 
 ---
+
+## 2026-06-17 — Ciclo 10: Assessment + Plano criado
+
+**Pre-flight:** `mvn test` → 1144 testes passando. BUILD SUCCESS.
+
+**Assessment base:** Auditoria de N+1 queries — 10 riscos confirmados em 8 entidades, entre associações lazy mapeadas em DTO sem batch fetching, queries de repositório concretas sem JOIN FETCH, e um N+1 de nível de aplicação em `CobrancaService.filterBy`.
+
+**Findings selecionados (3 chunks):**
+1. 8 entidades com `@ManyToOne`/`@OneToMany`/`@ManyToMany` LAZY acessadas pelo mapper sem `@BatchSize`.
+2. `HistoricoOcupacaoRepository` e `CotaRateioRepository` com queries derivadas sem `JOIN FETCH`, disparando N queries extras por página.
+3. `CobrancaService.filterBy` chamando `pessoaService.findById()` por DTO da página (N queries de Pessoa por listagem).
+
+**Plano:** 3 chunks escritos em `refactor-plan.md`, manifesto inicializado em `refactor-manifest.json`.
+
+---
+
+## 2026-06-17 — Chunk 2: JOIN FETCH em HistoricoOcupacaoRepository e CotaRateioRepository
+
+**Entry state:** 1144 testes passando.
+
+**Alterações:**
+1. `HistoricoOcupacaoRepository.java` — `findByApartamento_IdAndCondominio_IdOrderByDataSaidaDesc` convertido de query derivada para `@Query` explícita com `JOIN FETCH h.pessoa` + `countQuery` separado (paginação preservada).
+2. `CotaRateioRepository.java` — `findByRateioExecucaoId` convertido para `@Query` com `JOIN FETCH c.apartamento a JOIN FETCH a.bloco` (retorno `List`, sem paginação — sem risco de Cartesian product).
+
+**Outcome:** `mvn test -q` → BUILD SUCCESS, sem regressões.
+
+---
+
+## 2026-06-17 — Chunk 3: Batch morador loading em CobrancaService.filterBy
+
+**Entry state:** Chunk 2 completo (chunks 2 e 3 são independentes entre si).
+
+**Alterações:**
+1. `PessoaService.java` — adicionado `findByIds(Set<Long> ids): Map<Long, PessoaDTO>`, carregando todos os moradores de uma página em 1 query (`pessoaRepository.findAllById`).
+2. `CobrancaService.java` — `filterBy()` refatorado para coletar os `moradorId` de todos os DTOs da página, chamar `pessoaService.findByIds()` uma única vez, e usar `enriquecerMoradorFromMap()` para popular nome/email a partir do mapa. O método antigo `enriquecerMorador(dto)` (1 query por chamada) permanece para `findById`, `cancelar` e `reenviarEmail`, onde não há lista para batchear.
+3. Testes adicionados em `PessoaServiceTest` (2) e atualizados em `CobrancaServiceTest` para verificar que `findByIds` é chamado 1x por requisição de `filterBy` (não N vezes).
+
+**Outcome:** `mvn test -Dtest=PessoaServiceTest,CobrancaServiceTest` → 37/37 passam.
+
+---
+
+## 2026-06-17 — Chunk 1: @BatchSize(20) em associações lazy mapeadas em DTO
+
+**Entry state:** Baseline passando (chunk independente dos outros 2).
+
+**Alterações (versão inicial, conforme plano original):** `@BatchSize(size = 20)` adicionado diretamente nos 6 campos `@ManyToOne` (`Cobranca.apartamento`, `Apartamento.bloco`, `Despesa.grupoDespesa`, `ItemOrcamento.planoContas`, `Pessoa.apartamento`, `RateioExecucao.despesa`) e confirmado já presente nos 2 campos de coleção (`Apartamento.moradores`, `OrcamentoAnual.itens`) e no `@ManyToMany` (`Proprietario.apartamentos`).
+
+**Outcome registrado na época:** `mvn compile -q` → BUILD SUCCESS. Chunk marcado como `completed` no manifesto, mas **sem commit e sem entrada neste log** — lacuna identificada e corrigida na sessão de 2026-06-22 (ver entrada abaixo).
+
+---
+
+## 2026-06-22 — Correção do Chunk 1: @BatchSize movido para a classe alvo nas associações to-one
+
+**Contexto:** O skill `/architectural-refactor` foi invocado para retomar o trabalho. A Fase 3 de startup (ler manifesto → plano → log → verificar estado) revelou uma inconsistência: o manifesto marcava os 3 chunks do Ciclo 10 como `completed`, mas o log não tinha nenhuma entrada para o ciclo, nenhum chunk tinha `commit_sha`, e o working tree tinha 6 dos 8 arquivos do Chunk 1 com `@BatchSize` removido dos campos `@ManyToOne` (não commitado), sem explicação registrada.
+
+**Causa raiz:** `@BatchSize` em um campo singular (`@ManyToOne`/`@OneToOne`) não é uma colocação suportada pelo Hibernate — a anotação só tem efeito (a) em coleções (`@OneToMany`/`@ManyToMany`), no próprio campo, ou (b) em entidades, na classe alvo, controlando o batch de inicialização de proxies daquele tipo onde quer que sejam referenciados lazily. O Chunk 1 original (2026-06-17) colocou `@BatchSize` nos 6 campos `@ManyToOne` — compila sem erro, mas não reduz nenhuma query em runtime. Uma sessão anterior aparentemente percebeu o problema e começou a corrigir (working tree tinha a remoção dos campos, mas a adição na classe alvo só estava parcialmente migrada e nada disso foi commitado nem logado).
+
+**Correção aplicada:**
+1. `@BatchSize(size = 20)` adicionado **na classe** `Apartamento` (cobre `Cobranca.apartamento` e `Pessoa.apartamento`), `Bloco` (cobre `Apartamento.bloco`), `Despesa` (cobre `RateioExecucao.despesa`), `GrupoDespesa` (cobre `Despesa.grupoDespesa`), `PlanoContas` (cobre `ItemOrcamento.planoContas`).
+2. `@BatchSize(size = 20)` removido dos 6 campos `@ManyToOne` correspondentes (`Cobranca.apartamento`, `ItemOrcamento.planoContas`, `RateioExecucao.despesa`, `Pessoa.apartamento`, `Apartamento.bloco`, `Despesa.grupoDespesa`), junto com os imports não usados.
+3. Mantido sem alteração: `Apartamento.moradores`, `OrcamentoAnual.itens` (coleções, `@BatchSize` no campo já correto), `Proprietario.apartamentos` (`@ManyToMany`, idem).
+4. `refactor-plan.md` atualizado para documentar a colocação correta (Chunk 1 reescrito com a nota técnica).
+
+**Verificação:** `mvn compile -q` → BUILD SUCCESS. Testes de repositório alvo (`ApartamentoRepositoryTest`, `DespesaRepositoryTest`, `RateioExecucaoRepositoryTest`, `PessoaRepositoryTest`, `ProprietarioRepositoryTest`, `CobrancaRepositoryTest`, `OrcamentoAnualRepositoryTest`, `ItemOrcamentoRepositoryTest`) → 0 falhas. Suite completa (`mvn test -q`) → ver resultado na entrada de post-flight abaixo.
+
+**Nota:** O working tree também contém ~65 arquivos não relacionados a este ciclo (feature de autorização em andamento). Esses arquivos não foram tocados nem commitados como parte desta correção — apenas os 8 arquivos do Chunk 1 (`Apartamento`, `Bloco`, `Despesa`, `GrupoDespesa`, `PlanoContas`, `Cobranca`, `ItemOrcamento`, `RateioExecucao`, `Pessoa` — 9 arquivos no total, ver commit).
+
+---

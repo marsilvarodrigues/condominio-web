@@ -21,6 +21,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
@@ -47,6 +48,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @SQLDelete(sql = "UPDATE blocos SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
+@BatchSize(size = 20)
 @EntityListeners(AuditingEntityListener.class)
 public class Bloco {
 

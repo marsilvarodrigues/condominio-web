@@ -24,7 +24,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Filter;
 import org.hibernate.envers.Audited;
 
@@ -56,7 +55,6 @@ public class RateioExecucao {
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
 
-  @BatchSize(size = 20)
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "despesa_id", nullable = false)
   private Despesa despesa;

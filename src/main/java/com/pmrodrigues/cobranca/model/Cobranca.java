@@ -27,7 +27,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
@@ -78,7 +77,6 @@ public class Cobranca {
   private Condominio condominio;
 
   /** The apartment unit this charge is issued for. */
-  @BatchSize(size = 20)
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "apartamento_id", nullable = false)
   private Apartamento apartamento;

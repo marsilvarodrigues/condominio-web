@@ -16,13 +16,14 @@
   "chunks": [
     {
       "id": 1,
-      "name": "@BatchSize(20) em 9 campos lazy de 8 entidades (Cobranca, Apartamento×2, Despesa, ItemOrcamento, OrcamentoAnual, Pessoa, Proprietario, RateioExecucao)",
+      "name": "@BatchSize(20) — corrigido para classe alvo nas associações to-one (Apartamento, Bloco, Despesa, GrupoDespesa, PlanoContas) + mantido em coleções (Apartamento.moradores, OrcamentoAnual.itens, Proprietario.apartamentos)",
       "status": "completed",
       "depends_on": [],
-      "verification": "mvn compile -q → BUILD SUCCESS",
-      "commit_sha": null,
+      "verification": "mvn compile -q → BUILD SUCCESS; mvn test -q (full suite) → BUILD SUCCESS; targeted repository tests for all 8 affected entities → pass",
+      "commit_sha": "PENDING_COMMIT",
       "started_at": "2026-06-17",
-      "completed_at": "2026-06-17"
+      "completed_at": "2026-06-22",
+      "note": "Original placement (field-level @BatchSize on @ManyToOne) compiles but has no effect in Hibernate. Corrected mid-cycle to class-level on the target entity for to-one associations; left as-is for the 3 genuine collection associations. See refactor-log.md 2026-06-22 entry."
     },
     {
       "id": 2,

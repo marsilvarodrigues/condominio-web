@@ -58,6 +58,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @SQLDelete(sql = "UPDATE apartamentos SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
+@BatchSize(size = 20)
 @EntityListeners(AuditingEntityListener.class)
 public class Apartamento {
 
@@ -71,7 +72,6 @@ public class Apartamento {
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
 
-  @BatchSize(size = 20)
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "bloco_id", nullable = false)
   private Bloco bloco;
