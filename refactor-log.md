@@ -731,6 +731,26 @@ Scope: `com.pmrodrigues.condominio.service.*` public methods only.
 
 **Verificação:** `mvn compile -q` → BUILD SUCCESS. Testes de repositório alvo (`ApartamentoRepositoryTest`, `DespesaRepositoryTest`, `RateioExecucaoRepositoryTest`, `PessoaRepositoryTest`, `ProprietarioRepositoryTest`, `CobrancaRepositoryTest`, `OrcamentoAnualRepositoryTest`, `ItemOrcamentoRepositoryTest`) → 0 falhas. Suite completa (`mvn test -q`) → ver resultado na entrada de post-flight abaixo.
 
-**Nota:** O working tree também contém ~65 arquivos não relacionados a este ciclo (feature de autorização em andamento). Esses arquivos não foram tocados nem commitados como parte desta correção — apenas os 8 arquivos do Chunk 1 (`Apartamento`, `Bloco`, `Despesa`, `GrupoDespesa`, `PlanoContas`, `Cobranca`, `ItemOrcamento`, `RateioExecucao`, `Pessoa` — 9 arquivos no total, ver commit).
+**Nota:** O working tree também contém ~65 arquivos não relacionados a este ciclo (feature de autorização em andamento). Esses arquivos não foram tocados nem commitados como parte desta correção — apenas os 9 arquivos de entidade do Chunk 1 (`Apartamento`, `Bloco`, `Despesa`, `GrupoDespesa`, `PlanoContas`, `Cobranca`, `ItemOrcamento`, `RateioExecucao`, `Pessoa`).
+
+**Erro e correção durante a execução:** O primeiro `git commit` foi executado sem pathspec e capturou todo o índice — incluindo os ~65 arquivos não relacionados que já estavam staged antes desta sessão (feature de autorização, 2 submódulos de skills). Detectado imediatamente via `git show --stat HEAD`; corrigido com `git reset --soft HEAD~1` (não destrutivo — preserva todo o staging) seguido de `git commit -- <pathspec>` restrito aos 12 arquivos pretendidos (9 modelos + `refactor-plan.md`/`refactor-manifest.json`/`refactor-log.md`).
+
+**Outcome:** Commit `6d9f37d` — 12 arquivos, 99 inserções, 31 deleções. `mvn compile -q` → BUILD SUCCESS.
+
+---
+
+## 2026-06-22 — Post-flight: Ciclo 10 completo
+
+**Estado final:** Os 3 chunks do Ciclo 10 estão completos e verificados. Chunks 2 e 3 já estavam commitados (bundled nos commits `feature: adicionando historico de ocupação`); Chunk 1 commitado nesta sessão (`6d9f37d`) após a correção de colocação do `@BatchSize`.
+
+**Post-flight checklist:**
+- [x] `@BatchSize(size = 20)` na classe: `Apartamento`, `Bloco`, `Despesa`, `GrupoDespesa`, `PlanoContas` (associações to-one)
+- [x] `@BatchSize(size = 20)` no campo: `Apartamento.moradores`, `OrcamentoAnual.itens`, `Proprietario.apartamentos` (coleções — já corretas, sem mudança)
+- [x] `HistoricoOcupacaoRepository` usa `JOIN FETCH h.pessoa` com countQuery separado
+- [x] `CotaRateioRepository` usa `JOIN FETCH c.apartamento a JOIN FETCH a.bloco`
+- [x] `CobrancaService.filterBy()` usa batch loading — `pessoaService.findByIds()` chamado 1x por requisição
+- [x] `mvn compile -q` → BUILD SUCCESS
+- [x] Testes de repositório direcionados às 8 entidades do Chunk 1 → 0 falhas
+- [ ] Suite completa (`mvn test -q`) tem 14 falhas pré-existentes, **não relacionadas** a este ciclo — todas `403 FORBIDDEN` em GETs causadas por `@PreAuthorize` novo na feature de autorização em andamento (não commitada). Confirmado via diff de `ApartamentoController.java` que a causa é `@PreAuthorize("hasAnyRole(...)")` adicionado a `findById`/`findAll`, sem o teste correspondente atualizado. Fora do escopo deste ciclo — reportado ao usuário separadamente.
 
 ---

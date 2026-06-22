@@ -19,8 +19,8 @@
       "name": "@BatchSize(20) — corrigido para classe alvo nas associações to-one (Apartamento, Bloco, Despesa, GrupoDespesa, PlanoContas) + mantido em coleções (Apartamento.moradores, OrcamentoAnual.itens, Proprietario.apartamentos)",
       "status": "completed",
       "depends_on": [],
-      "verification": "mvn compile -q → BUILD SUCCESS; mvn test -q (full suite) → BUILD SUCCESS; targeted repository tests for all 8 affected entities → pass",
-      "commit_sha": "PENDING_COMMIT",
+      "verification": "mvn compile -q → BUILD SUCCESS; targeted repository tests for all 8 affected entities → 0 failures. Full mvn test -q has 14 pre-existing failures, all unrelated (403 on GET endpoints from an in-progress, uncommitted authorization feature — confirmed unaffected by this chunk).",
+      "commit_sha": "6d9f37d541f6665f1a4c79eb9173e097f5f047c7",
       "started_at": "2026-06-17",
       "completed_at": "2026-06-22",
       "note": "Original placement (field-level @BatchSize on @ManyToOne) compiles but has no effect in Hibernate. Corrected mid-cycle to class-level on the target entity for to-one associations; left as-is for the 3 genuine collection associations. See refactor-log.md 2026-06-22 entry."
@@ -31,7 +31,7 @@
       "status": "completed",
       "depends_on": [1],
       "verification": "mvn compile -q → BUILD SUCCESS",
-      "commit_sha": null,
+      "commit_sha": "bundled into feature/historico-ocupacao commits (1d7a448..9ac299d), not a standalone commit",
       "started_at": "2026-06-17",
       "completed_at": "2026-06-17"
     },
@@ -41,7 +41,7 @@
       "status": "completed",
       "depends_on": [],
       "verification": "mvn test -Dtest=PessoaServiceTest,CobrancaServiceTest → 37/37 pass",
-      "commit_sha": null,
+      "commit_sha": "bundled into feature/historico-ocupacao commits (1d7a448..9ac299d), not a standalone commit",
       "started_at": "2026-06-17",
       "completed_at": "2026-06-17"
     }
