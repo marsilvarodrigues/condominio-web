@@ -29,6 +29,7 @@ public class JwtService {
   private final JwtProperties jwtProperties;
   private final UserRepository userRepository;
   private final ProprietarioClaimsProvider proprietarioClaimsProvider;
+  private final MoradorClaimsProvider moradorClaimsProvider;
 
   /**
    * Builds and signs an RS256 JWT access token containing the user's roles and their {@code
@@ -56,6 +57,7 @@ public class JwtService {
             .orElse(List.of());
 
     boolean isProprietario = roles.contains("ROLE_PROPRIETARIO");
+    boolean isMorador = roles.contains("ROLE_MORADOR");
 
     List<Long> apartamentosIdsProprietario =
         isProprietario
@@ -64,6 +66,11 @@ public class JwtService {
                 .map(c -> c.apartamentoIds())
                 .orElse(List.of())
             : List.of();
+
+    Long apartamentoId =
+        isMorador
+            ? moradorClaimsProvider.findApartamentoIdByEmail(authentication.getName()).orElse(null)
+            : null;
 
     var builder =
         JwtClaimsSet.builder()
@@ -77,6 +84,9 @@ public class JwtService {
             .claim("apartamentos_ids_proprietario", apartamentosIdsProprietario);
     if (userId != null) {
       builder.claim("user_id", userId);
+    }
+    if (apartamentoId != null) {
+      builder.claim("apartamento_id", apartamentoId);
     }
     var claims = builder.build();
 

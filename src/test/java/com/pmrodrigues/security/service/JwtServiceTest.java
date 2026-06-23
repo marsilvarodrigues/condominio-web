@@ -47,6 +47,9 @@ class JwtServiceTest {
     @Mock
     ProprietarioClaimsProvider proprietarioClaimsProvider;
 
+    @Mock
+    MoradorClaimsProvider moradorClaimsProvider;
+
     @InjectMocks
     JwtService service;
 
@@ -66,6 +69,7 @@ class JwtServiceTest {
         user.setCondominios(Set.of(condominio));
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         lenient().when(proprietarioClaimsProvider.findClaimsByEmail(anyString())).thenReturn(Optional.empty());
+        lenient().when(moradorClaimsProvider.findApartamentoIdByEmail(anyString())).thenReturn(Optional.empty());
     }
 
     @Test
@@ -235,6 +239,40 @@ class JwtServiceTest {
         service.generateAccessToken(auth);
 
         verify(proprietarioClaimsProvider, never()).findClaimsByEmail(anyString());
+    }
+
+    @Test
+    void generateAccessToken_whenMorador_includesApartamentoIdClaim() {
+        when(moradorClaimsProvider.findApartamentoIdByEmail("morador@test.com")).thenReturn(Optional.of(17L));
+        var auth = authWith("morador@test.com", "ROLE_MORADOR");
+
+        service.generateAccessToken(auth);
+
+        var captor = ArgumentCaptor.forClass(JwtEncoderParameters.class);
+        verify(jwtEncoder).encode(captor.capture());
+        Long apartamentoId = captor.getValue().getClaims().getClaim("apartamento_id");
+        assertThat(apartamentoId).isEqualTo(17L);
+    }
+
+    @Test
+    void generateAccessToken_whenMoradorHasNoApartamento_apartamentoIdClaimAbsent() {
+        when(moradorClaimsProvider.findApartamentoIdByEmail("morador@test.com")).thenReturn(Optional.empty());
+        var auth = authWith("morador@test.com", "ROLE_MORADOR");
+
+        service.generateAccessToken(auth);
+
+        var captor = ArgumentCaptor.forClass(JwtEncoderParameters.class);
+        verify(jwtEncoder).encode(captor.capture());
+        assertThat((Object) captor.getValue().getClaims().getClaim("apartamento_id")).isNull();
+    }
+
+    @Test
+    void generateAccessToken_whenNotMorador_doesNotCallMoradorClaimsProvider() {
+        var auth = authWith("owner@test.com", "ROLE_PROPRIETARIO");
+
+        service.generateAccessToken(auth);
+
+        verify(moradorClaimsProvider, never()).findApartamentoIdByEmail(anyString());
     }
 
     @Test

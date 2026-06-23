@@ -99,6 +99,21 @@ class PessoaRepositoryTest {
         assertThat(pessoaRepository.findByApartamentoId(aptVazio.getId())).isEmpty();
     }
 
+    // ── findByEmail ───────────────────────────────────────────────────────────
+
+    @Test
+    void findByEmail_retornaPessoaComApartamento() {
+        var result = pessoaRepository.findByEmail("morador-apt@test.com");
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getApartamento().getId()).isEqualTo(apt.getId());
+    }
+
+    @Test
+    void findByEmail_quandoNaoExiste_retornaVazio() {
+        assertThat(pessoaRepository.findByEmail("ninguem@test.com")).isEmpty();
+    }
+
     // softDeleteByCondominioId is not testable in H2: Hibernate 6 generates a
     // PostgreSQL-specific MATERIALIZED CTE + RETURNING clause for bulk updates
     // across JOINED inheritance (deleted column is in the users table, not pessoas).

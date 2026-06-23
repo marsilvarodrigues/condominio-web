@@ -2,6 +2,7 @@ package com.pmrodrigues.morador.repository;
 
 import com.pmrodrigues.morador.model.Pessoa;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -33,4 +34,13 @@ public interface PessoaRepository
    * @return list of pessoas linked to this apartment
    */
   List<Pessoa> findByApartamentoId(Long apartamentoId);
+
+  /**
+   * Returns the pessoa whose user account has the given email.
+   *
+   * @param email user account email
+   * @return the matching pessoa, or empty if no account with this email is a pessoa
+   */
+  @Query("SELECT p FROM Pessoa p WHERE p.email = :email")
+  Optional<Pessoa> findByEmail(@Param("email") String email);
 }
