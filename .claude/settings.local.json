@@ -136,7 +136,13 @@
       "PowerShell($env:PGPASSWORD = \"postgres\"; & \"C:\\\\Program Files\\\\PostgreSQL\\\\17\\\\bin\\\\psql.exe\" -h localhost -U postgres -d condominio -f \"C:\\\\Users\\\\marsi\\\\IdeaProjects\\\\condominio-web\\\\scripts\\\\seed-data.sql\" 2>&1 | Select-Object -Last 40)",
       "Bash(gh repo *)",
       "PowerShell(gh repo view anthropics/skills --json name,description,url 2>&1)",
-      "Bash(echo \"EXIT_CODE=$?\")"
+      "Bash(echo \"EXIT_CODE=$?\")",
+      "Bash(mvn -N io.takari:maven:wrapper -Dmaven=3.9.9)",
+      "Bash(rm -f mvnw mvnw.cmd)",
+      "Bash(rm -rf .mvn/wrapper)",
+      "Bash(mvn -N org.apache.maven.plugins:maven-wrapper-plugin:3.3.2:wrapper -Dmaven=3.9.9)",
+      "Bash(./mvnw -v)",
+      "Bash(git add *)"
     ]
   }
 }
