@@ -35,6 +35,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.pmrodrigues.commons.tenant.TenantScoped;
 
 /** Individual debit or credit entry on a bank account, partitioned by condominio_id. */
 @Getter
@@ -50,7 +51,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @SQLRestriction("deleted = false")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @EntityListeners(AuditingEntityListener.class)
-public class LancamentoBancario {
+public class LancamentoBancario implements TenantScoped {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,6 +62,11 @@ public class LancamentoBancario {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
+
+  @Override
+  public Long getCondominioId() {
+    return condominio != null ? condominio.getId() : null;
+  }
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "conta_bancaria_id", nullable = false)

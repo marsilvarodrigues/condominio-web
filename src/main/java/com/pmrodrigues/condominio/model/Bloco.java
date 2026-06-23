@@ -31,6 +31,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.pmrodrigues.commons.tenant.TenantScoped;
 
 /**
  * JPA entity representing a building block within a condominium, with soft-delete and multi-tenancy
@@ -50,7 +51,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @BatchSize(size = 20)
 @EntityListeners(AuditingEntityListener.class)
-public class Bloco {
+public class Bloco implements TenantScoped {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,6 +62,11 @@ public class Bloco {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
+
+  @Override
+  public Long getCondominioId() {
+    return condominio != null ? condominio.getId() : null;
+  }
 
   @Column(nullable = false)
   private Integer numero;

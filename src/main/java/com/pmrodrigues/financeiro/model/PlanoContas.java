@@ -38,6 +38,7 @@ import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.pmrodrigues.commons.tenant.TenantScoped;
 
 /**
  * Hierarchical chart of accounts node for a condominium, supporting tree structure via
@@ -57,7 +58,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @BatchSize(size = 20)
 @EntityListeners(AuditingEntityListener.class)
-public class PlanoContas {
+public class PlanoContas implements TenantScoped {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,6 +69,11 @@ public class PlanoContas {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
+
+  @Override
+  public Long getCondominioId() {
+    return condominio != null ? condominio.getId() : null;
+  }
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "pai_id")

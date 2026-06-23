@@ -32,6 +32,7 @@ import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.pmrodrigues.commons.tenant.TenantScoped;
 
 /**
  * Stores the weight (coefficient, area, or consumption) of a single unit within a {@link
@@ -54,7 +55,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @SQLRestriction("deleted = false")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @EntityListeners(AuditingEntityListener.class)
-public class CoeficienteRateio {
+public class CoeficienteRateio implements TenantScoped {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,6 +66,11 @@ public class CoeficienteRateio {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
+
+  @Override
+  public Long getCondominioId() {
+    return condominio != null ? condominio.getId() : null;
+  }
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "grupo_despesa_id", nullable = false)

@@ -29,6 +29,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.pmrodrigues.commons.tenant.TenantScoped;
 
 /**
  * Immutable snapshot linking a {@link Pessoa} to an {@link Apartamento} for an occupancy period.
@@ -45,7 +46,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "historico_ocupacao")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @EntityListeners(AuditingEntityListener.class)
-public class HistoricoOcupacao {
+public class HistoricoOcupacao implements TenantScoped {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,6 +57,11 @@ public class HistoricoOcupacao {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
+
+  @Override
+  public Long getCondominioId() {
+    return condominio != null ? condominio.getId() : null;
+  }
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "apartamento_id", nullable = false)

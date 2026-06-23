@@ -36,6 +36,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.pmrodrigues.commons.tenant.TenantScoped;
 
 /**
  * JPA entity representing a condominium billing charge issued for a single apartment unit.
@@ -59,7 +60,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @SQLRestriction("deleted = false")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @EntityListeners(AuditingEntityListener.class)
-public class Cobranca {
+public class Cobranca implements TenantScoped {
 
   /** Surrogate primary key — simple BIGSERIAL auto-increment. */
   @Id
@@ -75,6 +76,11 @@ public class Cobranca {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
+
+  @Override
+  public Long getCondominioId() {
+    return condominio != null ? condominio.getId() : null;
+  }
 
   /** The apartment unit this charge is issued for. */
   @ManyToOne(fetch = FetchType.LAZY)

@@ -36,6 +36,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.pmrodrigues.commons.tenant.TenantScoped;
 
 /**
  * Represents a specific expense charge to be apportioned among condominium units.
@@ -58,7 +59,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @BatchSize(size = 20)
 @EntityListeners(AuditingEntityListener.class)
-public class Despesa {
+public class Despesa implements TenantScoped {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,6 +70,11 @@ public class Despesa {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
+
+  @Override
+  public Long getCondominioId() {
+    return condominio != null ? condominio.getId() : null;
+  }
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "grupo_despesa_id", nullable = false)

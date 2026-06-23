@@ -24,6 +24,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Filter;
 import org.hibernate.envers.Audited;
+import com.pmrodrigues.commons.tenant.TenantScoped;
 
 /**
  * Stores the calculated quota assigned to a single apartment unit for a given {@link Despesa}.
@@ -42,7 +43,7 @@ import org.hibernate.envers.Audited;
 @Entity
 @Table(name = "cotas_rateio")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
-public class CotaRateio {
+public class CotaRateio implements TenantScoped {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,6 +54,11 @@ public class CotaRateio {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
+
+  @Override
+  public Long getCondominioId() {
+    return condominio != null ? condominio.getId() : null;
+  }
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "despesa_id", nullable = false)

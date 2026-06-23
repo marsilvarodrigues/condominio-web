@@ -28,6 +28,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.pmrodrigues.commons.tenant.TenantScoped;
 
 /**
  * Abstract JPA entity representing a person (natural or legal) residing in a condominium. Extends
@@ -56,7 +57,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @EntityListeners(AuditingEntityListener.class)
-public abstract class Pessoa extends User {
+public abstract class Pessoa extends User implements TenantScoped {
 
   /**
    * Multi-tenancy discriminator. Not directly accessible — set via {@link TenantContext} in {@link
@@ -67,6 +68,11 @@ public abstract class Pessoa extends User {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
+
+  @Override
+  public Long getCondominioId() {
+    return condominio != null ? condominio.getId() : null;
+  }
 
   /**
    * Discriminator column — set in {@link #prePersist()} from the {@link DiscriminatorValue}

@@ -36,6 +36,7 @@ import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.pmrodrigues.commons.tenant.TenantScoped;
 
 /**
  * Groups expenses by rateio strategy. Each group defines how costs are apportioned among
@@ -58,7 +59,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
 @BatchSize(size = 20)
 @EntityListeners(AuditingEntityListener.class)
-public class GrupoDespesa {
+public class GrupoDespesa implements TenantScoped {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,6 +70,11 @@ public class GrupoDespesa {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
+
+  @Override
+  public Long getCondominioId() {
+    return condominio != null ? condominio.getId() : null;
+  }
 
   @Column(nullable = false)
   private String nome;

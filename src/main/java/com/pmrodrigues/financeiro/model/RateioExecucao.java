@@ -26,6 +26,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Filter;
 import org.hibernate.envers.Audited;
+import com.pmrodrigues.commons.tenant.TenantScoped;
 
 /**
  * Immutable audit record of a single rateio execution for one {@link Despesa}.
@@ -43,7 +44,7 @@ import org.hibernate.envers.Audited;
 @Entity
 @Table(name = "rateio_execucoes")
 @Filter(name = TenantFilterAspect.CONDOMINIO_FILTER, condition = "condominio_id = :condominioId")
-public class RateioExecucao {
+public class RateioExecucao implements TenantScoped {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,6 +55,11 @@ public class RateioExecucao {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "condominio_id", nullable = false)
   private Condominio condominio;
+
+  @Override
+  public Long getCondominioId() {
+    return condominio != null ? condominio.getId() : null;
+  }
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "despesa_id", nullable = false)
