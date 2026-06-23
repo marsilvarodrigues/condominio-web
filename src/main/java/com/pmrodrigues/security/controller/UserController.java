@@ -55,6 +55,7 @@ public class UserController {
    */
   @GetMapping
   @Timed(value = "user.controller.findAll", description = "Find all users")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ApiResponse<Page<UserDTO>>> findAll(
       @ModelAttribute UserFilterDTO dto,
       @PageableDefault(size = 20) Pageable pageable,
@@ -73,6 +74,7 @@ public class UserController {
    */
   @GetMapping("/{id}")
   @Timed(value = "user.controller.findById", description = "Find user by id")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ApiResponse<UserDTO>> findById(
       @PathVariable Long id, HttpServletRequest request) {
     log.info("GET /users/{} - finding user by id", id);

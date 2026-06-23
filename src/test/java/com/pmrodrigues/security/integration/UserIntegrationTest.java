@@ -105,13 +105,13 @@ class UserIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void findAll_withUserToken_returns200() throws Exception {
+    void findAll_withUserToken_returns403() throws Exception {
         var token = loginAndGetToken(USER_EMAIL, USER_PASSWORD);
 
         mockMvc.perform(get("/users")
                         .header("Authorization", "Bearer " + token)
                         .header(RequestIdInterceptor.REQUEST_ID_HEADER, UUID.randomUUID().toString()))
-                .andExpect(status().isOk());
+                .andExpect(status().isForbidden());
     }
 
     @Test

@@ -58,7 +58,7 @@ class UserControllerTest {
     // ── findAll ───────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_returnsListWith200() throws Exception {
         when(userService.filterBy(any(UserFilterDTO.class), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(dto(1L, "a@test.com"), dto(2L, "b@test.com"))));
@@ -72,7 +72,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findAll_includesRequestIdInResponse() throws Exception {
         when(userService.filterBy(any(UserFilterDTO.class), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of()));
@@ -89,10 +89,17 @@ class UserControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    @Test
+    @WithMockUser(roles = "MORADOR")
+    void findAll_asNonAdmin_returns403() throws Exception {
+        mockMvc.perform(get("/users").header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
+                .andExpect(status().isForbidden());
+    }
+
     // ── findById ──────────────────────────────────────────────────────────
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenFound_returns200() throws Exception {
         when(userService.findUserById(1L)).thenReturn(Optional.of(dto(1L, "test@test.com")));
 
@@ -103,7 +110,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void findById_whenNotFound_returns404() throws Exception {
         when(userService.findUserById(99L)).thenReturn(Optional.empty());
 
@@ -115,6 +122,13 @@ class UserControllerTest {
     void findById_withoutAuth_returns401() throws Exception {
         mockMvc.perform(get("/users/1").header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(roles = "MORADOR")
+    void findById_asNonAdmin_returns403() throws Exception {
+        mockMvc.perform(get("/users/1").header(RequestIdInterceptor.REQUEST_ID_HEADER, REQUEST_ID))
+                .andExpect(status().isForbidden());
     }
 
     // ── create ────────────────────────────────────────────────────────────
