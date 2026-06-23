@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Morador-module implementation of {@link ProprietarioClaimsProvider}. Reads proprietário data via
@@ -20,7 +21,14 @@ public class ProprietarioClaimsProviderImpl implements ProprietarioClaimsProvide
 
   private final ProprietarioRepository proprietarioRepository;
 
+  /**
+   * Called from {@code JwtService.generateAccessToken} during login, with no ambient transaction
+   * of its own — {@code @Transactional} here is required to keep the session open while {@code
+   * apartamentos} (a lazy {@code @ManyToMany}) is read, otherwise it throws {@code
+   * LazyInitializationException} and login fails for every PROPRIETARIO.
+   */
   @Override
+  @Transactional(readOnly = true)
   @Timed(value = "proprietario.claims.findByEmail", description = "Find proprietario claims by email")
   public Optional<ProprietarioClaims> findClaimsByEmail(String email) {
     return proprietarioRepository
