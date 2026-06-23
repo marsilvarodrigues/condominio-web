@@ -194,6 +194,34 @@ class CustomBearerTokenFilterTest {
     }
 
     @Test
+    void doFilterInternal_withMultipleCondominiosAndNoHeader_returns400() throws Exception {
+        when(jwtDecoder.decode("multi-cond-no-header")).thenReturn(buildJwtWithCondominioIds("jti-multi3", List.of(1L, 2L)));
+        when(tokenBlacklistService.isBlacklisted("jti-multi3")).thenReturn(false);
+
+        var request  = requestWithBearer("multi-cond-no-header");
+        var response = new MockHttpServletResponse();
+
+        filter.doFilterInternal(request, response, filterChain);
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        verify(filterChain, never()).doFilter(any(), any());
+    }
+
+    @Test
+    void doFilterInternal_withZeroCondominiosAndNoHeader_globalAccessPassesThrough() throws Exception {
+        when(jwtDecoder.decode("global-token")).thenReturn(buildJwtWithCondominioIds("jti-global", List.of()));
+        when(tokenBlacklistService.isBlacklisted("jti-global")).thenReturn(false);
+
+        var request  = requestWithBearer("global-token");
+        var response = new MockHttpServletResponse();
+
+        filter.doFilterInternal(request, response, filterChain);
+
+        verify(filterChain).doFilter(request, response);
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
     void doFilterInternal_withMalformedCondominioHeader_returns400() throws Exception {
         when(jwtDecoder.decode("any-token")).thenReturn(buildJwtWithCondominioIds("jti-bad-hdr", List.of(1L)));
         when(tokenBlacklistService.isBlacklisted("jti-bad-hdr")).thenReturn(false);

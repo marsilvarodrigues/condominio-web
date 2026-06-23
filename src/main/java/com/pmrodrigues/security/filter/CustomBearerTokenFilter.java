@@ -172,6 +172,12 @@ public class CustomBearerTokenFilter extends OncePerRequestFilter {
     if (allowedIds.size() == 1) {
       return allowedIds.get(0);
     }
-    return null; // global access (0 IDs) or multi-condominio without header
+    if (allowedIds.size() > 1) {
+      log.warn(
+          "User has {} allowed condominios but sent no X-Condominio-Id header", allowedIds.size());
+      response.setStatus(HttpStatus.BAD_REQUEST.value());
+      return null;
+    }
+    return null; // global access (0 IDs)
   }
 }
