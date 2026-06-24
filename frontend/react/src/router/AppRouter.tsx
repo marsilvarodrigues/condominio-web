@@ -1,9 +1,10 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { CircularProgress, Box } from '@mui/material'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { ProtectedRoute } from './ProtectedRoute'
 import { ROLES } from '@/utils/constants'
+import { useAuthStore } from '@/store/authStore'
 
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
 const ChangePasswordPage = lazy(() => import('@/pages/auth/ChangePasswordPage'))
@@ -38,6 +39,17 @@ function Loader() {
 }
 
 export function AppRouter() {
+  const bootstrap = useAuthStore((s) => s.bootstrap)
+  const [isBootstrapping, setIsBootstrapping] = useState(true)
+
+  useEffect(() => {
+    bootstrap().finally(() => setIsBootstrapping(false))
+  }, [bootstrap])
+
+  if (isBootstrapping) {
+    return <Loader />
+  }
+
   return (
     <BrowserRouter>
       <Suspense fallback={<Loader />}>

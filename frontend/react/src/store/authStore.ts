@@ -1,6 +1,11 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import axios from 'axios'
 import type { AuthUser } from '@/types'
+
+// Raw axios, not the configured apiClient — bootstrap runs before any token exists,
+// and apiClient's request interceptor would otherwise need the very token we're fetching.
+const BASE_URL = import.meta.env.VITE_API_URL ?? '/api'
 
 interface AuthState {
   accessToken: string | null
@@ -14,6 +19,13 @@ interface AuthState {
   logout: () => void
   isAuthenticated: () => boolean
   hasRole: (role: string) => boolean
+  /**
+   * Re-acquires an accessToken from the persisted refreshToken on app startup.
+   * accessToken is intentionally memory-only (not persisted) so every fresh page load
+   * starts with it null — without this, ProtectedRoute sees "not authenticated" and
+   * redirects to /login before any request ever gets a chance to use the refreshToken.
+   */
+  bootstrap: () => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -40,6 +52,18 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: () => !!get().accessToken,
 
       hasRole: (role) => get().user?.roles.includes(role) ?? false,
+
+      bootstrap: async () => {
+        const { accessToken, refreshToken } = get()
+        if (accessToken || !refreshToken) return
+
+        try {
+          const { data } = await axios.post(`${BASE_URL}/auth/refresh`, { refreshToken })
+          set({ accessToken: data.accessToken, refreshToken: data.refreshToken })
+        } catch {
+          set({ accessToken: null, refreshToken: null, user: null, activeCondominioId: null })
+        }
+      },
     }),
     {
       name: 'condogest-auth',

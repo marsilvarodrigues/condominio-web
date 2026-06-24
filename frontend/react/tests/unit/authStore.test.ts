@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
+import { http, HttpResponse } from 'msw'
 import { useAuthStore } from '@/store/authStore'
+import { server } from './mocks/server'
 
 describe('authStore', () => {
   beforeEach(() => {
@@ -44,5 +46,46 @@ describe('authStore', () => {
   it('sets active condominio', () => {
     useAuthStore.getState().setActiveCondominioId(42)
     expect(useAuthStore.getState().activeCondominioId).toBe(42)
+  })
+
+  describe('bootstrap', () => {
+    it('faz nada quando accessToken já está presente', async () => {
+      useAuthStore.setState({ accessToken: 'already-set', refreshToken: 'r' })
+      await useAuthStore.getState().bootstrap()
+      expect(useAuthStore.getState().accessToken).toBe('already-set')
+    })
+
+    it('faz nada quando não há refreshToken (usuário nunca logou)', async () => {
+      await useAuthStore.getState().bootstrap()
+      expect(useAuthStore.getState().accessToken).toBeNull()
+    })
+
+    it('renova o accessToken via /auth/refresh quando só o refreshToken está presente', async () => {
+      useAuthStore.setState({ accessToken: null, refreshToken: 'valid-refresh-token' })
+
+      await useAuthStore.getState().bootstrap()
+
+      const state = useAuthStore.getState()
+      expect(state.accessToken).toBe('new-access-token')
+      expect(state.refreshToken).toBe('new-refresh-token')
+    })
+
+    it('faz logout quando o refresh falha (refreshToken expirado/inválido)', async () => {
+      server.use(
+        http.post('/api/auth/refresh', () => HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })),
+      )
+      useAuthStore.setState({
+        accessToken: null,
+        refreshToken: 'expired-token',
+        user: { id: 1, email: 'a@b.com', roles: ['ROLE_USER'], condominioIds: [] },
+      })
+
+      await useAuthStore.getState().bootstrap()
+
+      const state = useAuthStore.getState()
+      expect(state.accessToken).toBeNull()
+      expect(state.refreshToken).toBeNull()
+      expect(state.user).toBeNull()
+    })
   })
 })

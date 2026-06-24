@@ -17,6 +17,16 @@ export const handlers = [
     }),
   ),
 
+  // Auth — refresh (flat AuthResponseDTO, no ApiResponse envelope — matches the real backend)
+  http.post(`${BASE}/auth/refresh`, () =>
+    HttpResponse.json({
+      accessToken: 'new-access-token',
+      refreshToken: 'new-refresh-token',
+      tokenType: 'Bearer',
+      expiresIn: 3600,
+    }),
+  ),
+
   // Condomínios
   http.get(`${BASE}/condominios`, () =>
     HttpResponse.json({
