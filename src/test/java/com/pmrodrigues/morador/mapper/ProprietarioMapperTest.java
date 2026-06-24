@@ -1,6 +1,7 @@
 package com.pmrodrigues.morador.mapper;
 
 import com.pmrodrigues.condominio.model.Apartamento;
+import com.pmrodrigues.condominio.model.Condominio;
 import com.pmrodrigues.morador.dto.CreateProprietarioDTO;
 import com.pmrodrigues.morador.dto.UpdateProprietarioDTO;
 import com.pmrodrigues.morador.model.ProprietarioPessoaFisica;
@@ -28,9 +29,9 @@ class ProprietarioMapperTest {
 
     @BeforeEach
     void setUp() {
-        aptRef = new Apartamento();
-        aptRef.setId(5L);
-        aptRef.setNumero("202");
+        var condominio = new Condominio();
+        condominio.setId(7L);
+        aptRef = Apartamento.builder().id(5L).numero("202").condominio(condominio).build();
         when(em.getReference(Apartamento.class, 5L)).thenReturn(aptRef);
     }
 
@@ -55,6 +56,7 @@ class ProprietarioMapperTest {
         assertThat(dto.cnpj()).isNull();
         assertThat(dto.apartamentos()).hasSize(1);
         assertThat(dto.apartamentos().get(0).id()).isEqualTo(5L);
+        assertThat(dto.apartamentos().get(0).condominioId()).isEqualTo(7L);
         assertThat(dto.userId()).isEqualTo(1L);
     }
 

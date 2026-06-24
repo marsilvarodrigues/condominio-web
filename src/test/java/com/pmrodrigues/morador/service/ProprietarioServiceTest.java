@@ -58,7 +58,7 @@ class ProprietarioServiceTest {
         lenient().when(mapper.toDTO(any(Proprietario.class))).thenAnswer(inv -> {
             Proprietario p = inv.getArgument(0);
             List<ApartamentoResumoDTO> apts = p.getApartamentos().stream()
-                    .map(a -> new ApartamentoResumoDTO(a.getId(), a.getNumero(), null))
+                    .map(a -> new ApartamentoResumoDTO(a.getId(), a.getNumero(), null, null))
                     .toList();
             return new ProprietarioDTO(p.getId(), p.getName(), "PROP_PF",
                     null, null, null,

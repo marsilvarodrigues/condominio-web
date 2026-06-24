@@ -192,7 +192,8 @@ public abstract class ProprietarioMapper {
                 new ApartamentoResumoDTO(
                     a.getId(),
                     a.getNumero(),
-                    a.getBloco() != null ? a.getBloco().getBloco() : null))
+                    a.getBloco() != null ? a.getBloco().getBloco() : null,
+                    a.getCondominioId()))
         .collect(Collectors.toList());
   }
 }
