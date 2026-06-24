@@ -85,7 +85,7 @@ export default function DashboardAdmin() {
                 <StatCard
                   title="Último rateio"
                   value={formatDate(rateio.data.dataExecucao)}
-                  subtitle={`Total: ${formatCurrency(rateio.data.totalRateado)} · ${rateio.data.status}`}
+                  subtitle={`Total: ${formatCurrency(rateio.data.despesaTotal)} · ${rateio.data.status}`}
                   icon={<CalculateIcon />}
                   color="#6A1B9A"
                 />

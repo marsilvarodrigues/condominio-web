@@ -362,11 +362,16 @@ export interface RateioLancamentoDTO {
 
 export interface RateioExecucaoDTO {
   id: number
-  tipo: TipoExecucaoRateio
+  despesaId: number
+  despesaDescricao: string | null
+  grupoDespesaId: number | null
+  tipoExecucao: TipoExecucaoRateio
   dataExecucao: string
+  despesaTotal: number
+  totalUnidades: number
+  totalCotas: number
   status: StatusExecucaoRateio
-  totalRateado: number
-  descricao: string | null
+  erroMensagem: string | null
   lancamentos?: RateioLancamentoDTO[]
 }
 

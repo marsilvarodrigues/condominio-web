@@ -139,7 +139,7 @@ export default function DashboardSindico() {
                   {formatDate(rateio.data.dataExecucao)}
                 </Typography>
                 <Typography variant="body2" mt={1}>
-                  Total: <strong>{formatCurrency(rateio.data.totalRateado)}</strong>
+                  Total: <strong>{formatCurrency(rateio.data.despesaTotal)}</strong>
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Status: {rateio.data.status}

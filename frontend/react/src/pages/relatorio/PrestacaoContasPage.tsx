@@ -144,7 +144,7 @@ export default function PrestacaoContasPage() {
           <Grid item xs={12} sm={6} md={3}>
             <StatCard
               title="Último Rateio"
-              value={rateio.data ? formatCurrency(rateio.data.totalRateado) : '—'}
+              value={rateio.data ? formatCurrency(rateio.data.despesaTotal) : '—'}
               subtitle={rateio.data ? formatDateTime(rateio.data.dataExecucao) : undefined}
               icon={<AssessmentIcon />}
               color="#E65100"
@@ -326,13 +326,13 @@ export default function PrestacaoContasPage() {
               <Box>
                 <Typography variant="caption" color="text.secondary">TOTAL RATEADO</Typography>
                 <Typography variant="body1" fontWeight={500} color="#1565C0">
-                  {formatCurrency(rateio.data.totalRateado)}
+                  {formatCurrency(rateio.data.despesaTotal)}
                 </Typography>
               </Box>
               <Box>
                 <Typography variant="caption" color="text.secondary">TIPO</Typography>
                 <Typography variant="body1" fontWeight={500}>
-                  {rateio.data.tipo}
+                  {rateio.data.tipoExecucao}
                 </Typography>
               </Box>
               <Box>

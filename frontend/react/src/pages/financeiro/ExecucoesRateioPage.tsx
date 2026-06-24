@@ -40,7 +40,7 @@ function ExecucaoDetail({ execucao }: { execucao: RateioExecucaoDTO }) {
         <TableCell>{formatDateTime(execucao.dataExecucao)}</TableCell>
         <TableCell>
           <Chip
-            label={TIPO_EXECUCAO_LABELS[execucao.tipo] ?? execucao.tipo}
+            label={TIPO_EXECUCAO_LABELS[execucao.tipoExecucao] ?? execucao.tipoExecucao}
             size="small"
             variant="outlined"
           />
@@ -49,9 +49,9 @@ function ExecucaoDetail({ execucao }: { execucao: RateioExecucaoDTO }) {
           <StatusChip status={execucao.status} label={STATUS_EXECUCAO_LABELS[execucao.status] ?? execucao.status} />
         </TableCell>
         <TableCell align="right">
-          <Typography variant="body2" fontWeight={600}>{formatCurrency(execucao.totalRateado)}</Typography>
+          <Typography variant="body2" fontWeight={600}>{formatCurrency(execucao.despesaTotal)}</Typography>
         </TableCell>
-        <TableCell>{execucao.descricao ?? '—'}</TableCell>
+        <TableCell>{execucao.despesaDescricao ?? '—'}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell colSpan={7} sx={{ p: 0 }}>

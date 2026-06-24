@@ -118,7 +118,7 @@ export function GerarCobrancasDialog({ open, onClose }: Props) {
                   execucoes.map((e) => (
                     <MenuItem key={e.id} value={e.id}>
                       Execução #{e.id} — {formatDate(e.dataExecucao)} —{' '}
-                      {formatCurrency(e.totalRateado)}
+                      {formatCurrency(e.despesaTotal)}
                     </MenuItem>
                   ))
                 )}
