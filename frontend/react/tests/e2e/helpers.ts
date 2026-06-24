@@ -4,23 +4,44 @@ import type { Page, Route } from '@playwright/test'
 export const ADMIN_TOKEN =
   'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkB0ZXN0LmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiY29uZG9taW5pb19pZHMiOltdLCJleHAiOjk5OTk5OTk5OTl9.placeholder'
 
-/** Injeta o estado de autenticação no localStorage da página. */
+/**
+ * Injeta uma sessão autenticada. accessToken vive só em memória (authStore.ts não o persiste,
+ * de propósito) — o app o readquire chamando /auth/refresh no boot a partir do refreshToken
+ * persistido em sessionStorage. Por isso aqui: mocka /auth/refresh e grava só refreshToken/user/
+ * activeCondominioId em sessionStorage, exatamente como o `partialize` do store espera.
+ */
 export async function setAdminAuth(page: Page): Promise<void> {
+  await mockRefresh(page, ADMIN_TOKEN)
   await page.goto('/login')
-  await page.evaluate((token) => {
-    localStorage.setItem(
+  await page.evaluate(() => {
+    sessionStorage.setItem(
       'condogest-auth',
       JSON.stringify({
         state: {
-          accessToken: token,
           refreshToken: 'refresh-token',
-          user: { email: 'admin@test.com', roles: ['ROLE_ADMIN'], condominioIds: [] },
+          user: { id: 1, email: 'admin@test.com', roles: ['ROLE_ADMIN'], condominioIds: [] },
           activeCondominioId: null,
         },
         version: 0,
       }),
     )
-  }, ADMIN_TOKEN)
+  })
+}
+
+/** Mocka POST /auth/refresh devolvendo `token` — formato plano (AuthResponseDTO), sem envelope ApiResponse. */
+export async function mockRefresh(page: Page, token: string): Promise<void> {
+  await page.route('**/api/auth/refresh', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        accessToken: token,
+        refreshToken: 'refresh-token',
+        tokenType: 'Bearer',
+        expiresIn: 3600,
+      }),
+    }),
+  )
 }
 
 /** Cria um payload de resposta no formato ApiResponse<T>. */

@@ -148,7 +148,12 @@ export default function LoginPage() {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton size="small" onClick={() => setShowPassword((v) => !v)} edge="end">
+                  <IconButton
+                    size="small"
+                    onClick={() => setShowPassword((v) => !v)}
+                    edge="end"
+                    aria-label={showPassword ? 'ocultar senha' : 'mostrar senha'}
+                  >
                     {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
                   </IconButton>
                 </InputAdornment>

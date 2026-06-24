@@ -37,7 +37,14 @@ apiClient.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    if (error.response?.status === 401 && !original._retry) {
+    // /auth/login and /auth/refresh failing with 401 means wrong credentials or an
+    // expired refresh token — both are normal, expected outcomes the caller (LoginPage,
+    // bootstrap) already handles inline. Letting this logic run for them would force a
+    // hard redirect to /login on every failed login attempt, wiping the error message
+    // before the user ever sees it.
+    const isAuthEndpoint = original.url?.includes('/auth/login') || original.url?.includes('/auth/refresh')
+
+    if (error.response?.status === 401 && !original._retry && !isAuthEndpoint) {
       original._retry = true
       const refreshToken = useAuthStore.getState().refreshToken
 

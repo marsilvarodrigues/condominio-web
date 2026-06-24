@@ -33,7 +33,7 @@ describe('LoginPage', () => {
   it('renders email and password fields', () => {
     renderLogin()
     expect(screen.getByLabelText(/e-mail/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/senha/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/senha/i, { selector: 'input' })).toBeInTheDocument()
   })
 
   it('renders the login button', () => {

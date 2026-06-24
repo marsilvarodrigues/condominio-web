@@ -45,7 +45,7 @@ test.describe('Dashboard', () => {
 
   test('redireciona para /login quando não autenticado', async ({ page }) => {
     // Limpa auth e tenta acessar direto
-    await page.evaluate(() => localStorage.removeItem('condogest-auth'))
+    await page.evaluate(() => sessionStorage.removeItem('condogest-auth'))
     await page.goto('/')
     await expect(page).toHaveURL(/\/login/)
   })
