@@ -208,6 +208,23 @@ class CustomBearerTokenFilterTest {
     }
 
     @Test
+    void doFilterInternal_withMultipleCondominiosAndNoHeader_onCondominiosListEndpoint_passesThrough() throws Exception {
+        when(jwtDecoder.decode("multi-cond-list-token")).thenReturn(buildJwtWithCondominioIds("jti-multi4", List.of(1L, 2L)));
+        when(tokenBlacklistService.isBlacklisted("jti-multi4")).thenReturn(false);
+
+        var request = requestWithBearer("multi-cond-list-token");
+        request.setMethod("GET");
+        request.setRequestURI("/api/condominios");
+        request.setServletPath("/condominios");
+        var response = new MockHttpServletResponse();
+
+        filter.doFilterInternal(request, response, filterChain);
+
+        verify(filterChain).doFilter(request, response);
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
     void doFilterInternal_withZeroCondominiosAndNoHeader_globalAccessPassesThrough() throws Exception {
         when(jwtDecoder.decode("global-token")).thenReturn(buildJwtWithCondominioIds("jti-global", List.of()));
         when(tokenBlacklistService.isBlacklisted("jti-global")).thenReturn(false);

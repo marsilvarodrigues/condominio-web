@@ -111,7 +111,11 @@ public class CustomBearerTokenFilter extends OncePerRequestFilter {
       TenantContext.setAllowedCondominioIds(allowedIds);
 
       Long activeCondominioId =
-          resolveActiveCondominio(allowedIds, request.getHeader(CONDOMINIO_ID_HEADER), response);
+          resolveActiveCondominio(
+              allowedIds,
+              request.getHeader(CONDOMINIO_ID_HEADER),
+              isTenantHeaderExempt(request),
+              response);
       if (activeCondominioId == null && response.getStatus() != HttpStatus.OK.value()) {
         return; // invalid header value, error status already set
       }
@@ -147,12 +151,28 @@ public class CustomBearerTokenFilter extends OncePerRequestFilter {
   }
 
   /**
+   * {@code GET /condominios} lists the condominios the caller may pick from — it operates on the
+   * tenant root entity itself (no {@code @Filter(condominioFilter)}, no condominio_id column), so
+   * it never needs an active condominio. A multi-condominio user must be able to call it with no
+   * header to discover their own condominios before selecting one.
+   */
+  private boolean isTenantHeaderExempt(HttpServletRequest request) {
+    // getServletPath() excludes the context-path (server.servlet.context-path=/api); getRequestURI()
+    // does not, so comparing against it directly would never match.
+    return "GET".equals(request.getMethod()) && "/condominios".equals(request.getServletPath());
+  }
+
+  /**
    * Resolves the active condominio ID from the allowed list and request header. Returns {@code
-   * null} both when global access applies (empty list, no header) and on validation errors —
-   * callers must check {@link HttpServletResponse#isCommitted()} to distinguish the two cases.
+   * null} both when global access applies (empty list, no header, or an exempt endpoint) and on
+   * validation errors — callers must check {@link HttpServletResponse#isCommitted()} to
+   * distinguish the two cases.
    */
   private Long resolveActiveCondominio(
-      List<Long> allowedIds, String condominioHeader, HttpServletResponse response)
+      List<Long> allowedIds,
+      String condominioHeader,
+      boolean headerExempt,
+      HttpServletResponse response)
       throws IOException {
     if (condominioHeader != null && !condominioHeader.isBlank()) {
       try {
@@ -172,7 +192,7 @@ public class CustomBearerTokenFilter extends OncePerRequestFilter {
     if (allowedIds.size() == 1) {
       return allowedIds.get(0);
     }
-    if (allowedIds.size() > 1) {
+    if (allowedIds.size() > 1 && !headerExempt) {
       log.warn(
           "User has {} allowed condominios but sent no X-Condominio-Id header", allowedIds.size());
       response.setStatus(HttpStatus.BAD_REQUEST.value());
